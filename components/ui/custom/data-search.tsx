@@ -34,7 +34,7 @@ export const DataSearch = ({
           onClick={() => setSearchInput("")}>
           <X className="size-4" />
         </button>
-      )}{" "}
+      )}
     </div>
   );
 };
