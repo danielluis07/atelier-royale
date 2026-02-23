@@ -61,7 +61,6 @@ export const categoriesRouter = createTRPCRouter({
           .set({
             name: input.name,
             slug: slugify(input.name),
-            updatedAt: new Date(),
           })
           .where(eq(category.id, input.id))
           .returning();
