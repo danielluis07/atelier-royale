@@ -6,8 +6,8 @@ export default function StoreLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className={`${playfair.variable} ${montserrat.variable} font-sans`}>
+    <div className={`${playfair.variable} ${montserrat.variable} font-sans`}>
       {children}
-    </main>
+    </div>
   );
 }
