@@ -1,4 +1,4 @@
-import { FolderClosed, Home } from "lucide-react";
+import { FolderClosed, Home, Users } from "lucide-react";
 
 import {
   Sidebar,
@@ -23,6 +23,11 @@ const items = [
     title: "Início",
     url: "/admin",
     icon: <Home className="size-4" />,
+  },
+  {
+    title: "Usuários",
+    url: "/admin/users",
+    icon: <Users className="size-4" />,
   },
   {
     title: "Categorias",
