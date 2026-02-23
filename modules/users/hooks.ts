@@ -14,7 +14,7 @@ export const useUsersSuspense = (params: Partial<UsersInput>) => {
 };
 
 /**
- * Hook to fetch public posts with pagination.
+ * Hook to fetch public user.
  */
 export const useUserSuspense = (params: UserInput) => {
   const trpc = useTRPC();

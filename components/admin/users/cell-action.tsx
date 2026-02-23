@@ -43,9 +43,7 @@ export const UsersCellAction = ({
         },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries(
-              trpc.users.list.queryOptions({ perPage: 10 }),
-            );
+            queryClient.invalidateQueries(trpc.users.list.queryOptions({}));
             setPending(false);
             closeConfirm();
             toast.success("Usuário banido com sucesso");
@@ -68,6 +66,7 @@ export const UsersCellAction = ({
     );
 
     if (confirmed) {
+      setPending(true);
       await authClient.admin.unbanUser(
         {
           userId: id,

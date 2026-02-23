@@ -29,11 +29,12 @@ export const DataSearch = ({
         <button
           type="button"
           aria-label="Clear search"
+          disabled={!hasMounted}
           className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
           onClick={() => setSearchInput("")}>
           <X className="size-4" />
         </button>
-      )}
+      )}{" "}
     </div>
   );
 };

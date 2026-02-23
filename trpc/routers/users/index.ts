@@ -34,7 +34,7 @@ export const usersRouter = createTRPCRouter({
     const orderBy =
       sortOrder === "asc" ? asc(orderByColumn) : desc(orderByColumn);
 
-    const [posts, total] = await Promise.all([
+    const [users, total] = await Promise.all([
       db
         .select({
           id: user.id,
@@ -58,7 +58,7 @@ export const usersRouter = createTRPCRouter({
     ]);
 
     return {
-      posts,
+      users,
       pagination: {
         page,
         perPage,

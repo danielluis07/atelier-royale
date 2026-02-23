@@ -59,7 +59,7 @@ export const UsersClient = () => {
     [searchParams, router, pathname],
   );
 
-  const users = data.posts;
+  const users = data.users;
   const pagination = data.pagination;
 
   return (
@@ -77,6 +77,7 @@ export const UsersClient = () => {
             total={pagination.total}
             handlePageChange={handlePageChange}
             isPending={isFetching || isSearchPending}
+            label="usuário"
           />
         </div>
       )}

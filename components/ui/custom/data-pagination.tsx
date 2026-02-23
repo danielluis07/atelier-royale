@@ -14,12 +14,14 @@ export const DataPagination = ({
   totalPages,
   total,
   handlePageChange,
+  label,
   isPending,
 }: {
   page: number;
   totalPages: number;
   total: number;
   handlePageChange: (page: number) => void;
+  label: string;
   isPending: boolean;
 }) => {
   const hasMounted = useHasMounted();
@@ -27,7 +29,7 @@ export const DataPagination = ({
   return (
     <div className="flex items-center justify-between">
       <p className="text-sm text-muted-foreground">
-        {total} {total > 1 ? "posts encontrados" : "post encontrado"}
+        {total} {total > 1 ? `${label}s encontrados` : `${label} encontrado`}
       </p>
 
       <div className="flex items-center gap-3">
