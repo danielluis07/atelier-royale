@@ -29,7 +29,7 @@ export const UsersCellAction = ({
 
   const { confirm, closeConfirm, setPending } = useConfirm();
 
-  const handleUserBun = async (id: string) => {
+  const handleUserBan = async (id: string) => {
     const confirmed = await confirm(
       "Tem certeza que deseja banir este usuário?",
       "Ao continuar, este usuário não poderá mais acessar a plataforma.",
@@ -51,7 +51,6 @@ export const UsersCellAction = ({
           onError: (error) => {
             console.error(error);
             setPending(false);
-            console.error("Falha ao banir usuário");
             toast.error("Falha ao banir usuário");
           },
         },
@@ -59,7 +58,7 @@ export const UsersCellAction = ({
     }
   };
 
-  const handleUserUnbun = async (id: string) => {
+  const handleUserUnban = async (id: string) => {
     const confirmed = await confirm(
       "Tem certeza que deseja reabilitar este usuário?",
       "Ao continuar, este usuário poderá acessar a plataforma novamente.",
@@ -102,11 +101,11 @@ export const UsersCellAction = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {banned ? (
-          <DropdownMenuItem onClick={() => handleUserUnbun(id)}>
+          <DropdownMenuItem onClick={() => handleUserUnban(id)}>
             Reabilitar Usuário
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem onClick={() => handleUserBun(id)}>
+          <DropdownMenuItem onClick={() => handleUserBan(id)}>
             Banir Usuário
           </DropdownMenuItem>
         )}

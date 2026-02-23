@@ -43,11 +43,11 @@ export const UsersClient = () => {
   } = useURLSearch();
 
   const { data, isFetching } = useUsersSuspense({
-    page: page,
-    search: search,
-    banned: banned,
-    sortBy: sortBy,
-    sortOrder: sortOrder,
+    page,
+    search,
+    banned,
+    sortBy,
+    sortOrder,
   });
 
   const handlePageChange = useCallback(

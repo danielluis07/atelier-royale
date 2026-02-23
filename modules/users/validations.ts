@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PAGINATION } from "@/constants";
 
-export const userSortBySchema = z.enum(["createdAt", "name"]);
+export const userSortBySchema = z.enum(["createdAt", "updatedAt", "name"]);
 export const userSortOrderSchema = z.enum(["asc", "desc"]);
 
 export const listUsersInput = z.object({

@@ -44,6 +44,7 @@ export const usersRouter = createTRPCRouter({
           image: user.image,
           banned: user.banned,
           createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         })
         .from(user)
         .where(whereClause)

@@ -35,11 +35,11 @@ const UsersPage = async ({
   const sortOrder = sortOrderParse.success ? sortOrderParse.data : "desc";
 
   prefetchUsers({
-    page: page,
-    search: search,
-    banned: banned,
-    sortBy: sortBy,
-    sortOrder: sortOrder,
+    page,
+    search,
+    banned,
+    sortBy,
+    sortOrder,
   });
 
   return (

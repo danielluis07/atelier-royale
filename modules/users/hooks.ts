@@ -14,7 +14,7 @@ export const useUsersSuspense = (params: Partial<UsersInput>) => {
 };
 
 /**
- * Hook to fetch public user.
+ * Hook to fetch a user.
  */
 export const useUserSuspense = (params: UserInput) => {
   const trpc = useTRPC();
