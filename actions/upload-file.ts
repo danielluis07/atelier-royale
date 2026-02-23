@@ -1,5 +1,6 @@
 "use server";
 
+import { MAX_FILE_SIZE_BYTES } from "@/constants";
 import { auth } from "@/lib/auth";
 import { client } from "@/lib/s3";
 import { headers } from "next/headers";
@@ -17,6 +18,16 @@ export async function uploadFile(formData: FormData, folder: string) {
 
   if (!file || file.size === 0) {
     return { success: false, error: "Arquivo inválido" };
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return { success: false, error: "Arquivo muito grande" };
+  }
+
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+
+  if (!allowedMimeTypes.includes(file.type)) {
+    return { success: false, error: "Tipo de arquivo não permitido" };
   }
 
   const sanitizedName = file.name

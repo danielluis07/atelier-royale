@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { createTRPCRouter, adminProcedure } from "@/trpc/init";
 import { product, productVariant } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
-import { eq, inArray, desc, and, notInArray } from "drizzle-orm";
+import { eq, inArray, desc, and, notInArray, ne } from "drizzle-orm";
 import { isDatabaseUniqueError, slugify } from "@/lib/utils";
 import {
   createProductInput,
@@ -119,12 +119,36 @@ export const productsRouter = createTRPCRouter({
     .input(updateProductInput)
     .mutation(async ({ input }) => {
       try {
+        // 1. Generate the slug and pre-validate to avoid database conflict errors
+        const generatedSlug = slugify(input.name);
+
+        const [existingProductWithSlug] = await db
+          .select({ id: product.id })
+          .from(product)
+          .where(
+            and(
+              eq(product.slug, generatedSlug),
+              ne(product.id, input.id), // Ignore the product we are currently updating
+            ),
+          )
+          .limit(1);
+
+        if (existingProductWithSlug) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message:
+              "Já existe outro produto com um nome similar. Por favor, escolha um nome diferente.",
+          });
+        }
+
+        // 2. Start the database transaction
         const updatedProduct = await db.transaction(async (tx) => {
+          // 2.1 Update the main product record
           const [productUpdated] = await tx
             .update(product)
             .set({
               name: input.name,
-              slug: slugify(input.name),
+              slug: generatedSlug, // Use the slug we generated above
               description: input.description,
               brand: input.brand,
               imageUrl: input.imageUrl,
@@ -147,7 +171,7 @@ export const productsRouter = createTRPCRouter({
               .filter((v) => v.id !== undefined)
               .map((v) => v.id as string);
 
-            // 2.1. Delete the variants that were removed by the Admin
+            // 2.2. Delete the variants that were removed by the Admin
             if (variantsToKeepIds.length > 0) {
               await tx
                 .delete(productVariant)
@@ -158,38 +182,28 @@ export const productsRouter = createTRPCRouter({
                   ),
                 );
             } else {
-              // If no variants are sent, it means all were removed, so we delete all existing variants for this product
+              // If an empty variants array is sent, it means all variants were removed, so we delete all existing variants for this product
               await tx
                 .delete(productVariant)
                 .where(eq(productVariant.productId, input.id));
             }
 
-            // 2.2. Update existing variants and insert new ones
+            // 2.3. Separate variants into insert and update arrays
+            const variantsToInsert = [];
+            const variantsToUpdate = [];
+
             for (const variant of input.variants) {
               if (variant.id) {
-                // If it has ID, it's an existing variant that needs to be updated
-                await tx
-                  .update(productVariant)
-                  .set({
-                    sku: variant.sku,
-                    name: variant.name,
-                    size: variant.size ?? null,
-                    priceOverride: variant.priceOverride ?? null,
-                    stockQuantity: variant.stockQuantity,
-                    weightGrams: variant.weightGrams ?? null,
-                    heightCm: variant.heightCm ?? null,
-                    widthCm: variant.widthCm ?? null,
-                    lengthCm: variant.lengthCm ?? null,
-                  })
-                  .where(
-                    and(
-                      eq(productVariant.id, variant.id),
-                      eq(productVariant.productId, input.id),
-                    ),
-                  );
+                variantsToUpdate.push(variant);
               } else {
-                // If it doesn't have ID, it's a new variant that needs to be inserted
-                await tx.insert(productVariant).values({
+                variantsToInsert.push(variant);
+              }
+            }
+
+            // 2.4. Bulk Insert new variants (Single database query)
+            if (variantsToInsert.length > 0) {
+              await tx.insert(productVariant).values(
+                variantsToInsert.map((variant) => ({
                   productId: input.id,
                   sku: variant.sku,
                   name: variant.name,
@@ -200,8 +214,35 @@ export const productsRouter = createTRPCRouter({
                   heightCm: variant.heightCm ?? null,
                   widthCm: variant.widthCm ?? null,
                   lengthCm: variant.lengthCm ?? null,
-                });
-              }
+                })),
+              );
+            }
+
+            // 2.5. Concurrently Update existing variants
+            if (variantsToUpdate.length > 0) {
+              await Promise.all(
+                variantsToUpdate.map((variant) =>
+                  tx
+                    .update(productVariant)
+                    .set({
+                      sku: variant.sku,
+                      name: variant.name,
+                      size: variant.size ?? null,
+                      priceOverride: variant.priceOverride ?? null,
+                      stockQuantity: variant.stockQuantity,
+                      weightGrams: variant.weightGrams ?? null,
+                      heightCm: variant.heightCm ?? null,
+                      widthCm: variant.widthCm ?? null,
+                      lengthCm: variant.lengthCm ?? null,
+                    })
+                    .where(
+                      and(
+                        eq(productVariant.id, variant.id!),
+                        eq(productVariant.productId, input.id),
+                      ),
+                    ),
+                ),
+              );
             }
           }
 
@@ -214,10 +255,11 @@ export const productsRouter = createTRPCRouter({
           throw error;
         }
 
+        // This still acts as a good fallback for other constraints, like variant SKUs
         if (isDatabaseUniqueError(error)) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "Já existe um produto com este nome ou SKU de variante",
+            message: "Já existe uma variante com este SKU",
           });
         }
 

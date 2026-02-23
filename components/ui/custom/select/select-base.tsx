@@ -29,8 +29,8 @@ export default function ClientSelectBase({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((opt, i) => (
-          <SelectItem key={`${opt.value}-${i}`} value={opt.value}>
+        {options.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
           </SelectItem>
         ))}

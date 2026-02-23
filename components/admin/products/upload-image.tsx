@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { MAX_FILE_SIZE_BYTES } from "@/constants";
 
 export const UploadImage = ({
   file,
@@ -32,6 +33,15 @@ export const UploadImage = ({
     return URL.createObjectURL(file);
   }, [file]);
 
+  useEffect(() => {
+    // Cleanup function to revoke the object URL when it changes or component unmounts
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const validateAndSet = useCallback(
     (selectedFile: File) => {
       if (!selectedFile.type.startsWith("image/")) {
@@ -39,7 +49,7 @@ export const UploadImage = ({
         return;
       }
 
-      if (selectedFile.size > 5 * 1024 * 1024) {
+      if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
         toast.error("A imagem deve ter no máximo 5MB");
         return;
       }

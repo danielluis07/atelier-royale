@@ -87,15 +87,14 @@ export const CreateProductForm = ({
     toast.promise(mutateAsync({ ...value, imageUrl: uploadResult.url }), {
       loading: "Criando produto...",
       success: () => {
-        setIsLoading(false);
         router.push("/admin/products");
         return "Produto criado com sucesso!";
       },
       error: (error) => {
-        setIsLoading(false);
         console.error(error);
         return "Erro ao criar produto";
       },
+      finally: () => setIsLoading(false),
     });
   };
 
