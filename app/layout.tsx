@@ -3,6 +3,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { inter } from "@/fonts";
+import { TRPCReactProvider } from "@/trpc/client";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,8 +18,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} font-inter antialiased`}>
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster />
+        <TRPCReactProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
+        </TRPCReactProvider>
       </body>
     </html>
   );
