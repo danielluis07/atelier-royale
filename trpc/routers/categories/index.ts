@@ -127,6 +127,15 @@ export const categoriesRouter = createTRPCRouter({
           throw error;
         }
 
+        // Check for foreign key constraint violation (adjust based on your DB)
+        if (error instanceof Error && error.message.includes("foreign key")) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message:
+              "Não é possível deletar categorias que possuem itens associados",
+          });
+        }
+
         console.error("Erro ao deletar categorias:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

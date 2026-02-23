@@ -35,8 +35,7 @@ export const getColumns = (
     header: "Nome",
   },
   {
-    accessorKey: "actions",
-    header: "Ações",
+    id: "actions",
     cell: ({ row }) => (
       <CategoriesCellAction
         onEdit={() => onEdit({ id: row.original.id, name: row.original.name })}
