@@ -56,6 +56,7 @@ export const UploadImage = ({
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    if (disabled) return;
     setDragActive(false);
     const selected = e.dataTransfer.files?.[0];
     if (selected) validateAndSet(selected);
@@ -63,11 +64,13 @@ export const UploadImage = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    if (disabled) return;
     setDragActive(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    if (disabled) return;
     setDragActive(false);
   };
 
@@ -121,10 +124,11 @@ export const UploadImage = ({
             <input
               type="file"
               accept="image/*"
+              aria-label="Selecionar imagem do produto"
               onChange={handleFileChange}
               disabled={disabled}
               className="absolute inset-0 z-10 cursor-pointer opacity-0"
-            />
+            />{" "}
             <ImagePlus className="mb-3 size-10 text-muted-foreground/50" />
             <p className="text-sm font-medium text-muted-foreground">
               Clique ou arraste uma imagem

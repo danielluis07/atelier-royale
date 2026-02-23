@@ -96,6 +96,10 @@ export const productsRouter = createTRPCRouter({
 
         return newProduct;
       } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+
         if (isDatabaseUniqueError(error)) {
           throw new TRPCError({
             code: "CONFLICT",
@@ -177,7 +181,12 @@ export const productsRouter = createTRPCRouter({
                     widthCm: variant.widthCm ?? null,
                     lengthCm: variant.lengthCm ?? null,
                   })
-                  .where(eq(productVariant.id, variant.id));
+                  .where(
+                    and(
+                      eq(productVariant.id, variant.id),
+                      eq(productVariant.productId, input.id),
+                    ),
+                  );
               } else {
                 // If it doesn't have ID, it's a new variant that needs to be inserted
                 await tx.insert(productVariant).values({

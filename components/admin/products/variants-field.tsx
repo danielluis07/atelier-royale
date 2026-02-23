@@ -94,9 +94,10 @@ export const VariantsField = ({
                       size="icon"
                       className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => remove(index)}
+                      aria-label={`Remover variação ${index + 1}`}
                       disabled={isLoading}>
                       <Trash2 className="size-4" />
-                    </Button>
+                    </Button>{" "}
                   </div>
 
                   <FieldGroup>
@@ -178,18 +179,27 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.priceOverride`}
-                              placeholder="Em centavos (opcional)"
+                              name={field.name}
+                              ref={field.ref}
+                              placeholder="Ex: R$ 10,00 (opcional)"
                               disabled={isLoading}
-                              value={centsToReais(field.value ?? 0)}
+                              value={
+                                field.value == null
+                                  ? ""
+                                  : centsToReais(field.value)
+                              }
+                              onBlur={field.onBlur}
                               onChange={(e) => {
                                 const rawValue = e.target.value.replace(
                                   /\D/g,
                                   "",
                                 );
-                                const numericValue = rawValue
-                                  ? parseInt(rawValue, 10)
-                                  : 0;
-                                field.onChange(numericValue);
+                                if (rawValue === "") {
+                                  field.onChange(null);
+                                } else {
+                                  const numericValue = parseInt(rawValue, 10);
+                                  field.onChange(numericValue);
+                                }
                               }}
                             />
                             <FieldDescription>
@@ -200,7 +210,7 @@ export const VariantsField = ({
                             )}
                           </Field>
                         )}
-                      />
+                      />{" "}
                       <Controller
                         name={`variants.${index}.stockQuantity`}
                         control={control}
@@ -212,10 +222,13 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.stockQuantity`}
+                              name={field.name}
+                              ref={field.ref}
                               type="number"
                               min={0}
                               disabled={isLoading}
                               value={field.value}
+                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(Number(e.target.value))
                               }
@@ -241,10 +254,13 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.weightGrams`}
+                              name={field.name}
+                              ref={field.ref}
                               type="number"
                               placeholder="Gramas"
                               disabled={isLoading}
                               value={field.value ?? ""}
+                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -269,10 +285,13 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.heightCm`}
+                              name={field.name}
+                              ref={field.ref}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
+                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -297,10 +316,13 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.widthCm`}
+                              name={field.name}
+                              ref={field.ref}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
+                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -325,10 +347,13 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.lengthCm`}
+                              name={field.name}
+                              ref={field.ref}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
+                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""

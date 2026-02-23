@@ -88,6 +88,7 @@ export const CreateProductForm = ({
       loading: "Criando produto...",
       success: () => {
         setIsLoading(false);
+        router.push("/admin/products");
         return "Produto criado com sucesso!";
       },
       error: (error) => {
@@ -107,9 +108,10 @@ export const CreateProductForm = ({
             type="button"
             variant="outline"
             size="icon"
+            aria-label="Voltar"
             onClick={() => router.back()}>
             <ArrowLeft className="size-4" />
-          </Button>
+          </Button>{" "}
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Criar Produto</h1>
             <p className="text-sm text-muted-foreground">
@@ -205,6 +207,9 @@ export const CreateProductForm = ({
                         <FieldLabel htmlFor="basePrice">Preço Base</FieldLabel>
                         <Input
                           id="basePrice"
+                          name={field.name}
+                          ref={field.ref}
+                          onBlur={field.onBlur}
                           value={centsToReais(field.value)}
                           onChange={(e) => {
                             const rawValue = e.target.value.replace(/\D/g, "");
