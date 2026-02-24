@@ -4,6 +4,8 @@ export const PAGINATION = {
   DEFAULT_PER_PAGE: 10,
 };
 
+export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
 export const SORT_ORDER_OPTIONS = [
   { label: "Mais recentes", value: "desc" },
   { label: "Mais antigos", value: "asc" },
