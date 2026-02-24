@@ -16,7 +16,7 @@ export const SORT_ORDER_OPTIONS = [
 
 // Users
 export const USER_STATUS_OPTIONS = [
-  { label: "Todos", value: "all" }, // or value: ""
+  { label: "Todos", value: "all" },
   { label: "Banido", value: "true" },
   { label: "Ativo", value: "false" },
 ] as const;
@@ -24,4 +24,18 @@ export const USER_STATUS_OPTIONS = [
 export const USER_SORT_BY_OPTIONS = [
   { label: "Data de criação", value: "createdAt" },
   { label: "Data de atualização", value: "updatedAt" },
+] as const;
+
+// Products
+export const PRODUCT_STATUS_OPTIONS = [
+  { label: "Todos", value: "all" },
+  { label: "Disponível", value: "true" },
+  { label: "Indisponível", value: "false" },
+] as const;
+
+export const PRODUCT_SORT_BY_OPTIONS = [
+  { label: "Data de criação", value: "createdAt" },
+  { label: "Data de atualização", value: "updatedAt" },
+  { label: "Nome", value: "name" },
+  { label: "Preço", value: "price" },
 ] as const;

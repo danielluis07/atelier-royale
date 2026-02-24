@@ -1,10 +1,14 @@
 import { prefetch, trpc } from "@/trpc/server";
+import type { ProductsInput } from "@/modules/products/types";
+import { normalizeProductsParams } from "@/modules/products/utils";
 
 /**
  * Prefetch product list
  */
-export const prefetchProducts = async () => {
-  return prefetch(trpc.products.list.queryOptions());
+export const prefetchProducts = async (params: Partial<ProductsInput>) => {
+  return prefetch(
+    trpc.products.list.queryOptions(normalizeProductsParams(params)),
+  );
 };
 
 /**

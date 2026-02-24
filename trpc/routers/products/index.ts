@@ -1,33 +1,109 @@
 import { z } from "zod";
 import { db } from "@/db";
 import { createTRPCRouter, adminProcedure } from "@/trpc/init";
-import { product, productVariant } from "@/db/schema";
+import { category, product, productVariant } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
-import { eq, inArray, desc, and, notInArray, ne } from "drizzle-orm";
+import {
+  eq,
+  inArray,
+  desc,
+  and,
+  notInArray,
+  ne,
+  or,
+  ilike,
+  asc,
+  count,
+} from "drizzle-orm";
 import { isDatabaseUniqueError, slugify } from "@/lib/utils";
 import {
   createProductInput,
   getProductInput,
+  listProductsInput,
   updateProductInput,
 } from "@/modules/products/validations";
 
 export const productsRouter = createTRPCRouter({
-  list: adminProcedure.query(async () => {
-    const data = await db
-      .select({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        brand: product.brand,
-        imageUrl: product.imageUrl,
-        basePrice: product.basePrice,
-        isAvailable: product.isAvailable,
-        categoryId: product.categoryId,
-      })
-      .from(product)
-      .orderBy(desc(product.createdAt));
+  list: adminProcedure.input(listProductsInput).query(async ({ input }) => {
+    const {
+      page,
+      perPage,
+      search,
+      isAvailable,
+      categoryId,
+      sortBy,
+      sortOrder,
+    } = input;
+    const offset = (page - 1) * perPage;
 
-    return data;
+    const conditions = [];
+
+    if (search) {
+      conditions.push(
+        or(
+          ilike(product.name, `%${search}%`),
+          ilike(product.brand, `%${search}%`),
+        ),
+      );
+    }
+
+    if (isAvailable !== undefined) {
+      conditions.push(eq(product.isAvailable, isAvailable));
+    }
+
+    if (categoryId) {
+      conditions.push(eq(product.categoryId, categoryId));
+    }
+
+    const whereClause = and(...conditions);
+
+    const orderByColumn = {
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+      name: product.name,
+      price: product.basePrice,
+    }[sortBy];
+
+    const orderBy =
+      sortOrder === "asc" ? asc(orderByColumn) : desc(orderByColumn);
+
+    const [products, total] = await Promise.all([
+      db
+        .select({
+          id: product.id,
+          name: product.name,
+          categoryName: category.name,
+          description: product.description,
+          brand: product.brand,
+          imageUrl: product.imageUrl,
+          basePrice: product.basePrice,
+          isAvailable: product.isAvailable,
+          categoryId: product.categoryId,
+          createdAt: product.createdAt,
+        })
+        .from(product)
+        .innerJoin(category, eq(product.categoryId, category.id))
+        .where(whereClause)
+        .orderBy(orderBy)
+        .limit(perPage)
+        .offset(offset),
+      db
+        .select({ count: count() })
+        .from(product)
+        .innerJoin(category, eq(product.categoryId, category.id))
+        .where(whereClause)
+        .then(([result]) => result?.count ?? 0),
+    ]);
+
+    return {
+      products,
+      pagination: {
+        page,
+        perPage,
+        total,
+        totalPages: Math.ceil(total / perPage),
+      },
+    };
   }),
 
   get: adminProcedure.input(getProductInput).query(async ({ input }) => {
