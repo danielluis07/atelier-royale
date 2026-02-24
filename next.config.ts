@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "atelier-royale-media-local.s3.us-east-1.amazonaws.com",
+        hostname: process.env.S3_IMAGE_HOSTNAME!,
       },
     ],
   },

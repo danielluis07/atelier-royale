@@ -153,7 +153,7 @@ export const VariantsField = ({
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor={`variants.${index}.size`}>
-                              Variação
+                              Opção
                             </FieldLabel>
                             <Input
                               {...field}

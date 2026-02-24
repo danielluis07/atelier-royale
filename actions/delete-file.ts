@@ -34,8 +34,6 @@ export async function deleteFile(fileUrl: string) {
     const s3File = client.file(fileKey);
     await s3File.delete();
 
-    console.log(`Deleted file: ${fileKey} by user: ${session.user.id}`);
-
     return { success: true };
   } catch (err) {
     console.error("Erro ao deletar arquivo:", err);

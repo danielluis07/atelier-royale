@@ -112,13 +112,11 @@ export const productsRouter = createTRPCRouter({
             });
           }
 
-          const fallbackSku = `SKU-${createdProduct.id.slice(-12).toUpperCase()}`;
-
           // --- 2. Handle Variants ---
           if (input.variants.length === 0) {
             await tx.insert(productVariant).values({
               productId: createdProduct.id,
-              sku: fallbackSku,
+              sku: `SKU-${createdProduct.id.slice(-12).toUpperCase()}`,
               name: "Variação",
               size: null,
               priceOverride: null,
@@ -130,9 +128,11 @@ export const productsRouter = createTRPCRouter({
             });
           } else {
             // Example: Suits and Shirts (Admin sent variants, create them all)
-            const variantsToInsert = input.variants.map((v) => ({
+            const variantsToInsert = input.variants.map((v, index) => ({
               productId: createdProduct.id,
-              sku: v.sku || fallbackSku, // Use provided SKU or fallback if empty
+              sku:
+                v.sku ||
+                `SKU-${createdProduct.id.slice(-12).toUpperCase()}-${index + 1}`,
               name: v.name || "Variação", // Fallback name if empty
               size: v.size ?? null,
               priceOverride: v.priceOverride ?? null,
