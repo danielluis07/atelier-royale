@@ -16,3 +16,14 @@ export const listUsersInput = z.object({
 export const getUserInput = z.object({
   id: z.string().min(1, "ID do usuário é obrigatório"),
 });
+
+export const usersSearchParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  search: z.string().optional(),
+  banned: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true")
+    .optional(),
+  sortBy: userSortBySchema.optional(),
+  sortOrder: userSortOrderSchema.optional(),
+});

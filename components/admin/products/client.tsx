@@ -20,11 +20,10 @@ export const ProductsClient = ({
   const router = useRouter();
   const pathname = usePathname();
 
-  // 2. Convert URLSearchParams to a plain object
   const rawParams = Object.fromEntries(searchParams.entries());
 
-  // 3. Parse everything in one clean line, falling back to defaults automatically
-  const parsedParams = productsSearchParamsSchema.parse(rawParams);
+  const result = productsSearchParamsSchema.safeParse(rawParams);
+  const parsedParams = result.success ? result.data : {};
 
   const {
     searchInput,
@@ -32,7 +31,6 @@ export const ProductsClient = ({
     isPending: isSearchPending,
   } = useURLSearch();
 
-  // 4. Pass the safely parsed and typed params directly to tRPC
   const { data, isFetching } = useProductsSuspense(parsedParams);
 
   const handlePageChange = useCallback(

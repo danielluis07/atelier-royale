@@ -16,8 +16,8 @@ const ProductsPage = async ({
   await requireAdmin();
   const rawParams = await searchParams;
 
-  // 2. Parse everything in one clean sweep
-  const parsedParams = productsSearchParamsSchema.parse(rawParams);
+  const result = productsSearchParamsSchema.safeParse(rawParams);
+  const parsedParams = result.success ? result.data : {};
 
   const categories = await db
     .select({
@@ -26,7 +26,6 @@ const ProductsPage = async ({
     })
     .from(category);
 
-  // 3. Pass the perfectly typed object directly to your tRPC prefetch
   prefetchProducts(parsedParams);
 
   return (

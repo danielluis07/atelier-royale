@@ -4,37 +4,22 @@ import { DataTable } from "@/components/ui/custom/data-table";
 import { columns } from "@/components/admin/users/columns";
 import { useUsersSuspense } from "@/modules/users/hooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { PAGINATION } from "@/constants";
-import {
-  userSortBySchema,
-  userSortOrderSchema,
-} from "@/modules/users/validations";
 import { DataPagination } from "@/components/ui/custom/data-pagination";
 import { DataSearch } from "@/components/ui/custom/data-search";
 import { useURLSearch } from "@/hooks/use-url-search";
 import { useCallback } from "react";
 import { UsersToolbar } from "@/components/admin/users/toolbar";
+import { usersSearchParamsSchema } from "@/modules/users/validations";
 
 export const UsersClient = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const page = Number(searchParams.get("page")) || PAGINATION.DEFAULT_PAGE;
+  const rawParams = Object.fromEntries(searchParams.entries());
 
-  const search = searchParams.get("search") || undefined;
-
-  const bannedParam = searchParams.get("banned");
-  const banned =
-    bannedParam === "true" ? true : bannedParam === "false" ? false : undefined;
-
-  const sortByParse = userSortBySchema.safeParse(searchParams.get("sortBy"));
-  const sortBy = sortByParse.success ? sortByParse.data : "createdAt";
-
-  const sortOrderParse = userSortOrderSchema.safeParse(
-    searchParams.get("sortOrder"),
-  );
-  const sortOrder = sortOrderParse.success ? sortOrderParse.data : "desc";
+  const result = usersSearchParamsSchema.safeParse(rawParams);
+  const parsedParams = result.success ? result.data : {};
 
   const {
     searchInput,
@@ -42,13 +27,7 @@ export const UsersClient = () => {
     isPending: isSearchPending,
   } = useURLSearch();
 
-  const { data, isFetching } = useUsersSuspense({
-    page,
-    search,
-    banned,
-    sortBy,
-    sortOrder,
-  });
+  const { data, isFetching } = useUsersSuspense(parsedParams);
 
   const handlePageChange = useCallback(
     (newPage: number) => {
@@ -72,7 +51,7 @@ export const UsersClient = () => {
       {pagination && (
         <div className="mt-5">
           <DataPagination
-            page={page}
+            page={pagination.page}
             totalPages={pagination.totalPages}
             total={pagination.total}
             handlePageChange={handlePageChange}
