@@ -119,42 +119,38 @@ export const productsRouter = createTRPCRouter({
     .input(updateProductInput)
     .mutation(async ({ input }) => {
       try {
-        // 1. Generate the slug and pre-validate to avoid database conflict errors
         const generatedSlug = slugify(input.name);
 
-        const [existingProductWithSlug] = await db
-          .select({ id: product.id })
-          .from(product)
-          .where(
-            and(
-              eq(product.slug, generatedSlug),
-              ne(product.id, input.id), // Ignore the product we are currently updating
-            ),
-          )
-          .limit(1);
-
-        if (existingProductWithSlug) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message:
-              "Já existe outro produto com um nome similar. Por favor, escolha um nome diferente.",
-          });
-        }
-
-        // 2. Start the database transaction
         const updatedProduct = await db.transaction(async (tx) => {
-          // 2.1 Update the main product record
+          // 1. Check slug uniqueness inside the transaction to avoid race conditions
+          const [existingProductWithSlug] = await tx
+            .select({ id: product.id })
+            .from(product)
+            .where(
+              and(eq(product.slug, generatedSlug), ne(product.id, input.id)),
+            );
+
+          if (existingProductWithSlug) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message:
+                "Já existe outro produto com um nome similar. Por favor, escolha um nome diferente.",
+            });
+          }
+
+          // 2. Update the main product record
           const [productUpdated] = await tx
             .update(product)
             .set({
               name: input.name,
-              slug: generatedSlug, // Use the slug we generated above
+              slug: generatedSlug,
               description: input.description,
               brand: input.brand,
               imageUrl: input.imageUrl,
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
               categoryId: input.categoryId,
+              updatedAt: new Date(),
             })
             .where(eq(product.id, input.id))
             .returning();
@@ -166,12 +162,13 @@ export const productsRouter = createTRPCRouter({
             });
           }
 
-          if (input.variants) {
+          // 3. Handle variants (undefined = untouched, empty array = delete all)
+          if (input.variants !== undefined) {
             const variantsToKeepIds = input.variants
-              .filter((v) => v.id !== undefined)
-              .map((v) => v.id as string);
+              .filter((v): v is typeof v & { id: string } => v.id !== undefined)
+              .map((v) => v.id);
 
-            // 2.2. Delete the variants that were removed by the Admin
+            // 3.1. Delete removed variants
             if (variantsToKeepIds.length > 0) {
               await tx
                 .delete(productVariant)
@@ -182,25 +179,28 @@ export const productsRouter = createTRPCRouter({
                   ),
                 );
             } else {
-              // If an empty variants array is sent, it means all variants were removed, so we delete all existing variants for this product
               await tx
                 .delete(productVariant)
                 .where(eq(productVariant.productId, input.id));
             }
 
-            // 2.3. Separate variants into insert and update arrays
-            const variantsToInsert = [];
-            const variantsToUpdate = [];
+            // 3.2. Separate variants into insert and update batches
+            const variantsToInsert: typeof input.variants = [];
+            const variantsToUpdate: ((typeof input.variants)[number] & {
+              id: string;
+            })[] = [];
 
             for (const variant of input.variants) {
               if (variant.id) {
-                variantsToUpdate.push(variant);
+                variantsToUpdate.push(
+                  variant as typeof variant & { id: string },
+                );
               } else {
                 variantsToInsert.push(variant);
               }
             }
 
-            // 2.4. Bulk Insert new variants (Single database query)
+            // 3.3. Bulk insert new variants
             if (variantsToInsert.length > 0) {
               await tx.insert(productVariant).values(
                 variantsToInsert.map((variant) => ({
@@ -218,31 +218,36 @@ export const productsRouter = createTRPCRouter({
               );
             }
 
-            // 2.5. Concurrently Update existing variants
-            if (variantsToUpdate.length > 0) {
-              await Promise.all(
-                variantsToUpdate.map((variant) =>
-                  tx
-                    .update(productVariant)
-                    .set({
-                      sku: variant.sku,
-                      name: variant.name,
-                      size: variant.size ?? null,
-                      priceOverride: variant.priceOverride ?? null,
-                      stockQuantity: variant.stockQuantity,
-                      weightGrams: variant.weightGrams ?? null,
-                      heightCm: variant.heightCm ?? null,
-                      widthCm: variant.widthCm ?? null,
-                      lengthCm: variant.lengthCm ?? null,
-                    })
-                    .where(
-                      and(
-                        eq(productVariant.id, variant.id!),
-                        eq(productVariant.productId, input.id),
-                      ),
-                    ),
-                ),
-              );
+            // 3.4. Update existing variants sequentially (concurrent Promise.all
+            // offers no real benefit inside a single-connection transaction)
+            for (const variant of variantsToUpdate) {
+              const [updated] = await tx
+                .update(productVariant)
+                .set({
+                  sku: variant.sku,
+                  name: variant.name,
+                  size: variant.size ?? null,
+                  priceOverride: variant.priceOverride ?? null,
+                  stockQuantity: variant.stockQuantity,
+                  weightGrams: variant.weightGrams ?? null,
+                  heightCm: variant.heightCm ?? null,
+                  widthCm: variant.widthCm ?? null,
+                  lengthCm: variant.lengthCm ?? null,
+                })
+                .where(
+                  and(
+                    eq(productVariant.id, variant.id),
+                    eq(productVariant.productId, input.id),
+                  ),
+                )
+                .returning({ id: productVariant.id });
+
+              if (!updated) {
+                throw new TRPCError({
+                  code: "NOT_FOUND",
+                  message: `Variante "${variant.name}" não encontrada para este produto`,
+                });
+              }
             }
           }
 
@@ -255,7 +260,6 @@ export const productsRouter = createTRPCRouter({
           throw error;
         }
 
-        // This still acts as a good fallback for other constraints, like variant SKUs
         if (isDatabaseUniqueError(error)) {
           throw new TRPCError({
             code: "CONFLICT",

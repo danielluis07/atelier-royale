@@ -65,22 +65,22 @@ export const UploadImage = ({
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
     if (disabled) return;
+    e.preventDefault();
     setDragActive(false);
     const selected = e.dataTransfer.files?.[0];
     if (selected) validateAndSet(selected);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
     if (disabled) return;
+    e.preventDefault();
     setDragActive(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
     if (disabled) return;
+    e.preventDefault();
     setDragActive(false);
   };
 
