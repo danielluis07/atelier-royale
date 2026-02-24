@@ -14,6 +14,15 @@ export const useProductsSuspense = () => {
   return useSuspenseQuery(trpc.products.list.queryOptions());
 };
 
+/**
+ * Hook to fetch a single product by ID.
+ */
+export const useProductSuspense = (id: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(trpc.products.get.queryOptions({ id }));
+};
+
 // ============================================================================
 // MUTATIONS
 // ============================================================================

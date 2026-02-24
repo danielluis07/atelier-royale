@@ -19,14 +19,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import type { CreateProductFormValues } from "@/modules/products/types";
 import { centsToReais } from "@/lib/utils";
 
 export const VariantsField = ({
   control,
   isLoading,
 }: {
-  control: Control<CreateProductFormValues>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
   isLoading: boolean;
 }) => {
   const { fields, append, remove } = useFieldArray({

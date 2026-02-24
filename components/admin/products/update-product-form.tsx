@@ -29,13 +29,16 @@ import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
 import { centsToReais } from "@/lib/utils";
-import { useCreateProduct } from "@/modules/products/hooks";
+import { useProductSuspense, useUpdateProduct } from "@/modules/products/hooks";
 import { uploadFile } from "@/actions/upload-file";
-import { createProductInput } from "@/modules/products/validations";
+import { deleteFile } from "@/actions/delete-file";
+import { updateProductInput } from "@/modules/products/validations";
 
-export const CreateProductForm = ({
+export const UpdateProductForm = ({
+  id,
   categories,
 }: {
+  id: string;
   categories: {
     id: string;
     name: string;
@@ -44,55 +47,84 @@ export const CreateProductForm = ({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageError, setImageError] = useState<string | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
 
-  const { mutateAsync } = useCreateProduct();
+  const { data: productData } = useProductSuspense(id);
+  const { mutateAsync } = useUpdateProduct();
 
-  const form = useForm<z.input<typeof createProductInput>>({
-    resolver: zodResolver(createProductInput),
-    defaultValues: {
-      name: "",
-      description: "",
-      brand: "",
-      basePrice: 0,
-      isAvailable: true,
-      categoryId: null,
-      variants: [],
+  const form = useForm<z.input<typeof updateProductInput>>({
+    resolver: zodResolver(updateProductInput),
+    values: {
+      id,
+      name: productData.name,
+      description: productData.description,
+      brand: productData.brand,
+      imageUrl: productData.imageUrl,
+      basePrice: productData.basePrice,
+      isAvailable: productData.isAvailable,
+      categoryId: productData.categoryId ?? null,
+      variants: productData.variants.map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        name: v.name,
+        size: v.size ?? null,
+        priceOverride: v.priceOverride ?? null,
+        stockQuantity: v.stockQuantity,
+        weightGrams: v.weightGrams ?? null,
+        heightCm: v.heightCm ?? null,
+        widthCm: v.widthCm ?? null,
+        lengthCm: v.lengthCm ?? null,
+      })),
     },
   });
 
+  // Track the existing image URL from the fetched product
+  const currentImageUrl = existingImageUrl ?? productData.imageUrl;
+
   const { control, handleSubmit } = form;
 
-  const onSubmit = async (value: z.input<typeof createProductInput>) => {
-    if (!imageFile) {
-      setImageError("A imagem do produto é obrigatória");
+  const onSubmit = async (value: z.input<typeof updateProductInput>) => {
+    if (!imageFile && !currentImageUrl) {
       return;
     }
 
     setIsLoading(true);
 
-    setImageError(null);
+    let imageUrl = currentImageUrl;
+    const previousImageUrl = currentImageUrl;
 
-    const formData = new FormData();
-    formData.append("file", imageFile);
+    // Only upload if a new file was selected
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
 
-    const uploadResult = await uploadFile(formData, "products");
+      const uploadResult = await uploadFile(formData, "products");
 
-    if (!uploadResult.success || !uploadResult.url) {
-      toast.error(uploadResult.error ?? "Erro ao enviar imagem");
-      setIsLoading(false);
-      return;
+      if (!uploadResult.success || !uploadResult.url) {
+        toast.error(uploadResult.error ?? "Erro ao enviar imagem");
+        setIsLoading(false);
+        return;
+      }
+
+      imageUrl = uploadResult.url;
+
+      if (previousImageUrl && previousImageUrl !== imageUrl) {
+        const deleteResult = await deleteFile(previousImageUrl);
+        if (!deleteResult.success) {
+          console.error("Erro ao deletar imagem antiga:", deleteResult.error);
+        }
+      }
     }
 
-    toast.promise(mutateAsync({ ...value, imageUrl: uploadResult.url }), {
-      loading: "Criando produto...",
+    toast.promise(mutateAsync({ ...value, imageUrl: imageUrl! }), {
+      loading: "Atualizando produto...",
       success: () => {
         router.push("/admin/products");
-        return "Produto criado com sucesso!";
+        return "Produto atualizado com sucesso!";
       },
       error: (error) => {
         console.error(error);
-        return "Erro ao criar produto";
+        return "Erro ao atualizar produto";
       },
       finally: () => setIsLoading(false),
     });
@@ -112,7 +144,9 @@ export const CreateProductForm = ({
             <ArrowLeft className="size-4" />
           </Button>{" "}
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Criar Produto</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              Atualizar Produto
+            </h1>
             <p className="text-sm text-muted-foreground">
               Preencha as informações do novo produto
             </p>
@@ -257,13 +291,11 @@ export const CreateProductForm = ({
               file={imageFile}
               onFileChange={(file) => {
                 setImageFile(file);
-                if (file) setImageError(null);
               }}
+              existingUrl={currentImageUrl}
+              onExistingUrlClear={() => setExistingImageUrl(null)}
               disabled={isLoading}
             />
-            {imageError && (
-              <p className="mt-2 text-sm text-destructive">{imageError}</p>
-            )}
           </div>
         </div>
 

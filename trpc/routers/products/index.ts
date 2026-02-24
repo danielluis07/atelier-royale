@@ -7,6 +7,7 @@ import { eq, inArray, desc, and, notInArray, ne } from "drizzle-orm";
 import { isDatabaseUniqueError, slugify } from "@/lib/utils";
 import {
   createProductInput,
+  getProductInput,
   updateProductInput,
 } from "@/modules/products/validations";
 
@@ -27,6 +28,50 @@ export const productsRouter = createTRPCRouter({
       .orderBy(desc(product.createdAt));
 
     return data;
+  }),
+
+  get: adminProcedure.input(getProductInput).query(async ({ input }) => {
+    const [foundProduct] = await db
+      .select({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        brand: product.brand,
+        imageUrl: product.imageUrl,
+        basePrice: product.basePrice,
+        isAvailable: product.isAvailable,
+        categoryId: product.categoryId,
+      })
+      .from(product)
+      .where(eq(product.id, input.id));
+
+    if (!foundProduct) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Produto não encontrado",
+      });
+    }
+
+    const variants = await db
+      .select({
+        id: productVariant.id,
+        sku: productVariant.sku,
+        name: productVariant.name,
+        size: productVariant.size,
+        priceOverride: productVariant.priceOverride,
+        stockQuantity: productVariant.stockQuantity,
+        weightGrams: productVariant.weightGrams,
+        heightCm: productVariant.heightCm,
+        widthCm: productVariant.widthCm,
+        lengthCm: productVariant.lengthCm,
+      })
+      .from(productVariant)
+      .where(eq(productVariant.productId, input.id));
+
+    return {
+      ...foundProduct,
+      variants,
+    };
   }),
 
   create: adminProcedure
