@@ -9,7 +9,7 @@ export async function deleteFile(fileUrl: string) {
     headers: await headers(),
   });
 
-  if (!session?.user) {
+  if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Usuário não autenticado" };
   }
 

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const variantInputSchema = z.object({
-  sku: z.string().min(1, "SKU é obrigatório"),
-  name: z.string().min(1, "O nome da variação é obrigatório"),
+  sku: z.string().optional(),
+  name: z.string().optional(),
   size: z.string().nullable().optional(),
   priceOverride: z
     .number()

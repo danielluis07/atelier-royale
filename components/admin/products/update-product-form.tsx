@@ -152,7 +152,7 @@ export const UpdateProductForm = ({
               Atualizar Produto
             </h1>
             <p className="text-sm text-muted-foreground">
-              Preencha as informações do novo produto
+              Preencha as informações do produto
             </p>
           </div>
         </div>
