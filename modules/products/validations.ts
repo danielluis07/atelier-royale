@@ -11,8 +11,7 @@ export const productSortOrderSchema = z.enum(["asc", "desc"]);
 
 export const productsSearchParamsSchema = z.object({
   // Coerce string to number, but leave it optional if it fails/is missing
-  page: z.coerce.number().optional(),
-
+  page: z.coerce.number().int().min(1).optional(),
   // Strings stay strings
   search: z.string().optional(),
   categoryId: z.string().optional(),

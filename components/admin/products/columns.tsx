@@ -34,6 +34,7 @@ function ProductImage({ src, alt }: { src: string; alt: string }) {
           isLoading ? "opacity-0" : "opacity-100",
         )}
         onLoad={() => setIsLoading(false)}
+        onError={() => setIsLoading(false)}
       />
     </div>
   );
@@ -77,11 +78,9 @@ export const columns: ColumnDef<ProductOutput>[] = [
           {name.length > 30 ? (
             <Tooltip>
               <TooltipTrigger className="cursor-pointer" asChild>
-                <Link
-                  className="w-34 truncate cursor-default font-semibold"
-                  href={`/admin/users/${row.original.id}`}>
-                  <span>{name}</span>
-                </Link>
+                <span className="w-34 truncate cursor-default font-semibold">
+                  {name}
+                </span>
               </TooltipTrigger>
               <TooltipContent>
                 <span>{name}</span>
@@ -113,7 +112,7 @@ export const columns: ColumnDef<ProductOutput>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "isAvailable",
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.isAvailable;

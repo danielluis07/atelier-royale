@@ -120,6 +120,7 @@ export const UploadImage = ({
               priority
               sizes="(max-width: 768px) 100vw, 33vw"
               onLoad={() => setIsLoading(false)}
+              onError={() => setIsLoading(false)}
             />
             <div className="absolute right-2 top-2 z-10">
               {!isLoading && (
