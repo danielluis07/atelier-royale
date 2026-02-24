@@ -1,4 +1,32 @@
 import { z } from "zod";
+import { PAGINATION } from "@/constants";
+
+export const productSortBySchema = z.enum([
+  "createdAt",
+  "updatedAt",
+  "name",
+  "price",
+]);
+export const productSortOrderSchema = z.enum(["asc", "desc"]);
+
+export const productsSearchParamsSchema = z.object({
+  // Coerce string to number, but leave it optional if it fails/is missing
+  page: z.coerce.number().optional(),
+
+  // Strings stay strings
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+
+  // Coerce "true"/"false" strings into actual booleans
+  isAvailable: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true")
+    .optional(),
+
+  // Validate, but leave optional
+  sortBy: productSortBySchema.optional(),
+  sortOrder: productSortOrderSchema.optional(),
+});
 
 export const variantInputSchema = z.object({
   sku: z.string().min(1, "SKU é obrigatório"),
@@ -19,6 +47,16 @@ export const variantInputSchema = z.object({
   heightCm: z.number().int().nullable().optional(),
   widthCm: z.number().int().nullable().optional(),
   lengthCm: z.number().int().nullable().optional(),
+});
+
+export const listProductsInput = z.object({
+  page: z.number().min(1).default(1),
+  perPage: z.number().min(1).max(100).default(PAGINATION.DEFAULT_PER_PAGE),
+  search: z.string().optional(),
+  isAvailable: z.boolean().optional(),
+  categoryId: z.string().optional(),
+  sortBy: productSortBySchema.default("createdAt"),
+  sortOrder: productSortOrderSchema.default("desc"),
 });
 
 export const updateVariantInputSchema = variantInputSchema.extend({

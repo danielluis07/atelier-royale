@@ -14,6 +14,7 @@ import { ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { MAX_FILE_SIZE_BYTES } from "@/constants";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const UploadImage = ({
   file,
@@ -30,6 +31,7 @@ export const UploadImage = ({
   disabled?: boolean;
   className?: string;
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [dragActive, setDragActive] = useState(false);
 
   const previewUrl = useMemo(() => {
@@ -109,6 +111,7 @@ export const UploadImage = ({
       <CardContent className="flex flex-1 flex-col">
         {displayUrl ? (
           <div className="relative flex flex-1 min-h-110 w-full overflow-hidden rounded-lg border">
+            {isLoading && <Skeleton className="absolute inset-0" />}
             <Image
               src={displayUrl}
               alt="Imagem do produto"
@@ -116,17 +119,20 @@ export const UploadImage = ({
               className="object-cover"
               priority
               sizes="(max-width: 768px) 100vw, 33vw"
+              onLoad={() => setIsLoading(false)}
             />
             <div className="absolute right-2 top-2 z-10">
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                className="size-8"
-                onClick={handleRemove}
-                disabled={disabled}>
-                <Trash2 className="size-4" />
-              </Button>
+              {!isLoading && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="size-8"
+                  onClick={handleRemove}
+                  disabled={disabled}>
+                  <Trash2 className="size-4" />
+                </Button>
+              )}
             </div>
           </div>
         ) : (

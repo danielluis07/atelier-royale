@@ -4,14 +4,17 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import type { ProductsInput } from "@/modules/products/types";
+import { normalizeProductsParams } from "@/modules/products/utils";
 
 /**
  * Hook to fetch products.
  */
-export const useProductsSuspense = () => {
+export const useProductsSuspense = (params: Partial<ProductsInput>) => {
   const trpc = useTRPC();
+  const normalized = normalizeProductsParams(params);
 
-  return useSuspenseQuery(trpc.products.list.queryOptions());
+  return useSuspenseQuery(trpc.products.list.queryOptions(normalized));
 };
 
 /**
