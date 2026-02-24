@@ -18,11 +18,15 @@ import { MAX_FILE_SIZE_BYTES } from "@/constants";
 export const UploadImage = ({
   file,
   onFileChange,
+  existingUrl,
+  onExistingUrlClear,
   disabled,
   className,
 }: {
   file: File | null;
   onFileChange: (file: File | null) => void;
+  existingUrl?: string | null;
+  onExistingUrlClear?: () => void;
   disabled?: boolean;
   className?: string;
 }) => {
@@ -32,6 +36,8 @@ export const UploadImage = ({
     if (!file) return null;
     return URL.createObjectURL(file);
   }, [file]);
+
+  const displayUrl = previewUrl ?? existingUrl ?? null;
 
   useEffect(() => {
     // Cleanup function to revoke the object URL when it changes or component unmounts
@@ -49,8 +55,8 @@ export const UploadImage = ({
         return;
       }
 
-      if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
-        toast.error("A imagem deve ter no máximo 5MB");
+      if (selectedFile.size > MAX_FILE_SIZE_BYTES.value) {
+        toast.error(`A imagem deve ter no máximo ${MAX_FILE_SIZE_BYTES.label}`);
         return;
       }
 
@@ -86,8 +92,11 @@ export const UploadImage = ({
 
   const handleRemove = () => {
     onFileChange(null);
+    if (!file) {
+      // No new file was selected, so the displayed image is the existingUrl — clear it.
+      onExistingUrlClear?.();
+    }
   };
-
   return (
     <Card className={cn("flex flex-col pb-2", className)}>
       <CardHeader>
@@ -98,10 +107,10 @@ export const UploadImage = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col">
-        {previewUrl ? (
+        {displayUrl ? (
           <div className="relative flex flex-1 min-h-110 w-full overflow-hidden rounded-lg border">
             <Image
-              src={previewUrl}
+              src={displayUrl}
               alt="Imagem do produto"
               fill
               className="object-cover"

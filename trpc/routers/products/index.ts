@@ -7,6 +7,7 @@ import { eq, inArray, desc, and, notInArray, ne } from "drizzle-orm";
 import { isDatabaseUniqueError, slugify } from "@/lib/utils";
 import {
   createProductInput,
+  getProductInput,
   updateProductInput,
 } from "@/modules/products/validations";
 
@@ -29,6 +30,61 @@ export const productsRouter = createTRPCRouter({
     return data;
   }),
 
+  get: adminProcedure.input(getProductInput).query(async ({ input }) => {
+    try {
+      const [foundProduct] = await db
+        .select({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          brand: product.brand,
+          imageUrl: product.imageUrl,
+          basePrice: product.basePrice,
+          isAvailable: product.isAvailable,
+          categoryId: product.categoryId,
+        })
+        .from(product)
+        .where(eq(product.id, input.id));
+
+      if (!foundProduct) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Produto não encontrado",
+        });
+      }
+
+      const variants = await db
+        .select({
+          id: productVariant.id,
+          sku: productVariant.sku,
+          name: productVariant.name,
+          size: productVariant.size,
+          priceOverride: productVariant.priceOverride,
+          stockQuantity: productVariant.stockQuantity,
+          weightGrams: productVariant.weightGrams,
+          heightCm: productVariant.heightCm,
+          widthCm: productVariant.widthCm,
+          lengthCm: productVariant.lengthCm,
+        })
+        .from(productVariant)
+        .where(eq(productVariant.productId, input.id));
+
+      return {
+        ...foundProduct,
+        variants,
+      };
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+      console.error("Erro ao buscar produto:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Erro ao buscar produto",
+      });
+    }
+  }),
+
   create: adminProcedure
     .input(createProductInput)
     .mutation(async ({ input }) => {
@@ -41,7 +97,7 @@ export const productsRouter = createTRPCRouter({
               name: input.name,
               description: input.description,
               brand: input.brand,
-              imageUrl: input.imageUrl,
+              imageUrl: input.imageUrl ?? "",
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
               categoryId: input.categoryId,
@@ -58,13 +114,10 @@ export const productsRouter = createTRPCRouter({
 
           // --- 2. Handle Variants ---
           if (input.variants.length === 0) {
-            // Example: Suits and Shirts (No variants sent by Admin, create a default one)
-            const fallbackSku = `SKU-${createdProduct.id.slice(-12).toUpperCase()}`;
-
             await tx.insert(productVariant).values({
               productId: createdProduct.id,
-              sku: fallbackSku,
-              name: "Tamanho Único",
+              sku: `SKU-${createdProduct.id.slice(-12).toUpperCase()}`,
+              name: "Variação",
               size: null,
               priceOverride: null,
               stockQuantity: 0,
@@ -75,10 +128,12 @@ export const productsRouter = createTRPCRouter({
             });
           } else {
             // Example: Suits and Shirts (Admin sent variants, create them all)
-            const variantsToInsert = input.variants.map((v) => ({
+            const variantsToInsert = input.variants.map((v, index) => ({
               productId: createdProduct.id,
-              sku: v.sku,
-              name: v.name,
+              sku:
+                v.sku ||
+                `SKU-${createdProduct.id.slice(-12).toUpperCase()}-${index + 1}`,
+              name: v.name || "Variação", // Fallback name if empty
               size: v.size ?? null,
               priceOverride: v.priceOverride ?? null,
               stockQuantity: v.stockQuantity,
@@ -150,7 +205,6 @@ export const productsRouter = createTRPCRouter({
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
               categoryId: input.categoryId,
-              updatedAt: new Date(),
             })
             .where(eq(product.id, input.id))
             .returning();

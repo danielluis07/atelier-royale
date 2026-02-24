@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: process.env.S3_IMAGE_HOSTNAME!,
+      },
     ],
   },
 };

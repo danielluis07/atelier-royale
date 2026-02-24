@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-const variantInputSchema = z.object({
-  sku: z.string().min(1, "SKU é obrigatório"), // For suits, for example, it is best for the admin to be able to set a custom SKU for each variant, instead of auto-generating one
+export const variantInputSchema = z.object({
+  sku: z.string().min(1, "SKU é obrigatório"),
   name: z.string().min(1, "O nome da variação é obrigatório"),
   size: z.string().nullable().optional(),
   priceOverride: z
@@ -21,40 +21,32 @@ const variantInputSchema = z.object({
   lengthCm: z.number().int().nullable().optional(),
 });
 
-export const createProductInput = z.object({
-  name: z.string().min(1, "O nome do produto é obrigatório"),
-  description: z.string().min(1, "A descrição do produto é obrigatória"),
-  brand: z.string().min(1, "A marca do produto é obrigatória"),
-  imageUrl: z.url("URL da imagem inválida"),
-  basePrice: z
-    .number()
-    .int("O preço base deve ser um número inteiro")
-    .nonnegative("O preço base não pode ser negativo"),
-  isAvailable: z.boolean().optional(),
-  categoryId: z.string().nullable().optional(),
-  variants: z.array(variantInputSchema).optional().default([]),
-});
-
-// Form-specific schema: imageUrl is handled separately (uploaded on submit)
-export const createProductFormInput = createProductInput.omit({
-  imageUrl: true,
-});
-
 export const updateVariantInputSchema = variantInputSchema.extend({
   id: z.string().optional(),
 });
 
-export const updateProductInput = z.object({
-  id: z.string().min(1, "O ID do produto é obrigatório"),
+const productBaseSchema = z.object({
   name: z.string().min(1, "O nome do produto é obrigatório"),
   description: z.string().min(1, "A descrição do produto é obrigatória"),
   brand: z.string().min(1, "A marca do produto é obrigatória"),
-  imageUrl: z.url("URL da imagem inválida"),
+  imageUrl: z.string().optional(),
   basePrice: z
     .number()
     .int("O preço base deve ser um número inteiro")
     .nonnegative("O preço base não pode ser negativo"),
   isAvailable: z.boolean().optional(),
   categoryId: z.string().nullable().optional(),
+});
+
+export const createProductInput = productBaseSchema.extend({
+  variants: z.array(variantInputSchema).optional().default([]),
+});
+
+export const updateProductInput = productBaseSchema.extend({
+  id: z.string().min(1, "O ID do produto é obrigatório"),
   variants: z.array(updateVariantInputSchema).optional(),
+});
+
+export const getProductInput = z.object({
+  id: z.string().min(1, "ID do produto é obrigatório"),
 });
