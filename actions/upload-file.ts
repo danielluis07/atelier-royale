@@ -20,8 +20,11 @@ export async function uploadFile(formData: FormData, folder: string) {
     return { success: false, error: "Arquivo inválido" };
   }
 
-  if (file.size > MAX_FILE_SIZE_BYTES) {
-    return { success: false, error: "Arquivo muito grande" };
+  if (file.size > MAX_FILE_SIZE_BYTES.value) {
+    return {
+      success: false,
+      error: `Arquivo muito grande. Tamanho máximo permitido: ${MAX_FILE_SIZE_BYTES.label}`,
+    };
   }
 
   const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];

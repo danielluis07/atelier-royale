@@ -55,9 +55,14 @@ export const CreateProductForm = ({
       description: "",
       brand: "",
       basePrice: 0,
+      imageUrl: "",
       isAvailable: true,
       categoryId: null,
-      variants: [],
+      variants: [
+        {
+          stockQuantity: 1,
+        },
+      ],
     },
   });
 

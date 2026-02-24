@@ -1,16 +1,40 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { client } from "@/lib/s3";
 
 export async function deleteFile(fileUrl: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return { success: false, error: "Usuário não autenticado" };
+  }
+
   try {
-    const fileKey = fileUrl.split(".amazonaws.com/")[1];
-    if (!fileKey) return { success: false, error: "URL inválida" };
+    let fileKey: string;
+
+    try {
+      const parsedUrl = new URL(fileUrl);
+      const expectedHost = `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
+      if (parsedUrl.host !== expectedHost) {
+        return { success: false, error: "URL não pertence ao sistema" };
+      }
+
+      fileKey = parsedUrl.pathname.substring(1);
+    } catch {
+      return { success: false, error: "URL com formato inválido" };
+    }
+
+    if (!fileKey)
+      return { success: false, error: "Chave do arquivo não encontrada" };
 
     const s3File = client.file(fileKey);
     await s3File.delete();
 
-    console.log(`Deleted file: ${fileKey}`);
+    console.log(`Deleted file: ${fileKey} by user: ${session.user.id}`);
 
     return { success: true };
   } catch (err) {

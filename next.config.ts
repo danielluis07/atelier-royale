@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "atelier-royale-media-local.s3.us-east-1.amazonaws.com",
+      },
     ],
   },
 };

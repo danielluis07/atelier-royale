@@ -47,7 +47,9 @@ export const UpdateProductForm = ({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<
+    string | null | undefined
+  >(undefined);
 
   const { data: productData } = useProductSuspense(id);
   const { mutateAsync } = useUpdateProduct();
@@ -79,19 +81,21 @@ export const UpdateProductForm = ({
   });
 
   // Track the existing image URL from the fetched product
-  const currentImageUrl = existingImageUrl ?? productData.imageUrl;
+  const currentImageUrl =
+    existingImageUrl !== undefined ? existingImageUrl : productData.imageUrl;
 
   const { control, handleSubmit } = form;
 
   const onSubmit = async (value: z.input<typeof updateProductInput>) => {
     if (!imageFile && !currentImageUrl) {
+      toast.error("O produto precisa de uma imagem");
       return;
     }
 
     setIsLoading(true);
 
     let imageUrl = currentImageUrl;
-    const previousImageUrl = currentImageUrl;
+    const previousImageUrl = productData.imageUrl;
 
     // Only upload if a new file was selected
     if (imageFile) {

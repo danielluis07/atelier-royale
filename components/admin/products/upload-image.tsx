@@ -55,8 +55,8 @@ export const UploadImage = ({
         return;
       }
 
-      if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
-        toast.error("A imagem deve ter no máximo 5MB");
+      if (selectedFile.size > MAX_FILE_SIZE_BYTES.value) {
+        toast.error(`A imagem deve ter no máximo ${MAX_FILE_SIZE_BYTES.label}`);
         return;
       }
 
@@ -92,9 +92,11 @@ export const UploadImage = ({
 
   const handleRemove = () => {
     onFileChange(null);
-    onExistingUrlClear?.();
+    if (!file) {
+      // No new file was selected, so the displayed image is the existingUrl — clear it.
+      onExistingUrlClear?.();
+    }
   };
-
   return (
     <Card className={cn("flex flex-col pb-2", className)}>
       <CardHeader>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const variantInputSchema = z.object({
-  sku: z.string().min(1, "SKU é obrigatório"), // For suits, for example, it is best for the admin to be able to set a custom SKU for each variant, instead of auto-generating one
+  sku: z.string().min(1, "SKU é obrigatório"),
   name: z.string().min(1, "O nome da variação é obrigatório"),
   size: z.string().nullable().optional(),
   priceOverride: z
@@ -29,7 +29,7 @@ const productBaseSchema = z.object({
   name: z.string().min(1, "O nome do produto é obrigatório"),
   description: z.string().min(1, "A descrição do produto é obrigatória"),
   brand: z.string().min(1, "A marca do produto é obrigatória"),
-  imageUrl: z.url("URL da imagem inválida"),
+  imageUrl: z.string().optional(),
   basePrice: z
     .number()
     .int("O preço base deve ser um número inteiro")

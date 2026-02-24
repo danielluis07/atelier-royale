@@ -93,9 +93,13 @@ export const VariantsField = ({
                       variant="ghost"
                       size="icon"
                       className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => remove(index)}
+                      onClick={() => {
+                        if (fields.length > 1) {
+                          remove(index);
+                        }
+                      }}
                       aria-label={`Remover variação ${index + 1}`}
-                      disabled={isLoading}>
+                      disabled={isLoading || fields.length === 1}>
                       <Trash2 className="size-4" />
                     </Button>{" "}
                   </div>
@@ -134,7 +138,7 @@ export const VariantsField = ({
                             <Input
                               {...field}
                               id={`variants.${index}.name`}
-                              placeholder="Ex: Tamanho 42"
+                              placeholder="Ex: Tamanho"
                               disabled={isLoading}
                             />
                             {fieldState.invalid && (
@@ -149,7 +153,7 @@ export const VariantsField = ({
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor={`variants.${index}.size`}>
-                              Tamanho
+                              Variação
                             </FieldLabel>
                             <Input
                               {...field}
