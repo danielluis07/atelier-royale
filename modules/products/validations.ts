@@ -28,7 +28,7 @@ export const productsSearchParamsSchema = z.object({
 });
 
 export const variantInputSchema = z.object({
-  sku: z.string().min(1, "SKU é obrigatório"),
+  sku: z.string(),
   name: z.string(),
   size: z.string().nullable().optional(),
   priceOverride: z

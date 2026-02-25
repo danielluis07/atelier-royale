@@ -61,6 +61,7 @@ export const CreateProductForm = ({
       categoryId: null,
       variants: [
         {
+          sku: "",
           name: "",
           stockQuantity: 1,
         },

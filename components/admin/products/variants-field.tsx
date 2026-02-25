@@ -122,6 +122,10 @@ export const VariantsField = ({
                               placeholder="Ex: TRN-SLM-42"
                               disabled={isLoading}
                             />
+                            <FieldDescription>
+                              Se vazio, será gerado automaticamente a partir do
+                              nome
+                            </FieldDescription>
                           </Field>
                         )}
                       />
