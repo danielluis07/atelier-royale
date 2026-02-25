@@ -302,8 +302,9 @@ export const CreateProductForm = ({
                     orientation="horizontal"
                     className="flex justify-between">
                     <FieldDescription>
-                      Marque se este produto está disponível para venda
-                    </FieldDescription>
+                      Marque se este produto deve ser exibido em destaque na
+                      loja
+                    </FieldDescription>{" "}
                     <Switch
                       id="isFeatured"
                       checked={field.value}

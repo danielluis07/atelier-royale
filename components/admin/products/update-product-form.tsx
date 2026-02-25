@@ -332,7 +332,7 @@ export const UpdateProductForm = ({
                     orientation="horizontal"
                     className="flex justify-between">
                     <FieldDescription>
-                      Marque se este produto está disponível para venda
+                      Marque se este produto deve aparecer em destaque
                     </FieldDescription>
                     <Switch
                       id="isFeatured"
