@@ -30,7 +30,7 @@ import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
 import { centsToReais } from "@/lib/utils";
 import { useProductSuspense, useUpdateProduct } from "@/modules/products/hooks";
-import { uploadFile } from "@/actions/upload-file";
+import { getUploadUrl } from "@/actions/get-upload-url";
 import { deleteFile } from "@/actions/delete-file";
 import { updateProductInput } from "@/modules/products/validations";
 
@@ -96,51 +96,82 @@ export const UpdateProductForm = ({
     setIsLoading(true);
 
     let imageUrl = currentImageUrl;
-    const previousImageUrl = productData.imageUrl;
+    const previousImageUrl = productData?.imageUrl; // Ensure you grab this safely
 
-    // Only upload if a new file was selected
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
+    try {
+      // 1. Only upload if a new file was selected
+      if (imageFile) {
+        const urlResult = await getUploadUrl(
+          imageFile.name,
+          imageFile.type,
+          imageFile.size,
+          "products", // Use "temp" here if you adopted the Temp Folder lifecycle pattern!
+        );
 
-      const uploadResult = await uploadFile(formData, "products");
-
-      if (!uploadResult.success || !uploadResult.url) {
-        toast.error(uploadResult.error ?? "Erro ao enviar imagem");
-        setIsLoading(false);
-        return;
-      }
-
-      imageUrl = uploadResult.url;
-
-      if (previousImageUrl && previousImageUrl !== imageUrl) {
-        const deleteResult = await deleteFile(previousImageUrl);
-        if (!deleteResult.success) {
-          console.error("Erro ao deletar imagem antiga:", deleteResult.error);
+        if (
+          !urlResult.success ||
+          !urlResult.uploadUrl ||
+          !urlResult.publicUrl
+        ) {
+          toast.error(urlResult.error ?? "Erro ao gerar link de upload");
+          setIsLoading(false);
+          return;
         }
-      }
-    }
 
-    toast.promise(
-      mutateAsync({
-        ...value,
-        name: value.name.trim(),
-        description: value.description.trim(),
-        imageUrl: imageUrl!,
-      }),
-      {
-        loading: "Atualizando produto...",
-        success: () => {
-          router.push("/admin/products");
-          return "Produto atualizado com sucesso!";
+        const uploadResponse = await fetch(urlResult.uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": imageFile.type },
+          body: imageFile,
+        });
+
+        if (!uploadResponse.ok) {
+          toast.error("Erro ao enviar a nova imagem para o S3");
+          setIsLoading(false);
+          return;
+        }
+
+        imageUrl = urlResult.publicUrl;
+      }
+
+      // 2. Update the database FIRST using mutateAsync
+      toast.promise(
+        mutateAsync({
+          ...value,
+          name: value.name.trim(),
+          description: value.description.trim(),
+          imageUrl: imageUrl!,
+        }),
+        {
+          loading: "Atualizando produto...",
+          success: () => {
+            // 3. Delete the old image ONLY if the DB update succeeded!
+            if (
+              imageFile &&
+              previousImageUrl &&
+              previousImageUrl !== imageUrl
+            ) {
+              // We run this in the background (fire-and-forget) so it doesn't delay the UI redirect
+              deleteFile(previousImageUrl).then((res) => {
+                if (!res.success)
+                  console.error("Erro ao deletar imagem antiga:", res.error);
+              });
+            }
+
+            router.push("/admin/products");
+            return "Produto atualizado com sucesso!";
+          },
+          error: (error) => {
+            console.error(error);
+            return "Erro ao atualizar produto";
+          },
+          finally: () => setIsLoading(false),
         },
-        error: (error) => {
-          console.error(error);
-          return "Erro ao atualizar produto";
-        },
-        finally: () => setIsLoading(false),
-      },
-    );
+      );
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+      toast.error("Ocorreu um erro inesperado");
+      setIsLoading(false);
+    }
   };
 
   return (
