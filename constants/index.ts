@@ -5,8 +5,8 @@ export const PAGINATION = {
 };
 
 export const MAX_FILE_SIZE_BYTES = {
-  label: "5MB",
-  value: 5 * 1024 * 1024,
+  label: "3MB",
+  value: 3 * 1024 * 1024,
 } as const;
 
 export const SORT_ORDER_OPTIONS = [
