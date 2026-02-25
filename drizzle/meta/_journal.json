@@ -15,6 +15,13 @@
       "when": 1771976064781,
       "tag": "0001_clear_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772045671158,
+      "tag": "0002_rich_yellowjacket",
+      "breakpoints": true
     }
   ]
 }
