@@ -25,7 +25,7 @@ export function Hero() {
       <div ref={parallaxRef} className="absolute inset-0 -top-20 -bottom-20">
         <Image
           src="/images/hero-bg.png"
-          alt="Luxury fashion collection"
+          alt="Coleção de moda de luxo"
           fill
           className="object-cover opacity-60"
           priority

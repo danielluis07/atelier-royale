@@ -29,7 +29,9 @@ const features = [
 
 export function TrustBadges() {
   return (
-    <section className="py-24 lg:py-32 border-y border-border">
+    <section
+      aria-label="Por que nos escolher"
+      className="py-24 lg:py-32 border-y border-border">
       <div className="max-w-360 mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {features.map((feature) => {
@@ -40,6 +42,7 @@ export function TrustBadges() {
                   <Icon
                     className="w-6 h-6 text-primary transition-transform duration-500 group-hover:scale-110"
                     strokeWidth={1}
+                    aria-hidden="true"
                   />
                 </div>
                 <h3 className="font-serif text-lg text-foreground mb-3 tracking-wide">

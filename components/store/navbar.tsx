@@ -80,7 +80,9 @@ export function Navbar() {
             <button
               className="lg:hidden text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menu">
+              aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu">
               {mobileMenuOpen ? (
                 <X className="w-5 h-5" strokeWidth={1.5} />
               ) : (

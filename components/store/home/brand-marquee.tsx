@@ -18,7 +18,10 @@ export function BrandMarquee() {
             <span className="font-serif italic text-lg lg:text-xl text-background/30 mx-8 tracking-wider">
               {word}
             </span>
-            <span className="w-1.5 h-1.5 bg-primary/50 rotate-45 shrink-0" />
+            <span
+              aria-hidden="true"
+              className="w-1.5 h-1.5 bg-primary/50 rotate-45 shrink-0"
+            />{" "}
           </span>
         ))}
       </div>

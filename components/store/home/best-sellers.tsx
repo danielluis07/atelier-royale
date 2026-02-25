@@ -110,7 +110,11 @@ export function BestSellers() {
                     {product.price}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.2em] uppercase font-sans text-primary">
-                    <TrendingUp className="w-3 h-3" strokeWidth={1.5} />
+                    <TrendingUp
+                      className="w-3 h-3"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
                     {product.soldCount}
                   </span>
                 </div>
