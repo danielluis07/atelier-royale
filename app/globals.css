@@ -83,6 +83,33 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
+.theme-luxury {
+  --background: oklch(0.99 0.005 50); /* Soft Alabaster White */
+  --foreground: oklch(0.15 0.01 250); /* Deep Midnight Charcoal */
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 250);
+
+  /* The "Luxury" Gold Accent */
+  --primary: oklch(0.75 0.08 85); /* Sophisticated Champagne/Gold */
+  --primary-foreground: oklch(0.15 0.01 250);
+
+  --secondary: oklch(0.94 0.01 50); /* Light Stone Gray */
+  --secondary-foreground: oklch(0.15 0.01 250);
+
+  --muted: oklch(0.94 0.01 50);
+  --muted-foreground: oklch(0.45 0.02 250);
+
+  --accent: oklch(0.75 0.08 85 / 15%); /* Subtle Gold Tint for hovers */
+  --accent-foreground: oklch(0.15 0.01 250);
+
+  --border: oklch(0.88 0.01 50); /* Very thin, elegant borders */
+  --input: oklch(0.88 0.01 50);
+  --ring: oklch(0.75 0.08 85);
+
+  --radius: 0px; /* Luxury often uses sharp, architectural corners */
+}
+
 .dark {
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
@@ -129,4 +156,18 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
