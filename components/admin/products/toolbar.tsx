@@ -114,19 +114,7 @@ export const ProductsToolbar = ({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {hasActiveFilters && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={clearFilters}
-          className="h-9 px-2">
-          <X className="mr-1 size-4" />
-          Limpar filtros
-        </Button>
-      )}
-
+    <div className="flex flex-wrap items-center gap-2 mt-5">
       <Select
         value={categoryId ?? "all"}
         onValueChange={(value) =>
@@ -191,6 +179,18 @@ export const ProductsToolbar = ({
           ))}
         </SelectContent>
       </Select>
+
+      {hasActiveFilters && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={clearFilters}
+          className="h-9 px-2">
+          <X className="mr-1 size-4" />
+          Limpar filtros
+        </Button>
+      )}
     </div>
   );
 };

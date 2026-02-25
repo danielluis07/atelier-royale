@@ -117,9 +117,21 @@ export const columns: ColumnDef<ProductOutput>[] = [
     cell: ({ row }) => {
       const status = row.original.isAvailable;
       return status ? (
-        <Badge variant="default">Disponível</Badge>
+        <Badge className="bg-green-600">Disponível</Badge>
       ) : (
         <Badge variant="destructive">Indisponível</Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "isFeatured",
+    header: "Destaque",
+    cell: ({ row }) => {
+      const isFeatured = row.original.isFeatured;
+      return isFeatured ? (
+        <Badge variant="default">Destacado</Badge>
+      ) : (
+        <Badge variant="secondary">Não Destacado</Badge>
       );
     },
   },

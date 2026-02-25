@@ -64,6 +64,7 @@ export const UpdateProductForm = ({
       imageUrl: productData.imageUrl,
       basePrice: productData.basePrice,
       isAvailable: productData.isAvailable,
+      isFeatured: productData.isFeatured,
       categoryId: productData.categoryId ?? null,
       variants: productData.variants.map((v) => ({
         id: v.id,
@@ -120,18 +121,26 @@ export const UpdateProductForm = ({
       }
     }
 
-    toast.promise(mutateAsync({ ...value, imageUrl: imageUrl! }), {
-      loading: "Atualizando produto...",
-      success: () => {
-        router.push("/admin/products");
-        return "Produto atualizado com sucesso!";
+    toast.promise(
+      mutateAsync({
+        ...value,
+        name: value.name.trim(),
+        description: value.description.trim(),
+        imageUrl: imageUrl!,
+      }),
+      {
+        loading: "Atualizando produto...",
+        success: () => {
+          router.push("/admin/products");
+          return "Produto atualizado com sucesso!";
+        },
+        error: (error) => {
+          console.error(error);
+          return "Erro ao atualizar produto";
+        },
+        finally: () => setIsLoading(false),
       },
-      error: (error) => {
-        console.error(error);
-        return "Erro ao atualizar produto";
-      },
-      finally: () => setIsLoading(false),
-    });
+    );
   };
 
   return (
@@ -309,18 +318,31 @@ export const UpdateProductForm = ({
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-3">
-          {/* TODO: Is Featured */}
+          {/* Is Featured */}
           <Card>
             <CardHeader>
               <CardTitle>Destaque</CardTitle>
             </CardHeader>
             <CardContent>
-              <Field orientation="horizontal" className="flex justify-between">
-                <FieldDescription>
-                  Marque se este produto deve ser exibido na seção de destaques
-                </FieldDescription>
-                <Switch id="isFeatured" disabled={isLoading} />
-              </Field>
+              <Controller
+                name="isFeatured"
+                control={control}
+                render={({ field }) => (
+                  <Field
+                    orientation="horizontal"
+                    className="flex justify-between">
+                    <FieldDescription>
+                      Marque se este produto está disponível para venda
+                    </FieldDescription>
+                    <Switch
+                      id="isFeatured"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={isLoading}
+                    />
+                  </Field>
+                )}
+              />
             </CardContent>
           </Card>
 

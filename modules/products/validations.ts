@@ -29,7 +29,7 @@ export const productsSearchParamsSchema = z.object({
 
 export const variantInputSchema = z.object({
   sku: z.string().min(1, "SKU é obrigatório"),
-  name: z.string().min(1, "O nome da variação é obrigatório"),
+  name: z.string(),
   size: z.string().nullable().optional(),
   priceOverride: z
     .number()
@@ -72,6 +72,7 @@ const productBaseSchema = z.object({
     .int("O preço base deve ser um número inteiro")
     .nonnegative("O preço base não pode ser negativo"),
   isAvailable: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
   categoryId: z.string().nullable().optional(),
 });
 

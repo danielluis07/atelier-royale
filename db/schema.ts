@@ -214,8 +214,9 @@ export const product = pgTable(
     description: text("description").notNull(),
     brand: text("brand").notNull(),
     imageUrl: text("image_url").notNull(),
-    basePrice: integer("base_price").notNull(), // Em centavos
+    basePrice: integer("base_price").notNull(),
     isAvailable: boolean("is_available").notNull().default(true),
+    isFeatured: boolean("is_featured").notNull().default(false),
     categoryId: text("category_id").references(() => category.id, {
       onDelete: "set null",
     }),

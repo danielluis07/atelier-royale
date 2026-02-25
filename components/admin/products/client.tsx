@@ -10,6 +10,9 @@ import { useCallback } from "react";
 import { useProductsSuspense } from "@/modules/products/hooks";
 import { productsSearchParamsSchema } from "@/modules/products/validations";
 import { ProductsToolbar } from "@/components/admin/products/toolbar";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 export const ProductsClient = ({
   categories,
@@ -53,9 +56,15 @@ export const ProductsClient = ({
           setSearchInput={setSearchInput}
           searchPlaceholder="Procurar por nome ou marca"
         />
-        <ProductsToolbar categories={categories} />
+        <Button asChild>
+          <Link href="/admin/products/create">
+            <Plus />
+            Criar Produto
+          </Link>
+        </Button>
       </div>
-      <DataTable data={products} columns={columns} />
+      <ProductsToolbar categories={categories} />
+      <DataTable data={products} columns={columns} className="min-h-10" />
       {pagination && (
         <div className="mt-5">
           <DataPagination

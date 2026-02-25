@@ -78,6 +78,7 @@ export const productsRouter = createTRPCRouter({
           imageUrl: product.imageUrl,
           basePrice: product.basePrice,
           isAvailable: product.isAvailable,
+          isFeatured: product.isFeatured,
           categoryId: product.categoryId,
           createdAt: product.createdAt,
         })
@@ -117,6 +118,7 @@ export const productsRouter = createTRPCRouter({
           imageUrl: product.imageUrl,
           basePrice: product.basePrice,
           isAvailable: product.isAvailable,
+          isFeatured: product.isFeatured,
           categoryId: product.categoryId,
         })
         .from(product)
@@ -176,6 +178,7 @@ export const productsRouter = createTRPCRouter({
               imageUrl: input.imageUrl ?? "",
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
+              isFeatured: input.isFeatured ?? false,
               categoryId: input.categoryId,
               slug: slugify(input.name),
             })

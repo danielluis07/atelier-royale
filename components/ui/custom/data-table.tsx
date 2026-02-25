@@ -38,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   simpleSearch?: boolean;
   searchKey?: string;
   additionalButton?: React.ReactNode;
+  className?: string;
   onDelete?: (rows: Row<TData>[]) => void;
 }
 
@@ -49,6 +50,7 @@ export function DataTable<TData, TValue>({
   simpleSearch = false,
   searchKey,
   additionalButton,
+  className,
   onDelete,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -82,7 +84,11 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center justify-between py-4 min-h-18">
+      <div
+        className={cn(
+          "flex items-center justify-between py-4 min-h-18",
+          className,
+        )}>
         {simpleSearch && searchKey && (
           <div className="relative">
             <Search className="size-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />

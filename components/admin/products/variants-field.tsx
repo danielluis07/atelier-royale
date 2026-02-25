@@ -54,7 +54,7 @@ export const VariantsField = ({
                 name: "",
                 size: null,
                 priceOverride: null,
-                stockQuantity: 0,
+                stockQuantity: 1,
                 weightGrams: null,
                 heightCm: null,
                 widthCm: null,
@@ -116,14 +116,12 @@ export const VariantsField = ({
                               SKU
                             </FieldLabel>
                             <Input
-                              {...field}
                               id={`variants.${index}.sku`}
+                              {...field}
+                              value={field.value ?? ""}
                               placeholder="Ex: TRN-SLM-42"
                               disabled={isLoading}
                             />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error!]} />
-                            )}
                           </Field>
                         )}
                       />
@@ -136,14 +134,12 @@ export const VariantsField = ({
                               Nome
                             </FieldLabel>
                             <Input
-                              {...field}
                               id={`variants.${index}.name`}
+                              {...field}
+                              value={field.value ?? ""}
                               placeholder="Ex: Tamanho"
                               disabled={isLoading}
                             />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error!]} />
-                            )}
                           </Field>
                         )}
                       />
@@ -183,8 +179,7 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.priceOverride`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               placeholder="Ex: R$ 10,00 (opcional)"
                               disabled={isLoading}
                               value={
@@ -192,7 +187,6 @@ export const VariantsField = ({
                                   ? ""
                                   : centsToReais(field.value)
                               }
-                              onBlur={field.onBlur}
                               onChange={(e) => {
                                 const rawValue = e.target.value.replace(
                                   /\D/g,
@@ -226,13 +220,11 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.stockQuantity`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               type="number"
                               min={0}
                               disabled={isLoading}
                               value={field.value}
-                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(Number(e.target.value))
                               }
@@ -258,13 +250,11 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.weightGrams`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               type="number"
                               placeholder="Gramas"
                               disabled={isLoading}
                               value={field.value ?? ""}
-                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -289,13 +279,11 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.heightCm`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
-                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -320,13 +308,11 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.widthCm`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
-                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
@@ -351,13 +337,11 @@ export const VariantsField = ({
                             </FieldLabel>
                             <Input
                               id={`variants.${index}.lengthCm`}
-                              name={field.name}
-                              ref={field.ref}
+                              {...field}
                               type="number"
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
-                              onBlur={field.onBlur}
                               onChange={(e) =>
                                 field.onChange(
                                   e.target.value === ""
