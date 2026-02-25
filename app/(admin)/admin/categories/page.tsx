@@ -1,4 +1,5 @@
 import { CategoriesClient } from "@/components/admin/categories/client";
+import { TableSkeleton } from "@/components/skeletons/table-skeleton";
 import { requireAdmin } from "@/lib/auth-utils";
 import { prefetchCategories } from "@/modules/categories/prefetch";
 import { HydrateClient } from "@/trpc/server";
@@ -13,7 +14,8 @@ const CategoriesPage = async () => {
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<p>Falha ao carregar categorias.</p>}>
-        <Suspense fallback={<p>Carregando categorias...</p>}>
+        <Suspense
+          fallback={<TableSkeleton className="space-y-4" columns={2} />}>
           <CategoriesClient />
         </Suspense>
       </ErrorBoundary>

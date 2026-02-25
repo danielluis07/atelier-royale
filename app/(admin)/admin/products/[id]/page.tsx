@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { category } from "@/db/schema";
 import { UpdateProductForm } from "@/components/admin/products/update-product-form";
 import { prefetchProduct } from "@/modules/products/prefetch";
+import { ProductFormSkeleton } from "@/components/skeletons/product-form-skeleton";
 
 const ProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   await requireAdmin();
@@ -23,7 +24,7 @@ const ProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<p>Falha ao carregar produto.</p>}>
-        <Suspense fallback={<p>Carregando produto...</p>}>
+        <Suspense fallback={<ProductFormSkeleton />}>
           <UpdateProductForm id={id} categories={categories} />
         </Suspense>
       </ErrorBoundary>

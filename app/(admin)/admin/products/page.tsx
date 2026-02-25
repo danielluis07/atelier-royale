@@ -1,4 +1,5 @@
 import { ProductsClient } from "@/components/admin/products/client";
+import { TableSkeleton } from "@/components/skeletons/table-skeleton";
 import { db } from "@/db";
 import { category } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-utils";
@@ -31,7 +32,8 @@ const ProductsPage = async ({
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<p>Falha ao carregar produtos.</p>}>
-        <Suspense fallback={<p>Carregando produtos...</p>}>
+        <Suspense
+          fallback={<TableSkeleton className="space-y-4" columns={5} />}>
           <ProductsClient categories={categories} />
         </Suspense>
       </ErrorBoundary>

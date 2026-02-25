@@ -1,4 +1,5 @@
 import { CreateProductForm } from "@/components/admin/products/create-product-form";
+import { ProductFormSkeleton } from "@/components/skeletons/product-form-skeleton";
 import { db } from "@/db";
 import { category } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-utils";
@@ -15,7 +16,7 @@ const CreateProductPage = async () => {
     .from(category);
 
   return (
-    <Suspense fallback={<p>Carregando...</p>}>
+    <Suspense fallback={<ProductFormSkeleton />}>
       <CreateProductForm categories={categories} />
     </Suspense>
   );

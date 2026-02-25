@@ -1,4 +1,5 @@
 import { UsersClient } from "@/components/admin/users/client";
+import { TableSkeleton } from "@/components/skeletons/table-skeleton";
 import { requireAdmin } from "@/lib/auth-utils";
 import { prefetchUsers } from "@/modules/users/prefetch";
 import { usersSearchParamsSchema } from "@/modules/users/validations";
@@ -22,7 +23,8 @@ const UsersPage = async ({
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<p>Falha ao carregar usuários.</p>}>
-        <Suspense fallback={<p>Carregando usuários...</p>}>
+        <Suspense
+          fallback={<TableSkeleton className="space-y-4" columns={5} />}>
           <UsersClient />
         </Suspense>
       </ErrorBoundary>

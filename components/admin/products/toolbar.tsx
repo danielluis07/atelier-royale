@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ToolbarSkeleton = () => {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2 mt-5">
       <div className="flex h-9 w-40 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2">
         <Skeleton className="h-4 flex-1" />
         <Skeleton className="size-4" />
