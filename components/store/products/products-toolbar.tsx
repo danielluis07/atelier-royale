@@ -168,6 +168,7 @@ export const ProductsToolbar = ({
       {/* Clear Filters */}
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={clearFilters}
           className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.2em] uppercase font-sans text-muted-foreground hover:text-foreground transition-colors duration-300 ml-2 border-b border-transparent hover:border-foreground pb-0.5">
           <X className="w-3 h-3" strokeWidth={1.5} />

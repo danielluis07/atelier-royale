@@ -21,6 +21,8 @@ export const ProductsSearch = ({
         strokeWidth={1.5}
       />
       <input
+        type="search"
+        aria-label={searchPlaceholder.replace("...", "")}
         placeholder={searchPlaceholder}
         value={searchInput}
         disabled={!hasMounted}

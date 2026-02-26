@@ -38,9 +38,11 @@ export const ProductsPagination = ({
             <PaginationItem className="border border-border flex items-center justify-center transition-all duration-300">
               <PaginationPrevious
                 onClick={() => handlePageChange(Math.max(1, page - 1))}
-                aria-disabled={page === 1 || isPending || !hasMounted}
+                aria-disabled={
+                  page === 1 || totalPages === 0 || isPending || !hasMounted
+                }
                 className={
-                  page === 1 || isPending || !hasMounted
+                  page === 1 || totalPages === 0 || isPending || !hasMounted
                     ? "pointer-events-none opacity-50"
                     : "cursor-pointer hover:bg-primary/5 hover:border-primary"
                 }
