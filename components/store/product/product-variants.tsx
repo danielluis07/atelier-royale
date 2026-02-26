@@ -67,9 +67,11 @@ export const ProductVariants = ({
             }`}>
             {isOutOfStock
               ? "Esgotado"
-              : activeStock <= 3
-                ? `Últimas ${activeStock} unidades`
-                : "Em estoque"}
+              : activeStock === 1
+                ? "Última unidade"
+                : activeStock <= 3
+                  ? `Últimas ${activeStock} unidades`
+                  : "Em estoque"}
           </span>
         )}
       </div>
