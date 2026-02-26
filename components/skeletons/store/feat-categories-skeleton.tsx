@@ -1,9 +1,6 @@
-import { getCategories } from "@/modules/categories/actions";
-import { CategoryCard } from "./category-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export async function FeaturedCategories() {
-  const categories = await getCategories();
-
+export function FeaturedCategoriesSkeleton({ count = 5 }: { count?: number }) {
   const getCardClasses = (index: number, totalItems: number) => {
     const positionInBlock = index % 5;
     const blockIndex = Math.floor(index / 5);
@@ -51,11 +48,12 @@ export async function FeaturedCategories() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-      {categories.map((category, index) => (
-        <CategoryCard
-          key={category.name}
-          category={category}
-          className={getCardClasses(index, categories.length)}
+      {Array.from({ length: count }).map((_, index) => (
+        <Skeleton
+          key={index}
+          // I added "rounded-xl" here to match standard card styles,
+          // adjust the radius to match your CategoryCard component!
+          className={`rounded-xl ${getCardClasses(index, count)}`}
         />
       ))}
     </div>

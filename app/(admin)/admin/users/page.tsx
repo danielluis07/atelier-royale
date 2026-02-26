@@ -1,5 +1,5 @@
 import { UsersClient } from "@/components/admin/users/client";
-import { TableSkeleton } from "@/components/skeletons/table-skeleton";
+import { TableSkeleton } from "@/components/skeletons/admin/table-skeleton";
 import { requireAdmin } from "@/lib/auth-utils";
 import { prefetchUsers } from "@/modules/users/prefetch";
 import { usersSearchParamsSchema } from "@/modules/users/validations";

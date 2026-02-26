@@ -1,28 +1,12 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export function Hero() {
-  const parallaxRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (parallaxRef.current) {
-        const scrollY = window.scrollY;
-        parallaxRef.current.style.transform = `translateY(${scrollY * 0.3}px)`;
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <section className="relative h-svh min-h-220 overflow-hidden bg-foreground">
       {/* Background Image with Parallax */}
-      <div ref={parallaxRef} className="absolute inset-0 -top-20 -bottom-20">
+      <div className="absolute inset-0 -top-20 -bottom-20">
         <Image
           src="/images/hero-bg.png"
           alt="Coleção de moda de luxo"
