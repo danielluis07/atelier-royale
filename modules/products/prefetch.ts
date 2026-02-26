@@ -36,3 +36,10 @@ export const prefetchPublicProducts = async (
 export const prefetchProduct = async (id: string) => {
   return prefetch(trpc.products.get.queryOptions({ id }));
 };
+
+/**
+ * Prefetch a single public product by slug
+ */
+export const prefetchPublicProduct = async (slug: string) => {
+  return prefetch(trpc.products.getPublic.queryOptions({ slug }));
+};

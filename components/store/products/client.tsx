@@ -9,7 +9,7 @@ import { ProductsPagination } from "@/components/store/products/products-paginat
 import { ProductsSearch } from "@/components/store/products/products-search";
 import { ProductsToolbar } from "@/components/store/products/products-toolbar";
 import { PackageOpen } from "lucide-react";
-import { ProductCard } from "@/components/store/products/product-card";
+import { ProductCard } from "@/components/store/product-card";
 
 export const ProductsClient = ({
   categories,

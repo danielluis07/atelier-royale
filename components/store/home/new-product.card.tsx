@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { centsToReais } from "@/lib/utils";
 
 export const NewProductCard = ({
@@ -24,12 +23,15 @@ export const NewProductCard = ({
     <Link
       href={`/products/${product.slug}`}
       className="group relative aspect-3/4 w-full overflow-hidden block">
-      {isLoading && <Skeleton className="absolute inset-0" />}
       <Image
         src={product.imageUrl}
         alt={product.name}
         fill
-        className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+        className={`object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
+          isLoading
+            ? "scale-110 opacity-0 blur-md"
+            : "scale-100 opacity-100 blur-0"
+        }`}
         sizes="400px"
         onLoad={() => setIsLoading(false)}
         onError={() => setIsLoading(false)}
