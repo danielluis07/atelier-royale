@@ -57,4 +57,6 @@ export const MAX_NEW_PRODUCTS = 10;
 
 export const MAX_BEST_SELLERS = 4;
 
+export const MAX_RELATED_PRODUCTS = 4;
+
 export const NEW_PRODUCT_THRESHOLD_DAYS = 30;

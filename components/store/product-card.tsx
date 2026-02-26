@@ -14,14 +14,13 @@ export const ProductCard = ({
     name: string;
     slug: string;
     categoryName: string;
-    description: string;
     brand: string;
     imageUrl: string;
     basePrice: number;
     categoryId: string | null;
     createdAt: Date;
   };
-  index: number;
+  index?: number;
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 

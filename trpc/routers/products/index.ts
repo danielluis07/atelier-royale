@@ -14,13 +14,16 @@ import {
   ilike,
   asc,
   count,
+  sql,
 } from "drizzle-orm";
 import { isDatabaseUniqueError, slugify } from "@/lib/utils";
 import {
   createProductInput,
   getProductInput,
+  getPublicProductInput,
   listProductsInput,
   listPublicProductsInput,
+  relatedProductsInput,
   updateProductInput,
 } from "@/modules/products/validations";
 
@@ -497,7 +500,6 @@ export const productsRouter = createTRPCRouter({
             name: product.name,
             slug: product.slug,
             categoryName: category.name,
-            description: product.description,
             brand: product.brand,
             imageUrl: product.imageUrl,
             basePrice: product.basePrice,
@@ -527,5 +529,106 @@ export const productsRouter = createTRPCRouter({
           totalPages: Math.ceil(total / perPage),
         },
       };
+    }),
+
+  getPublic: baseProcedure
+    .input(getPublicProductInput)
+    .query(async ({ input }) => {
+      try {
+        const [foundProduct] = await db
+          .select({
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            brand: product.brand,
+            imageUrl: product.imageUrl,
+            basePrice: product.basePrice,
+            categoryId: product.categoryId,
+          })
+          .from(product)
+          .where(eq(product.slug, input.slug));
+
+        if (!foundProduct) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Produto não encontrado",
+          });
+        }
+
+        const variants = await db
+          .select({
+            id: productVariant.id,
+            sku: productVariant.sku,
+            name: productVariant.name,
+            size: productVariant.size,
+            priceOverride: productVariant.priceOverride,
+            stockQuantity: productVariant.stockQuantity,
+            weightGrams: productVariant.weightGrams,
+            heightCm: productVariant.heightCm,
+            widthCm: productVariant.widthCm,
+            lengthCm: productVariant.lengthCm,
+          })
+          .from(productVariant)
+          .where(eq(productVariant.productId, foundProduct.id));
+
+        return {
+          ...foundProduct,
+          variants,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error("Erro ao buscar produto:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao buscar produto",
+        });
+      }
+    }),
+
+  getRelated: baseProcedure
+    .input(relatedProductsInput)
+    .query(async ({ input }) => {
+      // If the product has no category, we can't find category-related items easily.
+      // You could optionally fallback to featured products here instead!
+      if (!input.categoryId) {
+        return [];
+      }
+
+      try {
+        const relatedProducts = await db
+          .select({
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            brand: product.brand,
+            imageUrl: product.imageUrl,
+            basePrice: product.basePrice,
+            categoryName: category.name,
+            categoryId: product.categoryId,
+            createdAt: product.createdAt,
+          })
+          .from(product)
+          .innerJoin(category, eq(product.categoryId, category.id))
+          .where(
+            and(
+              eq(product.categoryId, input.categoryId),
+              ne(product.id, input.productId),
+              eq(product.isAvailable, true),
+            ),
+          )
+          // Optional: Order randomly so the related section doesn't look identical every time
+          .orderBy(sql`RANDOM()`)
+          .limit(input.limit);
+
+        return relatedProducts;
+      } catch (error) {
+        console.error("Erro ao buscar produtos relacionados:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao buscar produtos relacionados",
+        });
+      }
     }),
 });

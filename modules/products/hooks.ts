@@ -1,17 +1,23 @@
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import type {
   ProductsInput,
   PublicProductsInput,
+  PublicRelatedProductsInput,
 } from "@/modules/products/types";
 import {
   normalizeProductsParams,
   normalizePublicProductsParams,
 } from "@/modules/products/utils";
+
+// ============================================================================
+// SUSPENSE QUERIES
+// ============================================================================
 
 /**
  * Hook to fetch products.
@@ -42,6 +48,29 @@ export const useProductSuspense = (id: string) => {
   const trpc = useTRPC();
 
   return useSuspenseQuery(trpc.products.get.queryOptions({ id }));
+};
+
+/**
+ * Hook to fetch a single public product by ID.
+ */
+export const usePublicProductSuspense = (slug: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(trpc.products.getPublic.queryOptions({ slug }));
+};
+
+// ============================================================================
+// USE QUERY
+// ============================================================================
+
+/**
+ * Hook to fetch related products
+ */
+
+export const useGetRelatedProducts = (params: PublicRelatedProductsInput) => {
+  const trpc = useTRPC();
+
+  return useQuery(trpc.products.getRelated.queryOptions(params));
 };
 
 // ============================================================================

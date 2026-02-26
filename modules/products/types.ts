@@ -10,3 +10,6 @@ export type UpdateProductInput = inferInput<typeof trpc.products.update>;
 
 // Public
 export type PublicProductsInput = inferInput<typeof trpc.products.listPublic>;
+export type PublicRelatedProductsInput = inferInput<
+  typeof trpc.products.getRelated
+>;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PAGINATION } from "@/constants";
+import { MAX_RELATED_PRODUCTS, PAGINATION } from "@/constants";
 
 export const productSortBySchema = z.enum([
   "createdAt",
@@ -98,6 +98,16 @@ export const updateProductInput = productBaseSchema.extend({
 
 export const getProductInput = z.object({
   id: z.string().min(1, "ID do produto é obrigatório"),
+});
+
+export const getPublicProductInput = z.object({
+  slug: z.string().min(1, "O slug do produto é obrigatório"),
+});
+
+export const relatedProductsInput = z.object({
+  productId: z.string(),
+  categoryId: z.string().nullable(),
+  limit: z.number().min(1).max(10).default(MAX_RELATED_PRODUCTS),
 });
 
 export const listPublicProductsInput = z.object({
