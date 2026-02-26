@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "@/db";
-import { createTRPCRouter, adminProcedure } from "@/trpc/init";
+import { createTRPCRouter, adminProcedure, baseProcedure } from "@/trpc/init";
 import { category, product, productVariant } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import {
@@ -20,6 +20,7 @@ import {
   createProductInput,
   getProductInput,
   listProductsInput,
+  listPublicProductsInput,
   updateProductInput,
 } from "@/modules/products/validations";
 
@@ -454,5 +455,77 @@ export const productsRouter = createTRPCRouter({
           message: "Erro interno ao tentar deletar os produtos",
         });
       }
+    }),
+
+  listPublic: baseProcedure
+    .input(listPublicProductsInput)
+    .query(async ({ input }) => {
+      const { page, perPage, search, categoryId, sortBy, sortOrder } = input;
+      const offset = (page - 1) * perPage;
+
+      const conditions = [];
+      conditions.push(eq(product.isAvailable, true));
+
+      if (search) {
+        conditions.push(
+          or(
+            ilike(product.name, `%${search}%`),
+            ilike(product.brand, `%${search}%`),
+          ),
+        );
+      }
+
+      if (categoryId) {
+        conditions.push(eq(product.categoryId, categoryId));
+      }
+
+      const whereClause = and(...conditions);
+
+      const orderByColumn = {
+        createdAt: product.createdAt,
+        name: product.name,
+        price: product.basePrice,
+      }[sortBy];
+
+      const orderBy =
+        sortOrder === "asc" ? asc(orderByColumn) : desc(orderByColumn);
+
+      const [products, total] = await Promise.all([
+        db
+          .select({
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            categoryName: category.name,
+            description: product.description,
+            brand: product.brand,
+            imageUrl: product.imageUrl,
+            basePrice: product.basePrice,
+            categoryId: product.categoryId,
+            createdAt: product.createdAt,
+          })
+          .from(product)
+          .innerJoin(category, eq(product.categoryId, category.id))
+          .where(whereClause)
+          .orderBy(orderBy)
+          .limit(perPage)
+          .offset(offset),
+        db
+          .select({ count: count() })
+          .from(product)
+          .innerJoin(category, eq(product.categoryId, category.id))
+          .where(whereClause)
+          .then(([result]) => result?.count ?? 0),
+      ]);
+
+      return {
+        products,
+        pagination: {
+          page,
+          perPage,
+          total,
+          totalPages: Math.ceil(total / perPage),
+        },
+      };
     }),
 });

@@ -7,3 +7,6 @@ export type ProductsOutput = RouterOutput["products"]["list"];
 export type ProductOutput = ProductsOutput["products"][number];
 export type CreateProductInput = inferInput<typeof trpc.products.create>;
 export type UpdateProductInput = inferInput<typeof trpc.products.update>;
+
+// Public
+export type PublicProductsInput = inferInput<typeof trpc.products.listPublic>;
