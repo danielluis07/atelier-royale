@@ -1,6 +1,12 @@
 import { prefetch, trpc } from "@/trpc/server";
-import type { ProductsInput } from "@/modules/products/types";
-import { normalizeProductsParams } from "@/modules/products/utils";
+import type {
+  ProductsInput,
+  PublicProductsInput,
+} from "@/modules/products/types";
+import {
+  normalizeProductsParams,
+  normalizePublicProductsParams,
+} from "@/modules/products/utils";
 
 /**
  * Prefetch product list
@@ -8,6 +14,19 @@ import { normalizeProductsParams } from "@/modules/products/utils";
 export const prefetchProducts = async (params: Partial<ProductsInput>) => {
   return prefetch(
     trpc.products.list.queryOptions(normalizeProductsParams(params)),
+  );
+};
+
+/**
+ * Prefetch public product list
+ */
+export const prefetchPublicProducts = async (
+  params: Partial<PublicProductsInput>,
+) => {
+  return prefetch(
+    trpc.products.listPublic.queryOptions(
+      normalizePublicProductsParams(params),
+    ),
   );
 };
 

@@ -4,6 +4,11 @@ export const PAGINATION = {
   DEFAULT_PER_PAGE: 10,
 };
 
+export const STORE_PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_PER_PAGE: 12,
+};
+
 export const MAX_FILE_SIZE_BYTES = {
   label: "3MB",
   value: 3 * 1024 * 1024,
@@ -12,6 +17,12 @@ export const MAX_FILE_SIZE_BYTES = {
 export const SORT_ORDER_OPTIONS = [
   { label: "Mais recentes", value: "desc" },
   { label: "Mais antigos", value: "asc" },
+] as const;
+
+export const STORE_SORT_BY_OPTIONS = [
+  { label: "Data", value: "createdAt" },
+  { label: "Nome", value: "name" },
+  { label: "Preço", value: "price" },
 ] as const;
 
 // Users

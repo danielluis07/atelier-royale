@@ -7,6 +7,9 @@ export const productSortBySchema = z.enum([
   "name",
   "price",
 ]);
+
+export const publicProductSortBySchema = z.enum(["createdAt", "name", "price"]);
+
 export const productSortOrderSchema = z.enum(["asc", "desc"]);
 
 export const productsSearchParamsSchema = z.object({
@@ -24,6 +27,14 @@ export const productsSearchParamsSchema = z.object({
 
   // Validate, but leave optional
   sortBy: productSortBySchema.optional(),
+  sortOrder: productSortOrderSchema.optional(),
+});
+
+export const publicProductsSearchParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+  sortBy: publicProductSortBySchema.optional(),
   sortOrder: productSortOrderSchema.optional(),
 });
 
@@ -87,4 +98,14 @@ export const updateProductInput = productBaseSchema.extend({
 
 export const getProductInput = z.object({
   id: z.string().min(1, "ID do produto é obrigatório"),
+});
+
+export const listPublicProductsInput = z.object({
+  page: z.number().min(1).default(1),
+  perPage: z.number().min(1).max(100).default(PAGINATION.DEFAULT_PER_PAGE),
+  search: z.string().optional(),
+  isAvailable: z.boolean().optional(),
+  categoryId: z.string().optional(),
+  sortBy: publicProductSortBySchema.default("createdAt"),
+  sortOrder: productSortOrderSchema.default("desc"),
 });
