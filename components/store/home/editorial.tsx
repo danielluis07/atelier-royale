@@ -10,7 +10,7 @@ export function Editorial() {
         <div className="lg:col-span-5 space-y-3">
           <div className="relative aspect-4/3 overflow-hidden">
             <Image
-              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1170"
+              src="https://images.unsplash.com/photo-1635205383450-e0fee6fe73c4"
               alt="Editorial lookbook"
               fill
               className="object-cover"
@@ -20,7 +20,7 @@ export function Editorial() {
           <div className="grid grid-cols-2 gap-3">
             <div className="relative aspect-square overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=987"
+                src="https://images.unsplash.com/photo-1723854297399-1bd729aca4b9"
                 alt="Detail shot"
                 fill
                 className="object-cover"
@@ -29,7 +29,7 @@ export function Editorial() {
             </div>
             <div className="relative aspect-square overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=987"
+                src="https://images.unsplash.com/photo-1618215650148-e8e61eae521c"
                 alt="Craftsmanship"
                 fill
                 className="object-cover"

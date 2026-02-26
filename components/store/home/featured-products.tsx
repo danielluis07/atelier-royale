@@ -43,7 +43,7 @@ const products = [
 
 export function FeaturedProducts() {
   return (
-    <section className="py-24 lg:py-32 bg-secondary/50">
+    <section className="py-24 lg:py-32 bg-muted/50 border-y border-border/50">
       <div className="max-w-360 mx-auto px-6 lg:px-12">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">

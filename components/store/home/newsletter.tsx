@@ -7,13 +7,13 @@ export function Newsletter() {
       {/* Background */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071"
+          src="https://images.unsplash.com/photo-1675537057530-312348c6caa2"
           alt="Newsletter background"
           fill
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-foreground/85" />
+        <div className="absolute inset-0 bg-foreground/90" />
       </div>
 
       {/* Content */}

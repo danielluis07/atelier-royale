@@ -13,6 +13,7 @@ import Link from "next/link";
 
 const newProducts = [
   {
+    id: "1",
     name: "Collier Lumière",
     brand: "Maison Dorée",
     price: "R$ 15.200",
@@ -20,6 +21,7 @@ const newProducts = [
       "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=987",
   },
   {
+    id: "2",
     name: "Bague Céleste",
     brand: "Joaillerie Étoile",
     price: "R$ 9.800",
@@ -27,6 +29,7 @@ const newProducts = [
       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=987",
   },
   {
+    id: "3",
     name: "Montre Impériale",
     brand: "Horlogerie Suisse",
     price: "R$ 34.500",
@@ -34,6 +37,7 @@ const newProducts = [
       "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?q=80&w=987",
   },
   {
+    id: "4",
     name: "Pochette Soirée",
     brand: "Atelier Cuir",
     price: "R$ 6.490",
@@ -41,6 +45,7 @@ const newProducts = [
       "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=987",
   },
   {
+    id: "5",
     name: "Bracelet Opale",
     brand: "Maison Lumière",
     price: "R$ 11.350",
@@ -48,6 +53,7 @@ const newProducts = [
       "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=987",
   },
   {
+    id: "6",
     name: "Foulard Parisien",
     brand: "Textile Royale",
     price: "R$ 3.200",
@@ -120,46 +126,40 @@ export function NewArrivals() {
         className="max-w-360 mx-auto px-6 lg:px-12">
         <CarouselContent className="-ml-6">
           {newProducts.map((product) => (
-            <CarouselItem key={product.name} className="pl-6 basis-auto">
-              <Link href="#" className="group shrink-0 w-75 lg:w-80 block">
-                {/* Image */}
-                <div className="relative aspect-3/4 overflow-hidden bg-muted mb-5">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-contain transition-transform duration-800 ease-out group-hover:scale-105"
-                    sizes="320px"
-                  />
+            <CarouselItem
+              key={product.id}
+              className="pl-6 basis-1/2 lg:basis-1/4">
+              <Link
+                href="#"
+                className="group relative aspect-3/4 w-full overflow-hidden block">
+                {/* 1. Full-Bleed Image */}
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                  sizes="400px"
+                />
 
-                  {/* New Tag */}
-                  <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-foreground text-[9px] tracking-[0.3em] uppercase font-sans px-3 py-1.5">
-                    <Sparkles
-                      className="w-2.5 h-2.5 text-primary"
-                      strokeWidth={2}
-                    />
-                    Novo
-                  </div>
+                {/* 2. Scrim/Gradient Overlay (Crucial for text legibility) */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80" />
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-all duration-500 flex items-center justify-center">
-                    <span className="text-white text-xs tracking-[0.2em] uppercase font-sans opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 border border-white/40 px-6 py-3 backdrop-blur-sm">
-                      Descobrir
-                    </span>
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="space-y-1.5">
-                  <span className="text-[10px] tracking-[0.3em] uppercase font-sans text-primary">
+                {/* 3. Text Overlay */}
+                <div className="absolute bottom-0 left-0 w-full p-6 text-white space-y-2">
+                  <span className="text-[9px] tracking-[0.4em] uppercase font-sans text-white/70">
                     {product.brand}
                   </span>
-                  <h3 className="font-serif text-lg text-foreground group-hover:text-primary transition-colors duration-300">
+                  <h3 className="font-serif text-xl lg:text-2xl leading-tight">
                     {product.name}
                   </h3>
-                  <p className="font-sans text-sm text-muted-foreground tracking-wide">
-                    {product.price}
-                  </p>
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                    <p className="font-sans text-xs tracking-widest text-white/90">
+                      {product.price}
+                    </p>
+                    <span className="text-[10px] tracking-[0.2em] uppercase font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 underline underline-offset-4">
+                      Ver detalhes
+                    </span>
+                  </div>
                 </div>
               </Link>
             </CarouselItem>

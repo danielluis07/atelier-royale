@@ -84,30 +84,35 @@
 }
 
 .theme-luxury {
-  --background: oklch(0.99 0.005 50); /* Soft Alabaster White */
-  --foreground: oklch(0.15 0.01 250); /* Deep Midnight Charcoal */
+  /* A very "expensive" off-white with a hint of cool slate */
+  --background: oklch(0.98 0.005 260);
+  /* Deep, authoritative "Ink" blue-black */
+  --foreground: oklch(0.18 0.02 260);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 250);
+  --card-foreground: oklch(0.18 0.02 260);
 
-  /* The "Luxury" Gold Accent */
-  --primary: oklch(0.75 0.08 85); /* Sophisticated Champagne/Gold */
-  --primary-foreground: oklch(0.15 0.01 250);
+  /* THE ACCENT: A "Brushed Bronze" or "Old Gold" 
+     More muted and "manly" than bright yellow gold */
+  --primary: oklch(0.45 0.05 65);
+  --primary-foreground: oklch(0.98 0.005 260);
 
-  --secondary: oklch(0.94 0.01 50); /* Light Stone Gray */
-  --secondary-foreground: oklch(0.15 0.01 250);
+  /* Secondary: A Mid-tone "Steel" gray */
+  --secondary: oklch(0.25 0.02 260);
+  --secondary-foreground: oklch(0.98 0.005 260);
 
-  --muted: oklch(0.94 0.01 50);
-  --muted-foreground: oklch(0.45 0.02 250);
+  --muted: oklch(0.94 0.01 260);
+  --muted-foreground: oklch(0.45 0.02 260);
 
-  --accent: oklch(0.75 0.08 85 / 15%); /* Subtle Gold Tint for hovers */
-  --accent-foreground: oklch(0.15 0.01 250);
+  --accent: oklch(0.18 0.02 260 / 5%);
+  --accent-foreground: oklch(0.18 0.02 260);
 
-  --border: oklch(0.88 0.01 50); /* Very thin, elegant borders */
-  --input: oklch(0.88 0.01 50);
-  --ring: oklch(0.75 0.08 85);
+  --border: oklch(0.85 0.01 260); /* Defined but subtle */
+  --input: oklch(0.85 0.01 260);
+  --ring: oklch(0.18 0.02 260);
 
-  --radius: 0px; /* Luxury often uses sharp, architectural corners */
+  /* SHARP EDGES: Male luxury is about precision (like a watch gear) */
+  --radius: 0.125rem;
 }
 
 .dark {
