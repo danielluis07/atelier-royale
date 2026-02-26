@@ -104,7 +104,6 @@ export const listPublicProductsInput = z.object({
   page: z.number().min(1).default(1),
   perPage: z.number().min(1).max(100).default(PAGINATION.DEFAULT_PER_PAGE),
   search: z.string().optional(),
-  isAvailable: z.boolean().optional(),
   categoryId: z.string().optional(),
   sortBy: publicProductSortBySchema.default("createdAt"),
   sortOrder: productSortOrderSchema.default("desc"),

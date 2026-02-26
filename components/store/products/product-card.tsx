@@ -57,11 +57,9 @@ export const ProductCard = ({
           <span className="text-[10px] tracking-[0.3em] uppercase font-sans text-primary truncate">
             {product.brand}
           </span>
-          {product.categoryName && (
-            <span className="text-[10px] tracking-[0.2em] uppercase font-sans text-muted-foreground/60 shrink-0">
-              {product.categoryName}
-            </span>
-          )}
+          <span className="text-[10px] tracking-[0.2em] uppercase font-sans text-muted-foreground/60 shrink-0">
+            {product.categoryName}
+          </span>
         </div>
 
         <h3 className="font-serif text-lg text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
