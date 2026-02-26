@@ -546,7 +546,9 @@ export const productsRouter = createTRPCRouter({
             categoryId: product.categoryId,
           })
           .from(product)
-          .where(eq(product.slug, input.slug));
+          .where(
+            and(eq(product.slug, input.slug), eq(product.isAvailable, true)),
+          );
 
         if (!foundProduct) {
           throw new TRPCError({
@@ -554,7 +556,6 @@ export const productsRouter = createTRPCRouter({
             message: "Produto não encontrado",
           });
         }
-
         const variants = await db
           .select({
             id: productVariant.id,

@@ -15,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { centsToReais } from "@/lib/utils";
 import { RelatedProducts } from "@/components/store/product/related-products";
+import { ProductVariants } from "./product-variants";
 
 export const ProductClient = ({ slug }: { slug: string }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -98,67 +99,16 @@ export const ProductClient = ({ slug }: { slug: string }) => {
 
           {/* Variant / Size Selector */}
           {hasVariants && (
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs tracking-[0.2em] uppercase font-sans text-foreground">
-                  {hasSizes ? "Tamanho" : "Variação"}
-                </span>
-                {selectedVariant && activeStock !== null && (
-                  <span
-                    className={`text-[10px] tracking-[0.15em] uppercase font-sans ${
-                      isOutOfStock
-                        ? "text-destructive"
-                        : activeStock <= 3
-                          ? "text-primary"
-                          : "text-muted-foreground"
-                    }`}>
-                    {isOutOfStock
-                      ? "Esgotado"
-                      : activeStock <= 3
-                        ? `Últimas ${activeStock} unidades`
-                        : "Em estoque"}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {data.variants.map((variant) => {
-                  const isSelected = selectedVariantId === variant.id;
-                  const isVarOutOfStock = variant.stockQuantity === 0;
-                  const label = hasSizes
-                    ? (variant.size ?? variant.name)
-                    : variant.name;
-
-                  return (
-                    <button
-                      key={variant.id}
-                      onClick={() => {
-                        setSelectedVariantId(isSelected ? null : variant.id);
-                        setQuantity(1);
-                      }}
-                      disabled={isVarOutOfStock}
-                      className={`
-                        relative min-w-14 px-4 py-3 text-xs tracking-[0.15em] uppercase font-sans
-                        border transition-all duration-300
-                        ${
-                          isSelected
-                            ? "border-foreground bg-foreground text-background"
-                            : isVarOutOfStock
-                              ? "border-border text-muted-foreground/40 cursor-not-allowed"
-                              : "border-border text-foreground hover:border-foreground"
-                        }
-                      `}>
-                      {label}
-                      {isVarOutOfStock && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className="w-full h-px bg-muted-foreground/30 rotate-[-20deg]" />
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            <ProductVariants
+              hasSizes={hasSizes}
+              selectedVariantId={selectedVariantId}
+              selectedVariant={selectedVariant}
+              activeStock={activeStock}
+              isOutOfStock={isOutOfStock}
+              data={data}
+              setSelectedVariantId={setSelectedVariantId}
+              setQuantity={setQuantity}
+            />
           )}
 
           {/* Quantity Selector */}
@@ -168,6 +118,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
             </span>
             <div className="inline-flex items-center border border-border">
               <button
+                type="button"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
                 className="w-11 h-11 flex items-center justify-center text-foreground hover:bg-muted transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
@@ -178,6 +129,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
                 {quantity}
               </span>
               <button
+                type="button"
                 onClick={() => {
                   const max = activeStock !== null ? activeStock : 99;
                   setQuantity(Math.min(max, quantity + 1));
@@ -194,6 +146,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
 
           {/* Add to Cart Button */}
           <button
+            type="button"
             disabled={!canAddToCart}
             className={`
               group w-full flex items-center justify-center gap-3 py-4 text-xs tracking-[0.25em] uppercase font-sans transition-all duration-500 mb-4
@@ -212,7 +165,9 @@ export const ProductClient = ({ slug }: { slug: string }) => {
           </button>
 
           {/* Secondary Action */}
-          <button className="w-full py-3.5 text-xs tracking-[0.2em] uppercase font-sans text-foreground border border-border hover:border-foreground transition-colors duration-300 mb-10">
+          <button
+            type="button"
+            className="w-full py-3.5 text-xs tracking-[0.2em] uppercase font-sans text-foreground border border-border hover:border-foreground transition-colors duration-300 mb-10">
             Adicionar à lista de desejos
           </button>
 

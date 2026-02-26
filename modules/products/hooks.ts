@@ -51,7 +51,7 @@ export const useProductSuspense = (id: string) => {
 };
 
 /**
- * Hook to fetch a single public product by ID.
+ * Hook to fetch a single public product by slug.
  */
 export const usePublicProductSuspense = (slug: string) => {
   const trpc = useTRPC();
