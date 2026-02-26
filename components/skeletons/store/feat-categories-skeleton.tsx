@@ -49,12 +49,7 @@ export function FeaturedCategoriesSkeleton({ count = 5 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       {Array.from({ length: count }).map((_, index) => (
-        <Skeleton
-          key={index}
-          // I added "rounded-xl" here to match standard card styles,
-          // adjust the radius to match your CategoryCard component!
-          className={`rounded-xl ${getCardClasses(index, count)}`}
-        />
+        <Skeleton key={index} className={getCardClasses(index, count)} />
       ))}
     </div>
   );

@@ -7,7 +7,7 @@ import {
 import { db } from "@/db";
 import { product } from "@/db/schema";
 import { subDays } from "date-fns";
-import { eq, gte, and } from "drizzle-orm";
+import { eq, gte, and, desc } from "drizzle-orm";
 
 export const getFeaturedProducts = async () => {
   try {
@@ -23,6 +23,7 @@ export const getFeaturedProducts = async () => {
       })
       .from(product)
       .where(and(eq(product.isFeatured, true), eq(product.isAvailable, true)))
+      .orderBy(desc(product.createdAt))
       .limit(MAX_FEATURED_PRODUCTS);
 
     return products;
@@ -52,6 +53,7 @@ export const getNewProducts = async () => {
           eq(product.isAvailable, true),
         ),
       )
+      .orderBy(desc(product.createdAt))
       .limit(MAX_NEW_PRODUCTS);
 
     return products;
@@ -62,6 +64,7 @@ export const getNewProducts = async () => {
 };
 
 // TODO: Implement actual best-seller logic based on sales data instead of just fetching products
+// TODO: Once sales data is implemented, order by sales count DESC
 export const getBestSellers = async () => {
   try {
     const products = await db
