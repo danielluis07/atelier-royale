@@ -7,7 +7,7 @@ import {
 import { db } from "@/db";
 import { product } from "@/db/schema";
 import { subDays } from "date-fns";
-import { eq, gte } from "drizzle-orm";
+import { eq, gte, and } from "drizzle-orm";
 
 export const getFeaturedProducts = async () => {
   try {
@@ -22,7 +22,7 @@ export const getFeaturedProducts = async () => {
         createdAt: product.createdAt,
       })
       .from(product)
-      .where(eq(product.isFeatured, true))
+      .where(and(eq(product.isFeatured, true), eq(product.isAvailable, true)))
       .limit(MAX_FEATURED_PRODUCTS);
 
     return products;
@@ -46,7 +46,12 @@ export const getNewProducts = async () => {
         basePrice: product.basePrice,
       })
       .from(product)
-      .where(gte(product.createdAt, thresholdDate))
+      .where(
+        and(
+          gte(product.createdAt, thresholdDate),
+          eq(product.isAvailable, true),
+        ),
+      )
       .limit(MAX_NEW_PRODUCTS);
 
     return products;
@@ -69,6 +74,7 @@ export const getBestSellers = async () => {
         basePrice: product.basePrice,
       })
       .from(product)
+      .where(eq(product.isAvailable, true))
       .limit(MAX_BEST_SELLERS);
 
     return products;
