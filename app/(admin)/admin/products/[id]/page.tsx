@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { category } from "@/db/schema";
 import { UpdateProductForm } from "@/components/admin/products/update-product-form";
 import { prefetchProduct } from "@/modules/products/prefetch";
-import { ProductFormSkeleton } from "@/components/skeletons/product-form-skeleton";
+import { ProductFormSkeleton } from "@/components/skeletons/admin/product-form-skeleton";
 
 const ProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   await requireAdmin();

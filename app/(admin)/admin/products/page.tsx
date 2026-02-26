@@ -1,5 +1,5 @@
 import { ProductsClient } from "@/components/admin/products/client";
-import { TableSkeleton } from "@/components/skeletons/table-skeleton";
+import { TableSkeleton } from "@/components/skeletons/admin/table-skeleton";
 import { db } from "@/db";
 import { category } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth-utils";

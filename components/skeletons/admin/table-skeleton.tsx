@@ -27,7 +27,7 @@ export function TableSkeleton({
 }) {
   // Generate varied skeleton widths to look more natural
   const getCellWidth = (colIndex: number, rowIndex: number) => {
-    if (columnWidths?.[colIndex]) return columnWidths[colIndex];
+    if (columnWidths?.[colIndex] !== undefined) return columnWidths[colIndex];
     const widths = ["w-3/4", "w-1/2", "w-2/3", "w-4/5", "w-1/3"];
     return widths[(colIndex + rowIndex) % widths.length];
   };

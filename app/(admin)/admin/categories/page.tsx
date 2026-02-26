@@ -1,5 +1,5 @@
 import { CategoriesClient } from "@/components/admin/categories/client";
-import { TableSkeleton } from "@/components/skeletons/table-skeleton";
+import { TableSkeleton } from "@/components/skeletons/admin/table-skeleton";
 import { requireAdmin } from "@/lib/auth-utils";
 import { prefetchCategories } from "@/modules/categories/prefetch";
 import { HydrateClient } from "@/trpc/server";
