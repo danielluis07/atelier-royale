@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { isAfter, subDays } from "date-fns";
+import { NEW_PRODUCT_THRESHOLD_DAYS } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,7 +44,10 @@ export function centsToReais(cents: number): string {
   }).format(cents / 100);
 }
 
-export function isProductNew(createdAt: Date, days = 30): boolean {
+export function isProductNew(
+  createdAt: Date,
+  days = NEW_PRODUCT_THRESHOLD_DAYS,
+): boolean {
   const thresholdDate = subDays(new Date(), days);
   return isAfter(createdAt, thresholdDate);
 }
