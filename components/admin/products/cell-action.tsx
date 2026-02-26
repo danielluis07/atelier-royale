@@ -10,11 +10,17 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 import { Edit, MoreHorizontal } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const ProductsCellAction = ({ id }: { id: string }) => {
   const hasMounted = useHasMounted();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const params = searchParams.toString();
+  const editPath = params
+    ? `/admin/products/${id}?${params}`
+    : `/admin/products/${id}`;
 
   if (!hasMounted) {
     return <Skeleton className="h-5 w-8 my-1.5" />;
@@ -29,7 +35,7 @@ export const ProductsCellAction = ({ id }: { id: string }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => router.push(`/admin/products/${id}`)}>
+        <DropdownMenuItem onClick={() => router.push(editPath)}>
           <Edit className="mr-2 size-4" />
           Editar
         </DropdownMenuItem>
