@@ -27,7 +27,7 @@ export const CategoryCard = ({
       className={cn("relative group overflow-hidden", className)}>
       {isLoading && <Skeleton className="absolute inset-0" />}
       <Image
-        src={category.imageUrl || ""}
+        src={category.imageUrl || "/images/image-placeholder.jpg"}
         alt={category.name}
         fill
         className="object-cover transition-transform duration-800 ease-out group-hover:scale-105"

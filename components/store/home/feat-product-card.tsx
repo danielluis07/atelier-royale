@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { centsToReais } from "@/lib/utils";
 
 export const FeaturedProductsCard = ({
   product,
@@ -63,7 +64,7 @@ export const FeaturedProductsCard = ({
         </h3>
         <div className="flex items-center justify-between">
           <p className="font-sans text-sm text-muted-foreground tracking-wide">
-            {product.basePrice}
+            {centsToReais(product.basePrice)}
           </p>
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => (

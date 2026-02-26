@@ -64,7 +64,7 @@ export function NewProductsCarousel({
               </button>
             </div>
             <Link
-              href="#"
+              href="/products"
               className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] uppercase font-sans text-foreground hover:text-primary transition-colors duration-300">
               Ver tudo
               <ArrowRight

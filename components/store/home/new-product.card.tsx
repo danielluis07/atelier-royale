@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { centsToReais } from "@/lib/utils";
 
 export const NewProductCard = ({
   product,
@@ -47,7 +48,7 @@ export const NewProductCard = ({
         </h3>
         <div className="flex items-center justify-between pt-2 border-t border-white/10">
           <p className="font-sans text-xs tracking-widest text-white/90">
-            {product.basePrice}
+            {centsToReais(product.basePrice)}
           </p>
           <span className="text-[10px] tracking-[0.2em] uppercase font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 underline underline-offset-4">
             Ver detalhes
