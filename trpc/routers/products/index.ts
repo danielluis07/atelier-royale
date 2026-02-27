@@ -463,7 +463,15 @@ export const productsRouter = createTRPCRouter({
   listPublic: baseProcedure
     .input(listPublicProductsInput)
     .query(async ({ input }) => {
-      const { page, perPage, search, categoryId, sortBy, sortOrder } = input;
+      const {
+        page,
+        perPage,
+        search,
+        categoryId,
+        categorySlug,
+        sortBy,
+        sortOrder,
+      } = input;
       const offset = (page - 1) * perPage;
 
       const conditions = [];
@@ -480,6 +488,10 @@ export const productsRouter = createTRPCRouter({
 
       if (categoryId) {
         conditions.push(eq(product.categoryId, categoryId));
+      }
+
+      if (categorySlug) {
+        conditions.push(eq(category.slug, categorySlug));
       }
 
       const whereClause = and(...conditions);

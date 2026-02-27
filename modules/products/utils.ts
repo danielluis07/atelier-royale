@@ -22,6 +22,7 @@ export const normalizePublicProductsParams = (
   page: params.page ?? STORE_PAGINATION.DEFAULT_PAGE,
   perPage: params.perPage ?? STORE_PAGINATION.DEFAULT_PER_PAGE,
   search: params.search || undefined,
+  categorySlug: params.categorySlug || undefined,
   categoryId: params.categoryId || undefined,
   sortBy: params.sortBy ?? "createdAt",
   sortOrder: params.sortOrder ?? "desc",
