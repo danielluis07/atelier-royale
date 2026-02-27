@@ -12,32 +12,6 @@ export const publicProductSortBySchema = z.enum(["createdAt", "name", "price"]);
 
 export const productSortOrderSchema = z.enum(["asc", "desc"]);
 
-export const productsSearchParamsSchema = z.object({
-  // Coerce string to number, but leave it optional if it fails/is missing
-  page: z.coerce.number().int().min(1).optional(),
-  // Strings stay strings
-  search: z.string().optional(),
-  categoryId: z.string().optional(),
-
-  // Coerce "true"/"false" strings into actual booleans
-  isAvailable: z
-    .enum(["true", "false"])
-    .transform((val) => val === "true")
-    .optional(),
-
-  // Validate, but leave optional
-  sortBy: productSortBySchema.optional(),
-  sortOrder: productSortOrderSchema.optional(),
-});
-
-export const publicProductsSearchParamsSchema = z.object({
-  page: z.coerce.number().int().min(1).optional(),
-  search: z.string().optional(),
-  categoryId: z.string().optional(),
-  sortBy: publicProductSortBySchema.optional(),
-  sortOrder: productSortOrderSchema.optional(),
-});
-
 export const variantInputSchema = z.object({
   sku: z.string(),
   name: z.string(),
@@ -67,6 +41,24 @@ export const listProductsInput = z.object({
   categoryId: z.string().optional(),
   sortBy: productSortBySchema.default("createdAt"),
   sortOrder: productSortOrderSchema.default("desc"),
+});
+
+export const productsSearchParamsSchema = z.object({
+  // Coerce string to number, but leave it optional if it fails/is missing
+  page: z.coerce.number().int().min(1).optional(),
+  // Strings stay strings
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+
+  // Coerce "true"/"false" strings into actual booleans
+  isAvailable: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true")
+    .optional(),
+
+  // Validate, but leave optional
+  sortBy: productSortBySchema.optional(),
+  sortOrder: productSortOrderSchema.optional(),
 });
 
 export const updateVariantInputSchema = variantInputSchema.extend({
@@ -109,14 +101,23 @@ export const getProductInput = z.object({
   id: z.string().min(1, "ID do produto é obrigatório"),
 });
 
-export const getPublicProductInput = z.object({
-  slug: z.string().min(1, "O slug do produto é obrigatório"),
-});
-
 export const relatedProductsInput = z.object({
   productId: z.string().min(1, "O ID do produto é obrigatório"),
   categoryId: z.string().min(1, "A categoria do produto é obrigatória"),
   limit: z.number().min(1).max(10).default(MAX_RELATED_PRODUCTS),
+});
+
+export const getPublicProductInput = z.object({
+  slug: z.string().min(1, "O slug do produto é obrigatório"),
+});
+
+export const publicProductsSearchParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+  categorySlug: z.string().optional(),
+  sortBy: publicProductSortBySchema.optional(),
+  sortOrder: productSortOrderSchema.optional(),
 });
 
 export const listPublicProductsInput = z.object({
@@ -124,6 +125,7 @@ export const listPublicProductsInput = z.object({
   perPage: z.number().min(1).max(100).default(PAGINATION.DEFAULT_PER_PAGE),
   search: z.string().optional(),
   categoryId: z.string().optional(),
+  categorySlug: z.string().optional(),
   sortBy: publicProductSortBySchema.default("createdAt"),
   sortOrder: productSortOrderSchema.default("desc"),
 });
