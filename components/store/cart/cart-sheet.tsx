@@ -111,7 +111,7 @@ function CartItemRow({ item }: { item: CartItem }) {
   );
 }
 
-export function Cart() {
+export function CartSheet() {
   const { items, getTotal, getItemCount } = useCart();
   const isMounted = useHasMounted();
 

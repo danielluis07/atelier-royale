@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, User, Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Cart } from "@/components/store/cart";
+import { centsToReais, cn } from "@/lib/utils";
+import { CartSheet } from "@/components/store/cart/cart-sheet";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 
 const NAV_ITEMS = ["Camisas", "Ternos", "Camisas", "Relógios", "Sapatos"];
 
@@ -22,7 +23,7 @@ export function Navbar() {
     <>
       {/* Announcement Bar */}
       <div className="bg-foreground text-background text-center py-2 text-xs tracking-[0.3em] uppercase font-sans">
-        Frete grátis em compras acima de R$ 500
+        Frete grátis em compras acima de {centsToReais(FREE_SHIPPING_THRESHOLD)}
       </div>
 
       <header
@@ -71,7 +72,7 @@ export function Navbar() {
                 <User className="w-4.5 h-4.5" strokeWidth={1.5} />
               </Link>
               {/* Cart */}
-              <Cart />
+              <CartSheet />
             </div>
 
             {/* Mobile Toggle */}
@@ -114,7 +115,7 @@ export function Navbar() {
                 className="w-4.5 h-4.5 text-muted-foreground"
                 strokeWidth={1.5}
               />
-              <Cart />
+              <CartSheet />
             </div>
           </div>
         </div>

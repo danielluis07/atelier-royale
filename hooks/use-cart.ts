@@ -16,7 +16,7 @@ export const useCart = create<CartState>()(
 
         if (existing) {
           const newQty = existing.quantity + (item.quantity ?? 1);
-          const maxQty = existing.maxStock ? existing.maxStock : 99;
+          const maxQty = existing.maxStock ?? 99;
           set({
             items: items.map((i) =>
               i.productId === item.productId && i.variantId === item.variantId

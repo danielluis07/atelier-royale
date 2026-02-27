@@ -6,9 +6,16 @@ import { useCart } from "@/hooks/use-cart";
 import { CartEmpty } from "@/components/store/cart/cart-empty";
 import { CartItemCard } from "@/components/store/cart/item-card";
 import { OrderSummary } from "@/components/store/cart/order-summary";
+import { useHasMounted } from "@/hooks/use-has-mounted";
+import { CartClientSkeleton } from "@/components/skeletons/store/cart-client-skeleton";
 
 export const CartClient = () => {
   const { items, getTotal, getItemCount, clearCart } = useCart();
+  const isMounted = useHasMounted();
+
+  if (!isMounted) {
+    return <CartClientSkeleton />;
+  }
 
   const itemCount = getItemCount();
   const total = getTotal();

@@ -18,6 +18,7 @@ import { RelatedProducts } from "@/components/store/product/related-products";
 import { ProductVariants } from "./product-variants";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 
 export const ProductClient = ({ slug }: { slug: string }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -266,7 +267,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
               {
                 icon: Truck,
                 label: "Frete grátis",
-                detail: "Acima de R$ 500",
+                detail: `Acima de R$ ${centsToReais(FREE_SHIPPING_THRESHOLD)}`,
               },
               {
                 icon: ShieldCheck,
