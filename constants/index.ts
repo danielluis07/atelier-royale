@@ -60,3 +60,5 @@ export const MAX_BEST_SELLERS = 4;
 export const MAX_RELATED_PRODUCTS = 4;
 
 export const NEW_PRODUCT_THRESHOLD_DAYS = 30;
+
+export const FREE_SHIPPING_THRESHOLD = 50000;
