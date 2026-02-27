@@ -22,13 +22,13 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ClientSelect } from "@/components/ui/custom/select/client-select";
 import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
-import { centsToReais } from "@/lib/utils";
+import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useProductSuspense, useUpdateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
 import { deleteFile } from "@/actions/delete-file";
@@ -45,6 +45,7 @@ export const UpdateProductForm = ({
   }[];
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<
@@ -94,6 +95,7 @@ export const UpdateProductForm = ({
     }
 
     setIsLoading(true);
+    toast.loading("Atualizando produto...", { id: "update-product" });
 
     let imageUrl = currentImageUrl;
     const previousImageUrl = productData?.imageUrl; // Ensure you grab this safely
@@ -101,10 +103,12 @@ export const UpdateProductForm = ({
     try {
       // 1. Only upload if a new file was selected
       if (imageFile) {
+        const finalImageFile = await compressImageToWebP(imageFile);
+
         const urlResult = await getUploadUrl(
-          imageFile.name,
-          imageFile.type,
-          imageFile.size,
+          finalImageFile.name,
+          finalImageFile.type,
+          finalImageFile.size,
           "products", // Use "temp" here if you adopted the Temp Folder lifecycle pattern!
         );
 
@@ -113,19 +117,23 @@ export const UpdateProductForm = ({
           !urlResult.uploadUrl ||
           !urlResult.publicUrl
         ) {
-          toast.error(urlResult.error ?? "Erro ao gerar link de upload");
+          toast.error(urlResult.error ?? "Erro ao gerar link de upload", {
+            id: "update-product",
+          });
           setIsLoading(false);
           return;
         }
 
         const uploadResponse = await fetch(urlResult.uploadUrl, {
           method: "PUT",
-          headers: { "Content-Type": imageFile.type },
-          body: imageFile,
+          headers: { "Content-Type": finalImageFile.type },
+          body: finalImageFile,
         });
 
         if (!uploadResponse.ok) {
-          toast.error("Erro ao enviar a nova imagem para o S3");
+          toast.error("Erro ao enviar a nova imagem para o S3", {
+            id: "update-product",
+          });
           setIsLoading(false);
           return;
         }
@@ -133,43 +141,37 @@ export const UpdateProductForm = ({
         imageUrl = urlResult.publicUrl;
       }
 
-      // 2. Update the database FIRST using mutateAsync
-      toast.promise(
-        mutateAsync({
-          ...value,
-          name: value.name.trim(),
-          description: value.description.trim(),
-          imageUrl: imageUrl!,
-        }),
-        {
-          loading: "Atualizando produto...",
-          success: () => {
-            // 3. Delete the old image ONLY if the DB update succeeded!
-            if (
-              imageFile &&
-              previousImageUrl &&
-              previousImageUrl !== imageUrl
-            ) {
-              // We run this in the background (fire-and-forget) so it doesn't delay the UI redirect
-              deleteFile(previousImageUrl).then((res) => {
-                if (!res.success)
-                  console.error("Erro ao deletar imagem antiga:", res.error);
-              });
-            }
+      await mutateAsync({
+        ...value,
+        name: value.name.trim(),
+        description: value.description.trim(),
+        imageUrl: imageUrl!,
+      });
 
-            router.push("/admin/products");
-            return "Produto atualizado com sucesso!";
-          },
-          error: (error) => {
-            console.error(error);
-            return "Erro ao atualizar produto";
-          },
-          finally: () => setIsLoading(false),
-        },
-      );
+      // 3. Delete the old image ONLY if the DB update succeeded!
+      if (imageFile && previousImageUrl && previousImageUrl !== imageUrl) {
+        // We run this in the background (fire-and-forget) so it doesn't delay the UI redirect
+        deleteFile(previousImageUrl).then((res) => {
+          if (!res.success)
+            console.error("Erro ao deletar imagem antiga:", res.error);
+        });
+      }
+
+      const params = searchParams.toString();
+      const destination = params
+        ? `/admin/products?${params}`
+        : "/admin/products";
+
+      router.push(destination);
+      toast.success("Produto atualizado com sucesso!", {
+        id: "update-product",
+      });
     } catch (err) {
       console.error("Erro inesperado:", err);
-      toast.error("Ocorreu um erro inesperado");
+      toast.error("Ocorreu um erro inesperado. Tente novamente", {
+        id: "update-product",
+      });
+    } finally {
       setIsLoading(false);
     }
   };

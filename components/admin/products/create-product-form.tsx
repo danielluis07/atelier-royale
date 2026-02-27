@@ -28,7 +28,7 @@ import { ClientSelect } from "@/components/ui/custom/select/client-select";
 import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
-import { centsToReais } from "@/lib/utils";
+import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useCreateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
 import { createProductInput } from "@/modules/products/validations";
@@ -79,18 +79,22 @@ export const CreateProductForm = ({
 
     setIsLoading(true);
     setImageError(null);
+    toast.loading("Criando o produto...", { id: "create-product" });
 
     try {
-      // 1. Ask the server for an upload ticket (Pre-signed URL)
+      const finalImageFile = await compressImageToWebP(imageFile);
+
       const urlResult = await getUploadUrl(
-        imageFile.name,
-        imageFile.type,
-        imageFile.size,
+        finalImageFile.name,
+        finalImageFile.type,
+        finalImageFile.size,
         "products",
       );
 
       if (!urlResult.success || !urlResult.uploadUrl || !urlResult.publicUrl) {
-        toast.error(urlResult.error ?? "Erro ao gerar link de upload");
+        toast.error(urlResult.error ?? "Erro ao gerar link de upload", {
+          id: "create-product",
+        });
         setIsLoading(false);
         return;
       }
@@ -99,41 +103,35 @@ export const CreateProductForm = ({
       const uploadResponse = await fetch(urlResult.uploadUrl, {
         method: "PUT",
         headers: {
-          "Content-Type": imageFile.type, // Must exactly match the type validated on the server
+          "Content-Type": finalImageFile.type,
         },
-        body: imageFile,
+        body: finalImageFile,
       });
 
       if (!uploadResponse.ok) {
-        toast.error("Erro ao enviar imagem para o S3");
+        toast.error("Erro ao enviar imagem para o S3", {
+          id: "create-product",
+        });
         setIsLoading(false);
         return;
       }
 
-      // 3. Save the product data to your database, using the publicUrl
-      toast.promise(
-        mutateAsync({
-          ...value,
-          name: value.name.trim(),
-          description: value.description.trim(),
-          imageUrl: urlResult.publicUrl, // Use the generated public URL here
-        }),
-        {
-          loading: "Criando produto...",
-          success: () => {
-            router.push("/admin/products");
-            return "Produto criado com sucesso!";
-          },
-          error: (error) => {
-            console.error(error);
-            return "Erro ao criar produto";
-          },
-          finally: () => setIsLoading(false),
-        },
-      );
+      await mutateAsync({
+        ...value,
+        name: value.name.trim(),
+        description: value.description.trim(),
+        imageUrl: urlResult.publicUrl,
+      });
+
+      router.push("/admin/products");
+
+      toast.success("Produto criado com sucesso!", { id: "create-product" });
     } catch (err) {
       console.error("Erro inesperado:", err);
-      toast.error("Ocorreu um erro inesperado durante o processo");
+      toast.error("Ocorreu um erro inesperado. Tente novamente", {
+        id: "create-product",
+      });
+    } finally {
       setIsLoading(false);
     }
   };
