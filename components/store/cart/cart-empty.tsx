@@ -1,6 +1,7 @@
 "use client";
 
-import { Link, ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 
 export function CartEmpty() {
   return (

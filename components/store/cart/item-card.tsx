@@ -65,6 +65,7 @@ export function CartItemCard({ item }: { item: CartItem }) {
                     item.quantity - 1,
                   )
                 }
+                disabled={item.quantity <= 1}
                 className="w-9 h-9 flex items-center justify-center text-foreground hover:bg-muted transition-colors disabled:opacity-30"
                 aria-label="Diminuir quantidade">
                 <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />

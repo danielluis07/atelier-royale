@@ -72,7 +72,8 @@ function CartItemRow({ item }: { item: CartItem }) {
                   item.quantity - 1,
                 )
               }
-              className="w-7 h-7 flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+              disabled={item.quantity <= 1}
+              className="w-7 h-7 flex items-center justify-center text-foreground hover:bg-muted transition-colors disabled:opacity-30"
               aria-label="Diminuir quantidade">
               <Minus className="w-3 h-3" strokeWidth={1.5} />
             </button>
@@ -146,7 +147,7 @@ export function Cart() {
         {/* Cart Items */}
         <div className="flex-1 overflow-y-auto px-6">
           <ScrollArea className="h-full pr-1.5">
-            {items.length === 0 ? (
+            {!isMounted || items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full py-20 text-center">
                 <ShoppingBag
                   className="w-12 h-12 text-muted-foreground/40 mb-6"
@@ -181,7 +182,7 @@ export function Cart() {
         </div>
 
         {/* Footer */}
-        {items.length > 0 && (
+        {isMounted && items.length > 0 && (
           <SheetFooter className="border-t border-border px-6 py-5 gap-4">
             {/* Subtotal */}
             <div className="flex items-center justify-between w-full">

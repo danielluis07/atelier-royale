@@ -98,7 +98,10 @@ export function OrderSummary({
       <div className="mt-8 pt-6 border-t border-border space-y-3">
         {[
           { icon: ShieldCheck, text: "Compra 100% segura" },
-          { icon: Truck, text: "Frete grátis acima de R$ 500" },
+          {
+            icon: Truck,
+            text: `Frete grátis acima de ${centsToReais(FREE_SHIPPING_THRESHOLD)}`,
+          },
           { icon: RotateCcw, text: "Trocas e devoluções em até 30 dias" },
         ].map((badge) => {
           const Icon = badge.icon;

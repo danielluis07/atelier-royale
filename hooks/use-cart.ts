@@ -25,8 +25,13 @@ export const useCart = create<CartState>()(
             ),
           });
         } else {
+          const initialQty = item.quantity ?? 1;
+          const maxQty = item.maxStock ?? 99;
           set({
-            items: [...items, { ...item, quantity: item.quantity ?? 1 }],
+            items: [
+              ...items,
+              { ...item, quantity: Math.min(initialQty, maxQty) },
+            ],
           });
         }
       },
