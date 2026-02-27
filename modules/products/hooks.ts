@@ -114,9 +114,8 @@ export const useUpdateProduct = () => {
 };
 
 /**
- * Hook to delete a products.
- */
-export const useDeleteProducts = () => {
+ * Hook to delete products.
+ */ export const useDeleteProducts = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
