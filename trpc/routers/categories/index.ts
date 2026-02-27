@@ -130,7 +130,7 @@ export const categoriesRouter = createTRPCRouter({
           throw new TRPCError({
             code: "CONFLICT",
             message:
-              "Não é possível deletar esta categoria pois ela possui produtos vinculados",
+              "Não é possível deletar categoria(s) que possuem produtos vinculados",
           });
         }
 
