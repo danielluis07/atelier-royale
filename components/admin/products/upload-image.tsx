@@ -41,8 +41,6 @@ export const UploadImage = ({
 
   const displayUrl = previewUrl ?? existingUrl ?? null;
 
-  console.log("is loading?", isLoading);
-
   useEffect(() => {
     // Cleanup function to revoke the object URL when it changes or component unmounts
     return () => {
@@ -118,7 +116,7 @@ export const UploadImage = ({
               src={displayUrl}
               alt="Imagem do produto"
               fill
-              className="object-cover"
+              className={cn("object-cover", disabled && "opacity-70")}
               priority
               sizes="(max-width: 768px) 100vw, 33vw"
               onLoad={() => setIsLoading(false)}
