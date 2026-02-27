@@ -17,7 +17,7 @@ export const ProductCard = ({
     brand: string;
     imageUrl: string;
     basePrice: number;
-    categoryId: string | null;
+    categoryId: string;
     createdAt: Date;
   };
   index?: number;

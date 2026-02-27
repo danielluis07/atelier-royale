@@ -66,7 +66,7 @@ export const UpdateProductForm = ({
       basePrice: productData.basePrice,
       isAvailable: productData.isAvailable,
       isFeatured: productData.isFeatured,
-      categoryId: productData.categoryId ?? null,
+      categoryId: productData.categoryId,
       variants: productData.variants.map((v) => ({
         id: v.id,
         sku: v.sku,

@@ -58,7 +58,7 @@ export const CreateProductForm = ({
       imageUrl: "",
       isAvailable: true,
       isFeatured: false,
-      categoryId: null,
+      categoryId: "",
       variants: [
         {
           sku: "",

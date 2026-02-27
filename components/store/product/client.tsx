@@ -273,10 +273,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
       </div>
 
       <div className="mt-10">
-        <RelatedProducts
-          productId={data.id}
-          categoryId={data.categoryId ?? ""}
-        />
+        <RelatedProducts productId={data.id} categoryId={data.categoryId} />
       </div>
     </>
   );

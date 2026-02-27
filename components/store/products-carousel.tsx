@@ -28,7 +28,7 @@ export function ProductsCarousel({
         brand: string;
         imageUrl: string;
         basePrice: number;
-        categoryId: string | null;
+        categoryId: string;
         createdAt: Date;
       }[]
     | undefined;

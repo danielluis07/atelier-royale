@@ -57,7 +57,7 @@ export const CategoriesClient = () => {
               },
               onError: (error) => {
                 console.error(error);
-                toast.error("Erro ao deletar categoria(s). Tente novamente.");
+                toast.error(error.message || "Erro ao deletar categoria(s)");
               },
             },
           );

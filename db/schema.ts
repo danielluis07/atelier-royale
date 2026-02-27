@@ -190,7 +190,7 @@ export const category = pgTable("category", {
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description"),
-  imageUrl: text("image_url"),
+  imageUrl: text("image_url").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -218,9 +218,11 @@ export const product = pgTable(
     basePrice: integer("base_price").notNull(),
     isAvailable: boolean("is_available").notNull().default(true),
     isFeatured: boolean("is_featured").notNull().default(false),
-    categoryId: text("category_id").references(() => category.id, {
-      onDelete: "set null",
-    }),
+    categoryId: text("category_id")
+      .notNull()
+      .references(() => category.id, {
+        onDelete: "restrict",
+      }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
