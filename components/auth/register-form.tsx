@@ -4,13 +4,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Field,
   FieldDescription,
   FieldError,
@@ -76,29 +69,94 @@ export const RegisterForm = () => {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-md mt-10">
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">Criar conta</CardTitle>
-        <CardDescription>
-          Preencha os dados abaixo para criar sua conta
-        </CardDescription>
-      </CardHeader>
+    <div className="w-full max-w-md">
+      {/* Header */}
+      <div className="text-center mb-10">
+        <h1 className="font-serif text-3xl tracking-tight text-foreground mb-3">
+          Criar sua conta
+        </h1>
+        <p className="font-sans text-sm text-muted-foreground tracking-wide">
+          Preencha os dados abaixo para se cadastrar
+        </p>
+      </div>
 
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup>
-            {/* Nome */}
+      {/* Decorative divider */}
+      <div className="flex items-center justify-center gap-4 mb-10">
+        <div className="h-px flex-1 bg-border" />
+        <div className="w-1.5 h-1.5 rotate-45 border border-primary/40" />
+        <div className="h-px flex-1 bg-border" />
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FieldGroup>
+          {/* Nome */}
+          <Controller
+            name="name"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  htmlFor="name"
+                  className="text-[10px] tracking-[0.25em] uppercase font-sans text-foreground">
+                  Nome completo
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="name"
+                  placeholder="João Silva"
+                  disabled={isLoading}
+                  className="h-11 rounded-none border-border bg-transparent font-sans text-sm tracking-wide placeholder:text-muted-foreground/50 focus-visible:border-foreground focus-visible:ring-0"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error!]} />
+                )}
+              </Field>
+            )}
+          />
+
+          {/* Email */}
+          <Controller
+            name="email"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  htmlFor="email"
+                  className="text-[10px] tracking-[0.25em] uppercase font-sans text-foreground">
+                  Email
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  placeholder="m@exemplo.com"
+                  disabled={isLoading}
+                  className="h-11 rounded-none border-border bg-transparent font-sans text-sm tracking-wide placeholder:text-muted-foreground/50 focus-visible:border-foreground focus-visible:ring-0"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error!]} />
+                )}
+              </Field>
+            )}
+          />
+
+          {/* Senhas */}
+          <div className="grid grid-cols-2 gap-4">
             <Controller
-              name="name"
+              name="password"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="name">Nome completo</FieldLabel>
-                  <Input
+                  <FieldLabel
+                    htmlFor="password"
+                    className="text-[10px] tracking-[0.25em] uppercase font-sans text-foreground">
+                    Senha
+                  </FieldLabel>
+                  <PasswordInput
                     {...field}
-                    id="name"
-                    placeholder="João Silva"
+                    id="password"
                     disabled={isLoading}
+                    className="h-11 rounded-none border-border bg-transparent font-sans text-sm tracking-wide focus-visible:border-foreground focus-visible:ring-0"
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error!]} />
@@ -107,19 +165,21 @@ export const RegisterForm = () => {
               )}
             />
 
-            {/* Email */}
             <Controller
-              name="email"
+              name="repeat_password"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
+                  <FieldLabel
+                    htmlFor="repeat_password"
+                    className="text-[10px] tracking-[0.25em] uppercase font-sans text-foreground">
+                    Confirmar senha
+                  </FieldLabel>
+                  <PasswordInput
                     {...field}
-                    id="email"
-                    type="email"
-                    placeholder="m@exemplo.com"
+                    id="repeat_password"
                     disabled={isLoading}
+                    className="h-11 rounded-none border-border bg-transparent font-sans text-sm tracking-wide focus-visible:border-foreground focus-visible:ring-0"
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error!]} />
@@ -127,72 +187,37 @@ export const RegisterForm = () => {
                 </Field>
               )}
             />
+          </div>
 
-            {/* Senhas */}
-            <div className="grid grid-cols-2 gap-4">
-              <Controller
-                name="password"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="password">Senha</FieldLabel>
-                    <PasswordInput
-                      {...field}
-                      id="password"
-                      disabled={isLoading}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error!]} />
-                    )}
-                  </Field>
-                )}
-              />
+          <FieldDescription className="font-sans text-xs text-muted-foreground tracking-wide">
+            A senha deve ter pelo menos 8 caracteres.
+          </FieldDescription>
 
-              <Controller
-                name="repeat_password"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="repeat_password">
-                      Confirmar senha
-                    </FieldLabel>
-                    <PasswordInput
-                      {...field}
-                      id="repeat_password"
-                      disabled={isLoading}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error!]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
+          {/* Submit */}
+          <div className="mt-4">
+            <Button
+              type="submit"
+              variant="luxury"
+              disabled={isLoading}
+              className="w-full h-12 text-xs">
+              {isLoading ? "Criando conta..." : "Criar conta"}
+            </Button>
 
-            <FieldDescription>
-              A senha deve ter pelo menos 8 caracteres.
+            <FieldDescription
+              className={cn(
+                "pt-6 text-center font-sans text-sm text-muted-foreground",
+                isLoading && "pointer-events-none opacity-50",
+              )}>
+              Já tem uma conta?{" "}
+              <Link
+                href="/login"
+                className="text-foreground hover:text-primary transition-colors duration-300 underline underline-offset-4">
+                Entrar
+              </Link>
             </FieldDescription>
-
-            {/* Submit */}
-            <div className="mt-6">
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? "Criando conta..." : "Criar conta"}
-              </Button>
-
-              <FieldDescription
-                className={cn(
-                  "pt-4 text-center",
-                  isLoading && "pointer-events-none opacity-50",
-                )}>
-                Já tem uma conta?{" "}
-                <Link href="/login" className="underline">
-                  Entrar
-                </Link>
-              </FieldDescription>
-            </div>
-          </FieldGroup>
-        </form>
-      </CardContent>
-    </Card>
+          </div>
+        </FieldGroup>
+      </form>
+    </div>
   );
 };

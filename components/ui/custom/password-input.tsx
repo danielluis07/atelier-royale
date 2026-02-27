@@ -30,11 +30,10 @@ const PasswordInput = React.forwardRef<
         type="button"
         variant="ghost"
         size="icon"
-        className="absolute right-0 top-0 h-9 w-9 px-2 hover:bg-transparent"
+        className="absolute right-0 top-1 h-9 w-9 px-2 hover:bg-transparent"
         onClick={() => setShowPassword(!showPassword)}
         disabled={rest.disabled}
         aria-label={showPassword ? "Hide password" : "Show password"}>
-        {" "}
         {showPassword ? (
           <EyeOff className="h-4 w-4 text-muted-foreground" />
         ) : (
