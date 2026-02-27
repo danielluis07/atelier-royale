@@ -16,6 +16,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { centsToReais } from "@/lib/utils";
 import { RelatedProducts } from "@/components/store/product/related-products";
 import { ProductVariants } from "./product-variants";
+import { useCart } from "@/hooks/use-cart";
+import { toast } from "sonner";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 
 export const ProductClient = ({ slug }: { slug: string }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -50,6 +53,31 @@ export const ProductClient = ({ slug }: { slug: string }) => {
       : false;
 
   const canAddToCart = hasVariants ? !!selectedVariant && !isOutOfStock : true;
+
+  const { addItem } = useCart();
+
+  const handleAddToCart = () => {
+    if (!canAddToCart) return;
+
+    addItem({
+      productId: data.id,
+      productName: data.name,
+      productBrand: data.brand ?? "",
+      productImage: data.imageUrl,
+      productSlug: slug,
+      variantId: selectedVariant?.id ?? null,
+      variantName: selectedVariant?.name ?? null,
+      size: selectedVariant?.size ?? null,
+      price: activePrice,
+      quantity,
+      maxStock: activeStock,
+    });
+
+    toast.success("Adicionado!");
+
+    // Reset quantity after adding
+    setQuantity(1);
+  };
 
   return (
     <>
@@ -148,6 +176,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
           <button
             type="button"
             disabled={!canAddToCart}
+            onClick={handleAddToCart}
             className={`
               group w-full flex items-center justify-center gap-3 py-4 text-xs tracking-[0.25em] uppercase font-sans transition-all duration-500 mb-4
               ${
@@ -238,7 +267,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
               {
                 icon: Truck,
                 label: "Frete grátis",
-                detail: "Acima de R$ 500",
+                detail: `Acima de R$ ${centsToReais(FREE_SHIPPING_THRESHOLD)}`,
               },
               {
                 icon: ShieldCheck,

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, User, Menu, X } from "lucide-react";
+import { centsToReais, cn } from "@/lib/utils";
+import { CartSheet } from "@/components/store/cart/cart-sheet";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 
 const NAV_ITEMS = ["Camisas", "Ternos", "Camisas", "Relógios", "Sapatos"];
 
@@ -21,7 +23,7 @@ export function Navbar() {
     <>
       {/* Announcement Bar */}
       <div className="bg-foreground text-background text-center py-2 text-xs tracking-[0.3em] uppercase font-sans">
-        Frete grátis em compras acima de R$ 500
+        Frete grátis em compras acima de {centsToReais(FREE_SHIPPING_THRESHOLD)}
       </div>
 
       <header
@@ -57,24 +59,20 @@ export function Navbar() {
 
             {/* Right Nav */}
             <div className="hidden lg:flex items-center gap-8">
+              {/* TODO: Search */}
               <button
                 aria-label="Buscar"
                 className="text-muted-foreground hover:text-foreground transition-colors duration-300">
                 <Search className="w-4.5 h-4.5" strokeWidth={1.5} />
               </button>
+              {/* Login */}
               <Link
                 href="/login"
                 className="text-muted-foreground hover:text-foreground transition-colors duration-300">
                 <User className="w-4.5 h-4.5" strokeWidth={1.5} />
               </Link>
-              <button
-                aria-label="Carrinho de compras"
-                className="text-muted-foreground hover:text-foreground transition-colors duration-300 relative">
-                <ShoppingBag className="size-4.5" strokeWidth={1.5} />
-                <span className="absolute -top-2 -right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] flex items-center justify-center rounded-full">
-                  0
-                </span>
-              </button>
+              {/* Cart */}
+              <CartSheet />
             </div>
 
             {/* Mobile Toggle */}
@@ -117,10 +115,7 @@ export function Navbar() {
                 className="w-4.5 h-4.5 text-muted-foreground"
                 strokeWidth={1.5}
               />
-              <ShoppingBag
-                className="w-4.5 h-4.5 text-muted-foreground"
-                strokeWidth={1.5}
-              />
+              <CartSheet />
             </div>
           </div>
         </div>
