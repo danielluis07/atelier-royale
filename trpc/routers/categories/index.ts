@@ -20,6 +20,8 @@ export const categoriesRouter = createTRPCRouter({
       .select({
         id: category.id,
         name: category.name,
+        imageUrl: category.imageUrl,
+        description: category.description,
       })
       .from(category)
       .orderBy(desc(category.createdAt));
@@ -35,6 +37,7 @@ export const categoriesRouter = createTRPCRouter({
           .insert(category)
           .values({
             ...input,
+            description: input.description ?? null,
             slug: slugify(input.name),
           })
           .returning();
@@ -64,6 +67,8 @@ export const categoriesRouter = createTRPCRouter({
           .update(category)
           .set({
             name: input.name,
+            imageUrl: input.imageUrl,
+            description: input.description ?? null,
             slug: slugify(input.name),
           })
           .where(eq(category.id, input.id))

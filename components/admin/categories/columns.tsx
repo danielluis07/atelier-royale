@@ -6,7 +6,12 @@ import { CategoriesCellAction } from "@/components/admin/categories/cell-action"
 import type { CategoryOutput } from "@/modules/categories/types";
 
 export const getColumns = (
-  onEdit: (category: { id: string; name: string }) => void,
+  onEdit: (category: {
+    id: string;
+    name: string;
+    imageUrl: string;
+    description: string | null;
+  }) => void,
 ): ColumnDef<CategoryOutput>[] => [
   {
     id: "select",
@@ -38,7 +43,14 @@ export const getColumns = (
     id: "actions",
     cell: ({ row }) => (
       <CategoriesCellAction
-        onEdit={() => onEdit({ id: row.original.id, name: row.original.name })}
+        onEdit={() =>
+          onEdit({
+            id: row.original.id,
+            name: row.original.name,
+            imageUrl: row.original.imageUrl,
+            description: row.original.description,
+          })
+        }
       />
     ),
   },
