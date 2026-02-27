@@ -28,7 +28,7 @@ const RECOMMENDED = {
 // const ASPECT_RATIO = RECOMMENDED.width / RECOMMENDED.height;
 // const ASPECT_TOLERANCE = 0.07;
 
-async function getImageSize(
+/* async function getImageSize(
   file: File,
 ): Promise<{ width: number; height: number }> {
   const url = URL.createObjectURL(file);
@@ -43,7 +43,7 @@ async function getImageSize(
   } finally {
     URL.revokeObjectURL(url);
   }
-}
+} */
 
 export const UploadCategoryImage = ({
   file,
@@ -75,7 +75,6 @@ export const UploadCategoryImage = ({
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
-
   const validateAndSet = useCallback(
     async (selectedFile: File) => {
       if (!selectedFile.type.startsWith("image/")) {

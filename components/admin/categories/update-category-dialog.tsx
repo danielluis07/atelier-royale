@@ -67,15 +67,19 @@ export const UpdateCategoryDialog = ({
   const { control, handleSubmit, reset } = form;
 
   useEffect(() => {
+    // Reset the form fields
     reset({ id, name, imageUrl, description });
+
+    // Reset the local image states so they don't bleed over from the last edit
+    setImageFile(null);
+    setExistingImageUrl(undefined);
   }, [id, name, imageUrl, description, reset]);
 
   const onSubmit = async (value: z.infer<typeof updateCategoryInput>) => {
     if (!imageFile && !currentImageUrl) {
-      toast.error("O produto precisa de uma imagem");
+      toast.error("A categoria precisa de uma imagem");
       return;
     }
-
     setIsLoading(true);
     toast.loading("Atualizando categoria...", { id: "update-category" });
 
@@ -113,12 +117,11 @@ export const UpdateCategoryDialog = ({
 
         if (!uploadResponse.ok) {
           toast.error("Erro ao enviar a nova imagem para o S3", {
-            id: "update-product",
+            id: "update-category",
           });
           setIsLoading(false);
           return;
         }
-
         imageUrl = urlResult.publicUrl;
       }
 
@@ -135,6 +138,9 @@ export const UpdateCategoryDialog = ({
         });
       }
 
+      reset();
+      setImageFile(null);
+      onOpenChange(false);
       toast.success("Categoria atualizada com sucesso!", {
         id: "update-category",
       });
@@ -143,9 +149,6 @@ export const UpdateCategoryDialog = ({
       toast.error("Erro ao atualizar categoria", { id: "update-category" });
     } finally {
       setIsLoading(false);
-      reset();
-      setImageFile(null);
-      onOpenChange(false);
     }
   };
 

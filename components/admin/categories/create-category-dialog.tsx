@@ -94,6 +94,9 @@ export const CreateCategoryDialog = () => {
         imageUrl: urlResult.publicUrl,
       });
 
+      reset();
+      setImageFile(null);
+      setIsOpen(false);
       toast.success("Categoria criada com sucesso!", { id: "create-category" });
     } catch (err) {
       console.error("Erro inesperado:", err);
@@ -102,9 +105,6 @@ export const CreateCategoryDialog = () => {
       });
     } finally {
       setIsLoading(false);
-      reset();
-      setImageFile(null);
-      setIsOpen(false);
     }
   };
 

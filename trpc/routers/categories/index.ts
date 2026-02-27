@@ -66,6 +66,8 @@ export const categoriesRouter = createTRPCRouter({
           .update(category)
           .set({
             name: input.name,
+            imageUrl: input.imageUrl,
+            description: input.description,
             slug: slugify(input.name),
           })
           .where(eq(category.id, input.id))
