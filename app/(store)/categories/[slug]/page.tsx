@@ -32,6 +32,20 @@ const CategoryPage = async ({
     .from(category)
     .where(eq(category.slug, slug));
 
+  if (!categoryData) {
+    return (
+      <div className="max-w-360 mx-auto px-6 lg:px-12 py-32 text-center">
+        <h2 className="font-serif text-2xl text-foreground mb-2">
+          Categoria não encontrada
+        </h2>
+        <p className="font-sans text-sm text-muted-foreground">
+          A categoria que você está procurando não existe. Verifique o link ou
+          tente novamente mais tarde.
+        </p>
+      </div>
+    );
+  }
+
   prefetchPublicProducts({
     ...parsedParams,
     categorySlug: slug,
