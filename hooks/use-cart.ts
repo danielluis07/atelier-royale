@@ -45,14 +45,27 @@ export const useCart = create<CartState>()(
       },
 
       updateQuantity: (productId, variantId, quantity) => {
-        if (quantity <= 0) {
-          get().removeItem(productId, variantId);
+        const { items, removeItem } = get();
+        const existing = items.find(
+          (i) => i.productId === productId && i.variantId === variantId,
+        );
+
+        if (!existing) {
           return;
         }
+
+        const maxQty = existing.maxStock ?? 99;
+        const clampedQty = Math.min(quantity, maxQty);
+
+        if (clampedQty <= 0) {
+          removeItem(productId, variantId);
+          return;
+        }
+
         set({
-          items: get().items.map((i) =>
+          items: items.map((i) =>
             i.productId === productId && i.variantId === variantId
-              ? { ...i, quantity: Math.min(quantity, i.maxStock ?? 99) }
+              ? { ...i, quantity: clampedQty }
               : i,
           ),
         });
