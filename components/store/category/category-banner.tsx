@@ -11,7 +11,7 @@ export const CategoryBanner = ({
 }: {
   name: string;
   description?: string;
-  imageUrl: string;
+  imageUrl?: string;
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
