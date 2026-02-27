@@ -41,6 +41,8 @@ export const UploadImage = ({
 
   const displayUrl = previewUrl ?? existingUrl ?? null;
 
+  console.log("is loading?", isLoading);
+
   useEffect(() => {
     // Cleanup function to revoke the object URL when it changes or component unmounts
     return () => {

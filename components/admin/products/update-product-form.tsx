@@ -28,12 +28,11 @@ import { ClientSelect } from "@/components/ui/custom/select/client-select";
 import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
-import { centsToReais } from "@/lib/utils";
+import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useProductSuspense, useUpdateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
 import { deleteFile } from "@/actions/delete-file";
 import { updateProductInput } from "@/modules/products/validations";
-import imageCompression from "browser-image-compression";
 
 export const UpdateProductForm = ({
   id,
@@ -104,22 +103,7 @@ export const UpdateProductForm = ({
     try {
       // 1. Only upload if a new file was selected
       if (imageFile) {
-        const compressionOptions = {
-          maxSizeMB: 0.3, // 300kb
-          maxWidthOrHeight: 1920,
-          useWebWorker: true,
-          fileType: "image/webp",
-        };
-
-        const compressedBlob = await imageCompression(
-          imageFile,
-          compressionOptions,
-        );
-
-        const newFileName = imageFile.name.replace(/\.[^/.]+$/, ".webp");
-        const finalImageFile = new File([compressedBlob], newFileName, {
-          type: "image/webp",
-        });
+        const finalImageFile = await compressImageToWebP(imageFile);
 
         const urlResult = await getUploadUrl(
           finalImageFile.name,
@@ -133,7 +117,9 @@ export const UpdateProductForm = ({
           !urlResult.uploadUrl ||
           !urlResult.publicUrl
         ) {
-          toast.error(urlResult.error ?? "Erro ao gerar link de upload");
+          toast.error(urlResult.error ?? "Erro ao gerar link de upload", {
+            id: "update-product",
+          });
           setIsLoading(false);
           return;
         }
@@ -145,7 +131,9 @@ export const UpdateProductForm = ({
         });
 
         if (!uploadResponse.ok) {
-          toast.error("Erro ao enviar a nova imagem para o S3");
+          toast.error("Erro ao enviar a nova imagem para o S3", {
+            id: "update-product",
+          });
           setIsLoading(false);
           return;
         }

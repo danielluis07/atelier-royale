@@ -28,11 +28,10 @@ import { ClientSelect } from "@/components/ui/custom/select/client-select";
 import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
 import { UploadImage } from "@/components/admin/products/upload-image";
-import { centsToReais } from "@/lib/utils";
+import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useCreateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
 import { createProductInput } from "@/modules/products/validations";
-import imageCompression from "browser-image-compression";
 
 export const CreateProductForm = ({
   categories,
@@ -83,22 +82,7 @@ export const CreateProductForm = ({
     toast.loading("Criando o produto...", { id: "create-product" });
 
     try {
-      const compressionOptions = {
-        maxSizeMB: 0.3, // 300kb
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-        fileType: "image/webp",
-      };
-
-      const compressedBlob = await imageCompression(
-        imageFile,
-        compressionOptions,
-      );
-
-      const newFileName = imageFile.name.replace(/\.[^/.]+$/, ".webp");
-      const finalImageFile = new File([compressedBlob], newFileName, {
-        type: "image/webp",
-      });
+      const finalImageFile = await compressImageToWebP(imageFile);
 
       const urlResult = await getUploadUrl(
         finalImageFile.name,
@@ -108,7 +92,9 @@ export const CreateProductForm = ({
       );
 
       if (!urlResult.success || !urlResult.uploadUrl || !urlResult.publicUrl) {
-        toast.error(urlResult.error ?? "Erro ao gerar link de upload");
+        toast.error(urlResult.error ?? "Erro ao gerar link de upload", {
+          id: "create-product",
+        });
         setIsLoading(false);
         return;
       }
@@ -123,19 +109,22 @@ export const CreateProductForm = ({
       });
 
       if (!uploadResponse.ok) {
-        toast.error("Erro ao enviar imagem para o S3");
+        toast.error("Erro ao enviar imagem para o S3", {
+          id: "create-product",
+        });
         setIsLoading(false);
         return;
       }
 
-      // 3. Save the product data to your database, using the publicUrl
-      (await mutateAsync({
+      await mutateAsync({
         ...value,
         name: value.name.trim(),
         description: value.description.trim(),
-        imageUrl: urlResult.publicUrl, // Use the generated public URL here
-      }),
-        router.push("/admin/products"));
+        imageUrl: urlResult.publicUrl,
+      });
+
+      router.push("/admin/products");
+
       toast.success("Produto criado com sucesso!", { id: "create-product" });
     } catch (err) {
       console.error("Erro inesperado:", err);
