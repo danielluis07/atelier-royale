@@ -14,9 +14,9 @@ import {
   ilike,
   asc,
   count,
-  sql,
 } from "drizzle-orm";
-import { isDatabaseUniqueError, slugify } from "@/lib/utils";
+import { slugify } from "@/lib/utils";
+import { isDatabaseUniqueError } from "@/lib/db-utils";
 import {
   createProductInput,
   getProductInput,
@@ -179,7 +179,7 @@ export const productsRouter = createTRPCRouter({
               name: input.name,
               description: input.description,
               brand: input.brand,
-              imageUrl: input.imageUrl ?? "",
+              imageUrl: input.imageUrl,
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
               isFeatured: input.isFeatured ?? false,
@@ -591,12 +591,6 @@ export const productsRouter = createTRPCRouter({
   getRelated: baseProcedure
     .input(relatedProductsInput)
     .query(async ({ input }) => {
-      // If the product has no category, we can't find category-related items easily.
-      // You could optionally fallback to featured products here instead!
-      if (!input.categoryId) {
-        return [];
-      }
-
       try {
         const relatedProducts = await db
           .select({
@@ -619,8 +613,6 @@ export const productsRouter = createTRPCRouter({
               eq(product.isAvailable, true),
             ),
           )
-          // Optional: Order randomly so the related section doesn't look identical every time
-          .orderBy(sql`RANDOM()`)
           .limit(input.limit);
 
         return relatedProducts;

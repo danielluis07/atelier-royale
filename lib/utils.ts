@@ -8,21 +8,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Verify if the error is a database unique constraint violation (PostgreSQL error code 23505)
- */
-export const isDatabaseUniqueError = (error: unknown): boolean => {
-  return (
-    error !== null &&
-    typeof error === "object" &&
-    "cause" in error &&
-    error.cause !== null &&
-    typeof error.cause === "object" &&
-    "code" in error.cause &&
-    error.cause.code === "23505"
-  );
-};
-
 /*
  * Convert a string into a URL-friendly slug
  */

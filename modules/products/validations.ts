@@ -77,14 +77,14 @@ const productBaseSchema = z.object({
   name: z.string().min(1, "O nome do produto é obrigatório"),
   description: z.string().min(1, "A descrição do produto é obrigatória"),
   brand: z.string().min(1, "A marca do produto é obrigatória"),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().min(1, "A URL da imagem do produto é obrigatória"),
   basePrice: z
     .number()
     .int("O preço base deve ser um número inteiro")
     .nonnegative("O preço base não pode ser negativo"),
   isAvailable: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
-  categoryId: z.string().nullable().optional(),
+  categoryId: z.string("A categoria do produto é obrigatória"),
 });
 
 export const createProductInput = productBaseSchema.extend({
@@ -105,8 +105,8 @@ export const getPublicProductInput = z.object({
 });
 
 export const relatedProductsInput = z.object({
-  productId: z.string(),
-  categoryId: z.string().nullable(),
+  productId: z.string("O ID do produto é obrigatório"),
+  categoryId: z.string("A categoria do produto é obrigatória"),
   limit: z.number().min(1).max(10).default(MAX_RELATED_PRODUCTS),
 });
 

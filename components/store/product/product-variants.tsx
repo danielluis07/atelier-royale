@@ -43,7 +43,7 @@ export const ProductVariants = ({
     brand: string;
     imageUrl: string;
     basePrice: number;
-    categoryId: string | null;
+    categoryId: string;
   };
   activeStock: number | null;
   isOutOfStock: boolean;

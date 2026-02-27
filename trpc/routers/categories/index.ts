@@ -4,7 +4,11 @@ import { createTRPCRouter, adminProcedure } from "@/trpc/init";
 import { category } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray, desc } from "drizzle-orm";
-import { isDatabaseUniqueError, slugify } from "@/lib/utils";
+import { slugify } from "@/lib/utils";
+import {
+  isDatabaseForeignKeyError,
+  isDatabaseUniqueError,
+} from "@/lib/db-utils";
 import {
   createCategoryInput,
   updateCategoryInput,
@@ -122,16 +126,11 @@ export const categoriesRouter = createTRPCRouter({
 
         return deletedRows;
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
-        }
-
-        // Check for foreign key constraint violation (adjust based on your DB)
-        if (error instanceof Error && error.message.includes("foreign key")) {
+        if (isDatabaseForeignKeyError(error)) {
           throw new TRPCError({
             code: "CONFLICT",
             message:
-              "Não é possível deletar categorias que possuem itens associados",
+              "Não é possível deletar esta categoria pois ela possui produtos vinculados",
           });
         }
 
