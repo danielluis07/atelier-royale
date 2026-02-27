@@ -32,7 +32,7 @@ import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useProductSuspense, useUpdateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
 import { deleteFile } from "@/actions/delete-file";
-import { updateProductInput } from "@/modules/products/validations";
+import { updateProductSchema } from "@/modules/products/validations";
 
 export const UpdateProductForm = ({
   id,
@@ -55,14 +55,13 @@ export const UpdateProductForm = ({
   const { data: productData } = useProductSuspense(id);
   const { mutateAsync } = useUpdateProduct();
 
-  const form = useForm<z.input<typeof updateProductInput>>({
-    resolver: zodResolver(updateProductInput),
+  const form = useForm<z.input<typeof updateProductSchema>>({
+    resolver: zodResolver(updateProductSchema),
     values: {
       id,
       name: productData.name,
       description: productData.description,
       brand: productData.brand,
-      imageUrl: productData.imageUrl,
       basePrice: productData.basePrice,
       isAvailable: productData.isAvailable,
       isFeatured: productData.isFeatured,
@@ -88,7 +87,7 @@ export const UpdateProductForm = ({
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = async (value: z.input<typeof updateProductInput>) => {
+  const onSubmit = async (value: z.input<typeof updateProductSchema>) => {
     if (!imageFile && !currentImageUrl) {
       toast.error("O produto precisa de uma imagem");
       return;

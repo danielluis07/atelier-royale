@@ -77,7 +77,6 @@ const productBaseSchema = z.object({
   name: z.string().min(1, "O nome do produto é obrigatório"),
   description: z.string().min(1, "A descrição do produto é obrigatória"),
   brand: z.string().min(1, "A marca do produto é obrigatória"),
-  imageUrl: z.string().min(1, "A URL da imagem do produto é obrigatória"),
   basePrice: z
     .number()
     .int("O preço base deve ser um número inteiro")
@@ -87,12 +86,22 @@ const productBaseSchema = z.object({
   categoryId: z.string().min(1, "A categoria do produto é obrigatória"),
 });
 
-export const createProductInput = productBaseSchema.extend({
+export const createProductSchema = productBaseSchema.extend({
   variants: z.array(variantInputSchema).optional().default([]),
+});
+
+export const createProductInput = createProductSchema.extend({
+  imageUrl: z.string().min(1, "A URL da imagem é obrigatória"),
+});
+
+export const updateProductSchema = productBaseSchema.extend({
+  id: z.string().min(1, "O ID do produto é obrigatório"),
+  variants: z.array(updateVariantInputSchema).optional(),
 });
 
 export const updateProductInput = productBaseSchema.extend({
   id: z.string().min(1, "O ID do produto é obrigatório"),
+  imageUrl: z.string().min(1, "A URL da imagem é obrigatória"),
   variants: z.array(updateVariantInputSchema).optional(),
 });
 

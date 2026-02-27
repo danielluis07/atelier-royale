@@ -31,7 +31,7 @@ import { UploadImage } from "@/components/admin/products/upload-image";
 import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useCreateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
-import { createProductInput } from "@/modules/products/validations";
+import { createProductSchema } from "@/modules/products/validations";
 
 export const CreateProductForm = ({
   categories,
@@ -48,14 +48,13 @@ export const CreateProductForm = ({
 
   const { mutateAsync } = useCreateProduct();
 
-  const form = useForm<z.input<typeof createProductInput>>({
-    resolver: zodResolver(createProductInput),
+  const form = useForm<z.input<typeof createProductSchema>>({
+    resolver: zodResolver(createProductSchema),
     defaultValues: {
       name: "",
       description: "",
       brand: "",
       basePrice: 0,
-      imageUrl: "",
       isAvailable: true,
       isFeatured: false,
       categoryId: "",
@@ -71,7 +70,7 @@ export const CreateProductForm = ({
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = async (value: z.input<typeof createProductInput>) => {
+  const onSubmit = async (value: z.input<typeof createProductSchema>) => {
     if (!imageFile) {
       setImageError("A imagem do produto é obrigatória");
       return;

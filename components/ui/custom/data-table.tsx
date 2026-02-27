@@ -39,6 +39,7 @@ interface DataTableProps<TData, TValue> {
   searchKey?: string;
   additionalButton?: React.ReactNode;
   className?: string;
+  getRowId?: (originalRow: TData, index: number, parent?: Row<TData>) => string;
   onDelete?: (rows: Row<TData>[]) => void;
 }
 
@@ -51,6 +52,7 @@ export function DataTable<TData, TValue>({
   searchKey,
   additionalButton,
   className,
+  getRowId,
   onDelete,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -66,6 +68,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    getRowId,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,

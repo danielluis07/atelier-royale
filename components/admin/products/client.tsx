@@ -64,7 +64,12 @@ export const ProductsClient = ({
         </Button>
       </div>
       <ProductsToolbar categories={categories} />
-      <DataTable data={products} columns={columns} className="min-h-10" />
+      <DataTable
+        data={products}
+        columns={columns}
+        getRowId={(row) => String(row.id)}
+        className="min-h-10"
+      />
       {pagination && (
         <div className="mt-5">
           <DataPagination
