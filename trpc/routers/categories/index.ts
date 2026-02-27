@@ -20,6 +20,8 @@ export const categoriesRouter = createTRPCRouter({
       .select({
         id: category.id,
         name: category.name,
+        imageUrl: category.imageUrl,
+        description: category.description,
       })
       .from(category)
       .orderBy(desc(category.createdAt));

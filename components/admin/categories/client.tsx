@@ -22,6 +22,8 @@ export const CategoriesClient = () => {
   const [categoryToEdit, setCategoryToEdit] = useState<{
     id: string;
     name: string;
+    imageUrl: string;
+    description: string | null;
   } | null>(null);
 
   const columns = useMemo(() => getColumns(setCategoryToEdit), []);
@@ -31,6 +33,8 @@ export const CategoriesClient = () => {
       <UpdateCategoryDialog
         id={categoryToEdit?.id ?? ""}
         name={categoryToEdit?.name ?? ""}
+        imageUrl={categoryToEdit?.imageUrl ?? ""}
+        description={categoryToEdit?.description ?? null}
         isOpen={!!categoryToEdit}
         onOpenChange={(isOpen) => {
           if (!isOpen) setCategoryToEdit(null);
