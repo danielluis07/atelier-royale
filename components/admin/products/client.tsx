@@ -7,12 +7,20 @@ import { DataPagination } from "@/components/ui/custom/data-pagination";
 import { DataSearch } from "@/components/ui/custom/data-search";
 import { useURLSearch } from "@/hooks/use-url-search";
 import { useCallback } from "react";
-import { useProductsSuspense } from "@/modules/products/hooks";
+import {
+  useDeleteProducts,
+  useProductsSuspense,
+} from "@/modules/products/hooks";
 import { productsSearchParamsSchema } from "@/modules/products/validations";
 import { ProductsToolbar } from "@/components/admin/products/toolbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import type { Row } from "@tanstack/react-table";
+import { toast } from "sonner";
+import { useConfirm } from "@/providers/confirm-provider";
+import { deleteFiles } from "@/actions/delete-files";
+import { TRPCClientError } from "@trpc/client";
 
 export const ProductsClient = ({
   categories,
@@ -34,7 +42,11 @@ export const ProductsClient = ({
     isPending: isSearchPending,
   } = useURLSearch();
 
+  const { closeConfirm, setPending } = useConfirm();
+
   const { data, isFetching } = useProductsSuspense(parsedParams);
+
+  const { mutateAsync } = useDeleteProducts();
 
   const handlePageChange = useCallback(
     (newPage: number) => {
@@ -44,6 +56,55 @@ export const ProductsClient = ({
     },
     [searchParams, router, pathname],
   );
+
+  const onDelete = async (
+    row: Row<{
+      id: string;
+      name: string;
+      categoryName: string;
+      description: string;
+      brand: string;
+      imageUrl: string;
+      basePrice: number;
+      isAvailable: boolean;
+      isFeatured: boolean;
+      categoryId: string;
+      createdAt: Date;
+    }>[],
+  ) => {
+    const ids = row.map((r) => r.original.id);
+    const imageUrls = row.map((r) => r.original.imageUrl);
+
+    toast.loading(`Deletando ${ids.length} produto(s)...`, {
+      id: "delete-product",
+    });
+    setPending(true);
+
+    try {
+      await mutateAsync({ ids });
+
+      await deleteFiles(imageUrls);
+
+      closeConfirm();
+      toast.success("Produto(s) deletado(s) com sucesso!", {
+        id: "delete-product",
+      });
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof TRPCClientError) {
+        toast.error(error.message || "Erro ao deletar produto(s)", {
+          id: "delete-product",
+        });
+      } else {
+        toast.error("Erro inesperado ao deletar produto(s)", {
+          id: "delete-product",
+        });
+      }
+    } finally {
+      setPending(false);
+    }
+  };
 
   const products = data.products;
   const pagination = data.pagination;
@@ -68,7 +129,7 @@ export const ProductsClient = ({
         data={products}
         columns={columns}
         getRowId={(row) => String(row.id)}
-        className="min-h-10"
+        onDelete={onDelete}
       />
       {pagination && (
         <div className="mt-5">

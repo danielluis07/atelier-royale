@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { ClientSelect } from "@/components/ui/custom/select/client-select";
 import { ArrowLeft } from "lucide-react";
 import { VariantsField } from "@/components/admin/products/variants-field";
-import { UploadImage } from "@/components/admin/products/upload-image";
+import { UploadProductImage } from "@/components/admin/products/upload-product-image";
 import { centsToReais, compressImageToWebP } from "@/lib/utils";
 import { useCreateProduct } from "@/modules/products/hooks";
 import { getUploadUrl } from "@/actions/get-upload-url";
@@ -290,7 +290,7 @@ export const CreateProductForm = ({
         {/* Right Column — Sidebar */}
         <div className="flex flex-col gap-6 h-full">
           <div className="flex-1 flex flex-col min-h-0">
-            <UploadImage
+            <UploadProductImage
               file={imageFile}
               onFileChange={(file) => {
                 setImageFile(file);

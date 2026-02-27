@@ -43,7 +43,7 @@ export const CategoriesClient = () => {
     const imageUrls = row.map((r) => r.original.imageUrl);
 
     toast.loading(`Deletando ${ids.length} categoria(s)...`, {
-      id: "delete-category",
+      id: "delete-categories",
     });
     setPending(true);
 
@@ -54,18 +54,18 @@ export const CategoriesClient = () => {
 
       closeConfirm();
       toast.success("Categoria(s) deletada(s) com sucesso!", {
-        id: "delete-category",
+        id: "delete-categories",
       });
     } catch (error) {
       console.error(error);
 
       if (error instanceof TRPCClientError) {
         toast.error(error.message || "Erro ao deletar categoria(s)", {
-          id: "delete-category",
+          id: "delete-categories",
         });
       } else {
         toast.error("Erro inesperado ao deletar categoria(s)", {
-          id: "delete-category",
+          id: "delete-categories",
         });
       }
     } finally {

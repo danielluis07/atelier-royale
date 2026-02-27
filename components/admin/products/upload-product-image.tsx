@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { MAX_FILE_SIZE_BYTES } from "@/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const UploadImage = ({
+export const UploadProductImage = ({
   file,
   onFileChange,
   existingUrl,
