@@ -1,9 +1,18 @@
 import { db } from "@/db";
-import { createTRPCRouter, adminProcedure } from "@/trpc/init";
-import { user } from "@/db/schema";
+import {
+  createTRPCRouter,
+  adminProcedure,
+  protectedProcedure,
+} from "@/trpc/init";
+import { user, userAddress, userProfile } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq, desc, or, ilike, and, asc, count } from "drizzle-orm";
-import { getUserInput, listUsersInput } from "@/modules/users/validations";
+import {
+  getUserInput,
+  listUsersInput,
+  userProfileFormSchema,
+} from "@/modules/users/validations";
+import { isDatabaseUniqueError } from "@/lib/db-utils";
 
 export const usersRouter = createTRPCRouter({
   list: adminProcedure.input(listUsersInput).query(async ({ input }) => {
@@ -91,4 +100,97 @@ export const usersRouter = createTRPCRouter({
 
     return userData;
   }),
+
+  createProfile: protectedProcedure
+    .input(userProfileFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.auth.user.id;
+
+      const profileInsert = {
+        userId,
+        document: input.document ?? null,
+        phone: input.phone ?? null,
+        birthDate: input.birthDate ?? null,
+      };
+
+      const addressInsert = {
+        userId,
+        label: input.address.label ?? null,
+        recipientName: input.address.recipientName,
+        zipCode: input.address.zipCode,
+        street: input.address.street,
+        number: input.address.number,
+        complement: input.address.complement ?? null,
+        neighborhood: input.address.neighborhood,
+        city: input.address.city,
+        state: input.address.state,
+        isDefault: input.address.isDefault ?? false,
+      };
+
+      try {
+        const result = await db.transaction(async (tx) => {
+          // Optional: prevent multiple default addresses for the same user
+          if (addressInsert.isDefault) {
+            await tx
+              .update(userAddress)
+              .set({ isDefault: false })
+              .where(eq(userAddress.userId, userId));
+          }
+
+          // Insert profile (will fail if profile already exists due to unique userId)
+          const [createdProfile] = await tx
+            .insert(userProfile)
+            .values(profileInsert)
+            .returning({
+              id: userProfile.id,
+              userId: userProfile.userId,
+              document: userProfile.document,
+              phone: userProfile.phone,
+              birthDate: userProfile.birthDate,
+              createdAt: userProfile.createdAt,
+              updatedAt: userProfile.updatedAt,
+            });
+
+          // Insert address
+          const [createdAddress] = await tx
+            .insert(userAddress)
+            .values(addressInsert)
+            .returning({
+              id: userAddress.id,
+              userId: userAddress.userId,
+              label: userAddress.label,
+              recipientName: userAddress.recipientName,
+              zipCode: userAddress.zipCode,
+              street: userAddress.street,
+              number: userAddress.number,
+              complement: userAddress.complement,
+              neighborhood: userAddress.neighborhood,
+              city: userAddress.city,
+              state: userAddress.state,
+              isDefault: userAddress.isDefault,
+              createdAt: userAddress.createdAt,
+              updatedAt: userAddress.updatedAt,
+            });
+
+          return { profile: createdProfile, address: createdAddress };
+        });
+
+        return result;
+      } catch (err) {
+        // Unique constraint violations: document already used, or profile already exists for user
+        if (isDatabaseUniqueError(err)) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message:
+              "Conflito de dados: documento já cadastrado ou perfil já existe para este usuário.",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao criar perfil",
+          cause: err,
+        });
+      }
+    }),
 });

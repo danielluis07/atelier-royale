@@ -27,3 +27,56 @@ export const usersSearchParamsSchema = z.object({
   sortBy: userSortBySchema.optional(),
   sortOrder: userSortOrderSchema.optional(),
 });
+
+const emptyToUndefined = z
+  .string()
+  .trim()
+  .transform((v) => (v === "" ? undefined : v));
+
+export const userProfileFormSchema = z.object({
+  document: emptyToUndefined.optional(), // you can add .min(11) if you want
+  phone: emptyToUndefined.optional(),
+  birthDate: emptyToUndefined
+    .optional()
+    .refine((v) => !v || /^\d{4}-\d{2}-\d{2}$/.test(v), "Data inválida"),
+  address: z.object({
+    label: emptyToUndefined.optional(),
+    recipientName: z.string().trim().min(1),
+    zipCode: z.string().trim().min(8), // masked form "00000-000" is length 9
+    street: z.string().trim().min(1),
+    number: z.string().trim().min(1),
+    complement: emptyToUndefined.optional(),
+    neighborhood: z.string().trim().min(1),
+    city: z.string().trim().min(1),
+    state: z.enum([
+      "AC",
+      "AL",
+      "AP",
+      "AM",
+      "BA",
+      "CE",
+      "DF",
+      "ES",
+      "GO",
+      "MA",
+      "MT",
+      "MS",
+      "MG",
+      "PA",
+      "PB",
+      "PR",
+      "PE",
+      "PI",
+      "RJ",
+      "RN",
+      "RS",
+      "RO",
+      "RR",
+      "SC",
+      "SP",
+      "SE",
+      "TO",
+    ]),
+    isDefault: z.boolean().default(true),
+  }),
+});
