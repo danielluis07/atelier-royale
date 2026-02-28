@@ -45,7 +45,7 @@ export const ProfileForm = ({
     birthDate: string | null;
     createdAt: Date;
     updatedAt: Date;
-  }[];
+  };
   defaultAddress: {
     id: string;
     userId: string;
@@ -57,11 +57,11 @@ export const ProfileForm = ({
     complement: string | null;
     neighborhood: string;
     city: string;
-    state: string;
+    state: (typeof BRAZILIAN_STATES)[number];
     isDefault: boolean;
     createdAt: Date;
     updatedAt: Date;
-  }[];
+  };
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { mutateAsync: createUserProfile } = useCreateUserProfile();
@@ -70,20 +70,22 @@ export const ProfileForm = ({
   const form = useForm<z.input<typeof userProfileFormSchema>>({
     resolver: zodResolver(userProfileFormSchema),
     defaultValues: {
-      document: "",
-      phone: "",
-      birthDate: "",
+      document: profile?.document ? formatCpfCnpj(profile.document) : "",
+      phone: profile?.phone ? formatPhoneBR(profile.phone) : "",
+      birthDate: profile?.birthDate ?? "",
       address: {
-        label: "Casa",
-        recipientName: "",
-        zipCode: "",
-        street: "",
-        number: "",
-        complement: "",
-        neighborhood: "",
-        city: "",
-        state: "SC",
-        isDefault: true,
+        label: defaultAddress?.label ?? "Casa",
+        recipientName: defaultAddress?.recipientName ?? "",
+        zipCode: defaultAddress?.zipCode
+          ? formatCep(defaultAddress.zipCode)
+          : "",
+        street: defaultAddress?.street ?? "",
+        number: defaultAddress?.number ?? "",
+        complement: defaultAddress?.complement ?? "",
+        neighborhood: defaultAddress?.neighborhood ?? "",
+        city: defaultAddress?.city ?? "",
+        state: defaultAddress?.state ?? "SC",
+        isDefault: defaultAddress?.isDefault ?? true,
       },
     },
   });

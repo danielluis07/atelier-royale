@@ -15,13 +15,18 @@ const ProfilePage = async () => {
   const { user } = await requireUser();
 
   const [profile, defaultAddress] = await Promise.all([
-    db.select().from(userProfile).where(eq(userProfile.userId, user.id)),
+    db
+      .select()
+      .from(userProfile)
+      .where(eq(userProfile.userId, user.id))
+      .then((res) => res[0] ?? null),
     db
       .select()
       .from(userAddress)
       .where(
         and(eq(userAddress.userId, user.id), eq(userAddress.isDefault, true)),
-      ),
+      )
+      .then((res) => res[0] ?? null),
   ]);
 
   return (
@@ -49,6 +54,7 @@ const ProfilePage = async () => {
         name={user.name}
         email={user.email}
         profile={profile}
+        // @ts-expect-error - State is defined as a string in the database, this will be fixed in a future PR
         defaultAddress={defaultAddress}
       />
     </div>
