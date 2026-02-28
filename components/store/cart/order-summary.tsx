@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Truck, ShieldCheck, RotateCcw, Lock } from "lucide-react";
 import { centsToReais } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
+import { toast } from "sonner";
 
 export function OrderSummary({
   total,
@@ -82,6 +83,7 @@ export function OrderSummary({
       {/* Checkout */}
       <button
         type="button"
+        onClick={() => toast("Essa é apenas uma demonstração")}
         className="w-full flex items-center justify-center gap-3 py-4 text-xs tracking-[0.25em] uppercase font-sans bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-all duration-500 mb-3">
         <Lock className="w-3.5 h-3.5" strokeWidth={1.5} />
         Finalizar compra

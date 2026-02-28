@@ -62,3 +62,33 @@ export const MAX_RELATED_PRODUCTS = 4;
 export const NEW_PRODUCT_THRESHOLD_DAYS = 30;
 
 export const FREE_SHIPPING_THRESHOLD = 50000;
+
+export const BRAZILIAN_STATES = [
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
+] as const;
