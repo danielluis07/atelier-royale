@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, User, Menu, X } from "lucide-react";
+import { User, Menu, X } from "lucide-react";
 import { centsToReais, cn } from "@/lib/utils";
 import { CartSheet } from "@/components/store/cart/cart-sheet";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import { authClient } from "@/lib/auth-client";
+import { SearchDialog } from "@/components/store/search-dialog";
 
 const NAV_ITEMS = ["Camisas", "Ternos", "Camisas", "Relógios", "Sapatos"];
 
@@ -61,12 +62,8 @@ export function Navbar() {
 
             {/* Right Nav */}
             <div className="hidden lg:flex items-center gap-8">
-              {/* TODO: Search */}
-              <button
-                aria-label="Buscar"
-                className="text-muted-foreground hover:text-foreground transition-colors duration-300">
-                <Search className="w-4.5 h-4.5" strokeWidth={1.5} />
-              </button>
+              {/* Search */}
+              <SearchDialog />
               {/* Login */}
               <Link
                 href={session ? "/account" : "/login"}
@@ -109,10 +106,7 @@ export function Navbar() {
               </Link>
             ))}
             <div className="flex items-center gap-6 pt-4 border-t border-border">
-              <Search
-                className="w-4.5 h-4.5 text-muted-foreground"
-                strokeWidth={1.5}
-              />
+              <SearchDialog />
               <Link
                 href={session ? "/account" : "/login"}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-300">
