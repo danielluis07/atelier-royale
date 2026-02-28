@@ -1,4 +1,7 @@
 import { ProfileForm } from "@/components/store/account/profile/profile-form";
+import { db } from "@/db";
+import { userAddress, userProfile } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { requireUser } from "@/lib/auth-utils";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
@@ -10,6 +13,16 @@ export const metadata: Metadata = {
 
 const ProfilePage = async () => {
   const { user } = await requireUser();
+
+  const [profile, defaultAddress] = await Promise.all([
+    db.select().from(userProfile).where(eq(userProfile.userId, user.id)),
+    db
+      .select()
+      .from(userAddress)
+      .where(
+        and(eq(userAddress.userId, user.id), eq(userAddress.isDefault, true)),
+      ),
+  ]);
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
@@ -32,7 +45,12 @@ const ProfilePage = async () => {
         </div>
       </div>
 
-      <ProfileForm name={user.name} email={user.email} />
+      <ProfileForm
+        name={user.name}
+        email={user.email}
+        profile={profile}
+        defaultAddress={defaultAddress}
+      />
     </div>
   );
 };

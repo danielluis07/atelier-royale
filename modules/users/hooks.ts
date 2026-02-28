@@ -30,3 +30,12 @@ export const useCreateUserProfile = () => {
 
   return useMutation(trpc.users.createProfile.mutationOptions());
 };
+
+/**
+ * Hook to upsert a user profile.
+ */
+export const useUpsertUserProfile = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.users.upsertProfile.mutationOptions());
+};

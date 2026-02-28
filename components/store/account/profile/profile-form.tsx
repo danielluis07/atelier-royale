@@ -11,7 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BRAZILIAN_STATES } from "@/constants";
 import { Section } from "@/components/store/account/profile/section";
-import { useCreateUserProfile } from "@/modules/users/hooks";
+import {
+  useCreateUserProfile,
+  useUpsertUserProfile,
+} from "@/modules/users/hooks";
 import { userProfileFormSchema } from "@/modules/users/validations";
 import {
   digitsOnly,
@@ -29,12 +32,40 @@ const labelClasses =
 export const ProfileForm = ({
   name,
   email,
+  profile,
+  defaultAddress,
 }: {
   name: string;
   email: string;
+  profile: {
+    id: string;
+    userId: string;
+    document: string | null;
+    phone: string | null;
+    birthDate: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  defaultAddress: {
+    id: string;
+    userId: string;
+    label: string | null;
+    recipientName: string;
+    zipCode: string;
+    street: string;
+    number: string;
+    complement: string | null;
+    neighborhood: string;
+    city: string;
+    state: string;
+    isDefault: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { mutateAsync } = useCreateUserProfile();
+  const { mutateAsync: createUserProfile } = useCreateUserProfile();
+  const { mutateAsync: upsertUserProfile } = useUpsertUserProfile();
 
   const form = useForm<z.input<typeof userProfileFormSchema>>({
     resolver: zodResolver(userProfileFormSchema),
@@ -74,15 +105,27 @@ export const ProfileForm = ({
       },
     };
 
-    toast.promise(mutateAsync(payload), {
-      loading: "Salvando...",
-      success: "Salvo com sucesso!",
-      error: (error) => {
-        console.error(error);
-        return "Erro ao salvar perfil";
-      },
-      finally: () => setIsLoading(false),
-    });
+    if (!profile && !defaultAddress) {
+      toast.promise(createUserProfile(payload), {
+        loading: "Salvando...",
+        success: "Salvo com sucesso!",
+        error: (error) => {
+          console.error(error);
+          return "Erro ao salvar perfil";
+        },
+        finally: () => setIsLoading(false),
+      });
+    } else {
+      toast.promise(upsertUserProfile(payload), {
+        loading: "Salvando...",
+        success: "Salvo com sucesso!",
+        error: (error) => {
+          console.error(error);
+          return "Erro ao salvar perfil";
+        },
+        finally: () => setIsLoading(false),
+      });
+    }
   };
 
   return (
@@ -482,7 +525,7 @@ export const ProfileForm = ({
       {/* ─── Submit ─── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
         <p className="font-sans text-xs text-muted-foreground tracking-wide">
-          As alterações serão salvas automaticamente no seu perfil
+          Clique em salvar para atualizar seu perfil
         </p>
 
         <Button

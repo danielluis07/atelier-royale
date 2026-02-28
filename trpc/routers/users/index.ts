@@ -101,6 +101,24 @@ export const usersRouter = createTRPCRouter({
     return userData;
   }),
 
+  getProfile: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.auth.user.id;
+
+    const [profile] = await db
+      .select()
+      .from(userProfile)
+      .where(eq(userProfile.userId, userId));
+
+    const [defaultAddress] = await db
+      .select()
+      .from(userAddress)
+      .where(
+        and(eq(userAddress.userId, userId), eq(userAddress.isDefault, true)),
+      );
+
+    return { profile: profile ?? null, address: defaultAddress ?? null };
+  }),
+
   createProfile: protectedProcedure
     .input(userProfileFormSchema)
     .mutation(async ({ input, ctx }) => {
@@ -189,6 +207,108 @@ export const usersRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Erro ao criar perfil",
+          cause: err,
+        });
+      }
+    }),
+
+  upsertProfile: protectedProcedure
+    .input(userProfileFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.auth.user.id;
+
+      try {
+        return await db.transaction(async (tx) => {
+          if (input.address.isDefault) {
+            await tx
+              .update(userAddress)
+              .set({ isDefault: false })
+              .where(eq(userAddress.userId, userId));
+          }
+
+          // UPSERT profile by unique userId
+          const [profile] = await tx
+            .insert(userProfile)
+            .values({
+              userId,
+              document: input.document ?? null,
+              phone: input.phone ?? null,
+              birthDate: input.birthDate ?? null,
+            })
+            .onConflictDoUpdate({
+              target: userProfile.userId,
+              set: {
+                document: input.document ?? null,
+                phone: input.phone ?? null,
+                birthDate: input.birthDate ?? null,
+                updatedAt: new Date(),
+              },
+            })
+            .returning();
+
+          // Find default address to update (or create one)
+          const [existingDefault] = await tx
+            .select({ id: userAddress.id })
+            .from(userAddress)
+            .where(
+              and(
+                eq(userAddress.userId, userId),
+                eq(userAddress.isDefault, true),
+              ),
+            );
+
+          let address;
+          if (existingDefault) {
+            [address] = await tx
+              .update(userAddress)
+              .set({
+                label: input.address.label ?? null,
+                recipientName: input.address.recipientName,
+                zipCode: input.address.zipCode,
+                street: input.address.street,
+                number: input.address.number,
+                complement: input.address.complement ?? null,
+                neighborhood: input.address.neighborhood,
+                city: input.address.city,
+                state: input.address.state,
+                isDefault: input.address.isDefault ?? true,
+                updatedAt: new Date(),
+              })
+              .where(eq(userAddress.id, existingDefault.id))
+              .returning();
+          } else {
+            [address] = await tx
+              .insert(userAddress)
+              .values({
+                userId,
+                label: input.address.label ?? null,
+                recipientName: input.address.recipientName,
+                zipCode: input.address.zipCode,
+                street: input.address.street,
+                number: input.address.number,
+                complement: input.address.complement ?? null,
+                neighborhood: input.address.neighborhood,
+                city: input.address.city,
+                state: input.address.state,
+                isDefault: input.address.isDefault ?? true,
+              })
+              .returning();
+          }
+
+          return { profile, address };
+        });
+      } catch (err) {
+        if (isDatabaseUniqueError(err)) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message:
+              "Conflito de dados: documento já cadastrado ou perfil já existe para este usuário.",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao salvar perfil.",
           cause: err,
         });
       }
