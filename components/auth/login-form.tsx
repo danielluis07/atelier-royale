@@ -45,9 +45,10 @@ export const LoginForm = () => {
       },
       {
         onRequest: () => setIsLoading(true),
-        onSuccess: async (ctx) => {
+        onSuccess: (ctx) => {
+          const route = ctx.data.user.role === "admin" ? "/admin" : "/account";
           setIsLoading(false);
-          router.push(`/${ctx.data.user.role}`);
+          router.push(route);
         },
         onError: (ctx) => {
           console.error("Sign-in error:", ctx.error);

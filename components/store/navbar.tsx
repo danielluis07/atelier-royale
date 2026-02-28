@@ -6,12 +6,14 @@ import { Search, User, Menu, X } from "lucide-react";
 import { centsToReais, cn } from "@/lib/utils";
 import { CartSheet } from "@/components/store/cart/cart-sheet";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
+import { authClient } from "@/lib/auth-client";
 
 const NAV_ITEMS = ["Camisas", "Ternos", "Camisas", "Relógios", "Sapatos"];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const session = authClient.useSession();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -67,7 +69,7 @@ export function Navbar() {
               </button>
               {/* Login */}
               <Link
-                href="/login"
+                href={session ? "/account" : "/login"}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-300">
                 <User className="w-4.5 h-4.5" strokeWidth={1.5} />
               </Link>
@@ -111,10 +113,11 @@ export function Navbar() {
                 className="w-4.5 h-4.5 text-muted-foreground"
                 strokeWidth={1.5}
               />
-              <User
-                className="w-4.5 h-4.5 text-muted-foreground"
-                strokeWidth={1.5}
-              />
+              <Link
+                href={session ? "/account" : "/login"}
+                className="text-muted-foreground hover:text-foreground transition-colors duration-300">
+                <User className="w-4.5 h-4.5" strokeWidth={1.5} />
+              </Link>
               <CartSheet />
             </div>
           </div>

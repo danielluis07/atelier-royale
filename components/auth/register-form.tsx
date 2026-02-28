@@ -14,19 +14,18 @@ import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { signUpInput } from "@/validations/auth";
 import { useState } from "react";
-// import { authClient } from "@/lib/auth-client";
-// import { useRouter } from "next/navigation";
-// import { getErrorMessage } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { getErrorMessage } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PasswordInput } from "@/components/ui/custom/password-input";
 import { toast } from "sonner";
 
 export const RegisterForm = () => {
-  // const { signUp } = authClient;
-  // const router = useRouter();
+  const { signUp } = authClient;
+  const router = useRouter();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof signUpInput>>({
@@ -41,11 +40,8 @@ export const RegisterForm = () => {
 
   const { control, handleSubmit } = form;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSubmit = async (value: z.infer<typeof signUpInput>) => {
-    toast.warning("Por enquanto apenas o administrador pode criar contas.");
-
-    /*     await signUp.email(
+    await signUp.email(
       {
         email: value.email,
         password: value.password,
@@ -55,9 +51,9 @@ export const RegisterForm = () => {
         onRequest: () => {
           setIsLoading(true);
         },
-        onSuccess: async () => {
+        onSuccess: () => {
           setIsLoading(false);
-          router.push(`/`);
+          router.push("/account");
         },
         onError: (ctx) => {
           console.error("Sign-up error:", ctx.error);
@@ -65,7 +61,7 @@ export const RegisterForm = () => {
           setIsLoading(false);
         },
       },
-    ); */
+    );
   };
 
   return (
