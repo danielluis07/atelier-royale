@@ -267,6 +267,7 @@ export const ProfileClient = () => {
           </p>
           <Button
             onClick={() => toast("Essa é apenas uma demonstração")}
+            type="button"
             variant="luxury"
             className="h-12 px-10 text-xs">
             <Save className="w-4 h-4" strokeWidth={1.5} />
