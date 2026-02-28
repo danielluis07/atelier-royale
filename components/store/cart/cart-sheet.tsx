@@ -8,7 +8,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
-  SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
 import { ShoppingBag, Minus, Plus, Trash2, ArrowRight } from "lucide-react";
@@ -17,6 +16,7 @@ import { centsToReais } from "@/lib/utils";
 import type { CartItem } from "@/types/cart";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
 
 function CartItemRow({ item }: { item: CartItem }) {
   const { updateQuantity, removeItem } = useCart();
@@ -112,6 +112,7 @@ function CartItemRow({ item }: { item: CartItem }) {
 }
 
 export function CartSheet() {
+  const [open, setOpen] = useState(false);
   const { items, getTotal, getItemCount } = useCart();
   const isMounted = useHasMounted();
 
@@ -119,19 +120,18 @@ export function CartSheet() {
   const total = isMounted ? getTotal() : 0;
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <button
-          aria-label="Carrinho de compras"
-          className="text-muted-foreground hover:text-foreground transition-colors duration-300 relative">
-          <ShoppingBag className="size-4.5" strokeWidth={1.5} />
-          {itemCount > 0 && (
-            <span className="absolute -top-2 -right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] flex items-center justify-center rounded-full">
-              {itemCount > 99 ? "99+" : itemCount}
-            </span>
-          )}
-        </button>
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <button
+        onClick={() => setOpen(true)}
+        aria-label="Carrinho de compras"
+        className="text-muted-foreground hover:text-foreground transition-colors duration-300 relative">
+        <ShoppingBag className="size-4.5" strokeWidth={1.5} />
+        {itemCount > 0 && (
+          <span className="absolute -top-2 -right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] flex items-center justify-center rounded-full">
+            {itemCount > 99 ? "99+" : itemCount}
+          </span>
+        )}
+      </button>
       <SheetContent className="flex flex-col p-0 sm:max-w-md">
         <SheetHeader className="px-6 pt-6 pb-0">
           <SheetTitle className="font-serif text-xl tracking-wide">
