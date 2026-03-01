@@ -1,5 +1,5 @@
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { normalizeUsersParams } from "@/modules/users/utils";
 import type { UserInput, UsersInput } from "@/modules/users/types";
 
@@ -20,4 +20,22 @@ export const useUserSuspense = (params: UserInput) => {
   const trpc = useTRPC();
 
   return useSuspenseQuery(trpc.users.get.queryOptions(params));
+};
+
+/**
+ * Hook to create a user profile.
+ */
+export const useCreateUserProfile = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.users.createProfile.mutationOptions());
+};
+
+/**
+ * Hook to upsert a user profile.
+ */
+export const useUpsertUserProfile = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.users.upsertProfile.mutationOptions());
 };
