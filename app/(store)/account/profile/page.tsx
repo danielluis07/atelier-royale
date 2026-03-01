@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/auth-utils";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
+import { ProfileFormSkeleton } from "@/components/skeletons/store/profile-form-skeleton";
 
 export const metadata: Metadata = {
   title: "Meu Perfil | Atelier Royale",
@@ -50,13 +52,15 @@ const ProfilePage = async () => {
         </div>
       </div>
 
-      <ProfileForm
-        name={user.name}
-        email={user.email}
-        profile={profile}
-        // @ts-expect-error - State is defined as a string in the database, this will be fixed in a future PR
-        defaultAddress={defaultAddress}
-      />
+      <Suspense fallback={<ProfileFormSkeleton />}>
+        <ProfileForm
+          name={user.name}
+          email={user.email}
+          profile={profile}
+          // @ts-expect-error - State is defined as a string in the database, this will be fixed in a future PR
+          defaultAddress={defaultAddress}
+        />
+      </Suspense>
     </div>
   );
 };
