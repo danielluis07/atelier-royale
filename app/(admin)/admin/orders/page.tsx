@@ -1,4 +1,3 @@
-import { CategoriesClient } from "@/components/admin/categories/client";
 import { OrdersClient } from "@/components/admin/orders/client";
 import { TableSkeleton } from "@/components/skeletons/admin/table-skeleton";
 import { requireAdmin } from "@/lib/auth-utils";

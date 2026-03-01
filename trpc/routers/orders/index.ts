@@ -14,13 +14,14 @@ export const ordersRouter = createTRPCRouter({
 
     if (search) {
       const normalizedSearch = search.trim();
+      const escapedSearch = normalizedSearch.replace(/[%_]/g, "\\$&");
       const parsedOrderNumber = Number.parseInt(normalizedSearch, 10);
 
       conditions.push(
         or(
-          ilike(user.name, `%${normalizedSearch}%`),
-          ilike(user.email, `%${normalizedSearch}%`),
-          ilike(order.id, `%${normalizedSearch}%`),
+          ilike(user.name, `%${escapedSearch}%`),
+          ilike(user.email, `%${escapedSearch}%`),
+          ilike(order.id, `%${escapedSearch}%`),
           Number.isNaN(parsedOrderNumber)
             ? undefined
             : eq(order.orderNumber, parsedOrderNumber),
