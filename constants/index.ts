@@ -51,6 +51,33 @@ export const PRODUCT_SORT_BY_OPTIONS = [
   { label: "Preço", value: "price" },
 ] as const;
 
+// Orders
+export const ORDER_STATUS_OPTIONS = [
+  { label: "Todos", value: "all" },
+  { label: "Aguardando pagamento", value: "pending_payment" },
+  { label: "Pago", value: "paid" },
+  { label: "Em preparação", value: "processing" },
+  { label: "Enviado", value: "shipped" },
+  { label: "Entregue", value: "delivered" },
+  { label: "Cancelado", value: "cancelled" },
+  { label: "Reembolsado", value: "refunded" },
+] as const;
+
+export const DELIVERY_STATUS_OPTIONS = [
+  { label: "Todos", value: "all" },
+  { label: "Em separação", value: "processing" },
+  { label: "Despachado", value: "dispatched" },
+  { label: "Em trânsito", value: "in_transit" },
+  { label: "Entregue", value: "delivered" },
+  { label: "Falha na entrega", value: "failed" },
+] as const;
+
+export const ORDER_SORT_BY_OPTIONS = [
+  { label: "Data de criação", value: "createdAt" },
+  { label: "Total do pedido", value: "totalAmount" },
+  { label: "Número do pedido", value: "orderNumber" },
+] as const;
+
 export const MAX_FEATURED_PRODUCTS = 4;
 
 export const MAX_NEW_PRODUCTS = 10;
