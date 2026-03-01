@@ -78,6 +78,24 @@ export const ORDER_SORT_BY_OPTIONS = [
   { label: "Número do pedido", value: "orderNumber" },
 ] as const;
 
+export const ORDER_STATUS_LABELS = {
+  pending_payment: "Aguardando pagamento",
+  paid: "Pago",
+  processing: "Em preparação",
+  shipped: "Enviado",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+  refunded: "Reembolsado",
+} as const;
+
+export const DELIVERY_STATUS_LABELS = {
+  processing: "Em separação",
+  dispatched: "Despachado",
+  in_transit: "Em trânsito",
+  delivered: "Entregue",
+  failed: "Falha na entrega",
+} as const;
+
 export const MAX_FEATURED_PRODUCTS = 4;
 
 export const MAX_NEW_PRODUCTS = 10;
