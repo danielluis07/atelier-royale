@@ -70,22 +70,22 @@ export const ProfileForm = ({
   const form = useForm<z.input<typeof userProfileFormSchema>>({
     resolver: zodResolver(userProfileFormSchema),
     defaultValues: {
-      document: profile?.document ? formatCpfCnpj(profile.document) : "",
-      phone: profile?.phone ? formatPhoneBR(profile.phone) : "",
-      birthDate: profile?.birthDate ?? "",
+      document: profile.document ? formatCpfCnpj(profile.document) : "",
+      phone: profile.phone ? formatPhoneBR(profile.phone) : "",
+      birthDate: profile.birthDate ?? "",
       address: {
-        label: defaultAddress?.label ?? "Casa",
-        recipientName: defaultAddress?.recipientName ?? "",
-        zipCode: defaultAddress?.zipCode
+        label: defaultAddress.label ?? "Casa",
+        recipientName: defaultAddress.recipientName ?? "",
+        zipCode: defaultAddress.zipCode
           ? formatCep(defaultAddress.zipCode)
           : "",
-        street: defaultAddress?.street ?? "",
-        number: defaultAddress?.number ?? "",
-        complement: defaultAddress?.complement ?? "",
-        neighborhood: defaultAddress?.neighborhood ?? "",
-        city: defaultAddress?.city ?? "",
-        state: defaultAddress?.state ?? "SC",
-        isDefault: defaultAddress?.isDefault ?? true,
+        street: defaultAddress.street ?? "",
+        number: defaultAddress.number ?? "",
+        complement: defaultAddress.complement ?? "",
+        neighborhood: defaultAddress.neighborhood ?? "",
+        city: defaultAddress.city ?? "",
+        state: defaultAddress.state ?? "SC",
+        isDefault: defaultAddress.isDefault ?? true,
       },
     },
   });

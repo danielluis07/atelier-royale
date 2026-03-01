@@ -124,10 +124,19 @@ export const usersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.auth.user.id;
 
+      const normalizedDocument =
+        input.document && input.document.trim() !== ""
+          ? input.document.replace(/\D+/g, "")
+          : null;
+      const normalizedPhone =
+        input.phone && input.phone.trim() !== ""
+          ? input.phone.replace(/\D+/g, "")
+          : null;
+
       const profileInsert = {
         userId,
-        document: input.document ?? null,
-        phone: input.phone ?? null,
+        document: normalizedDocument,
+        phone: normalizedPhone,
         birthDate: input.birthDate ?? null,
       };
 
@@ -219,6 +228,18 @@ export const usersRouter = createTRPCRouter({
 
       try {
         return await db.transaction(async (tx) => {
+          // Find existing default address BEFORE clearing defaults
+          const [existingDefault] = await tx
+            .select({ id: userAddress.id })
+            .from(userAddress)
+            .where(
+              and(
+                eq(userAddress.userId, userId),
+                eq(userAddress.isDefault, true),
+              ),
+            );
+
+          // Clear all default addresses and set the new one as default
           if (input.address.isDefault) {
             await tx
               .update(userAddress)
@@ -246,17 +267,7 @@ export const usersRouter = createTRPCRouter({
             })
             .returning();
 
-          // Find default address to update (or create one)
-          const [existingDefault] = await tx
-            .select({ id: userAddress.id })
-            .from(userAddress)
-            .where(
-              and(
-                eq(userAddress.userId, userId),
-                eq(userAddress.isDefault, true),
-              ),
-            );
-
+          // Update existing default address or create a new one
           let address;
           if (existingDefault) {
             [address] = await tx

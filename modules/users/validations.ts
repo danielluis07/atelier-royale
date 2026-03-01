@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PAGINATION } from "@/constants";
+import { BRAZILIAN_STATES, PAGINATION } from "@/constants";
 
 export const userSortBySchema = z.enum(["createdAt", "updatedAt", "name"]);
 export const userSortOrderSchema = z.enum(["asc", "desc"]);
@@ -48,35 +48,7 @@ export const userProfileFormSchema = z.object({
     complement: emptyToUndefined.optional(),
     neighborhood: z.string().trim().min(1),
     city: z.string().trim().min(1),
-    state: z.enum([
-      "AC",
-      "AL",
-      "AP",
-      "AM",
-      "BA",
-      "CE",
-      "DF",
-      "ES",
-      "GO",
-      "MA",
-      "MT",
-      "MS",
-      "MG",
-      "PA",
-      "PB",
-      "PR",
-      "PE",
-      "PI",
-      "RJ",
-      "RN",
-      "RS",
-      "RO",
-      "RR",
-      "SC",
-      "SP",
-      "SE",
-      "TO",
-    ]),
+    state: z.enum(BRAZILIAN_STATES),
     isDefault: z.boolean().default(true),
   }),
 });
