@@ -19,7 +19,11 @@ export const MobileMenu = ({
 
   if (isLoading) {
     return (
-      <div className="lg:hidden overflow-hidden transition-all duration-500 bg-background border-t border-border max-h-80 opacity-100">
+      <div
+        className={cn(
+          "lg:hidden overflow-hidden transition-all duration-500 bg-background border-t border-border",
+          mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
+        )}>
         <div className="px-6 py-8 space-y-6">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="w-full h-4" />
