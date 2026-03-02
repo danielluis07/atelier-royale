@@ -43,7 +43,7 @@ export function RevenueByPeriod() {
     <Card className="py-0">
       <CardHeader className="border-b">
         <div className="flex items-center justify-between gap-3">
-          <div>
+          <div className="pt-3">
             <CardTitle>{cardTitle}</CardTitle>
             <CardDescription>{cardDescription}</CardDescription>
           </div>

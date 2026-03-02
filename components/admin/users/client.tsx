@@ -47,19 +47,24 @@ export const UsersClient = () => {
         <DataSearch searchInput={searchInput} setSearchInput={setSearchInput} />
         <UsersToolbar />
       </div>
-      <DataTable data={users} columns={columns} />
-      {pagination && (
-        <div className="mt-5">
-          <DataPagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            total={pagination.total}
-            handlePageChange={handlePageChange}
-            isPending={isFetching || isSearchPending}
-            label="usuário"
-          />
-        </div>
-      )}
+      <div
+        className={
+          isFetching || isSearchPending ? "pointer-events-none opacity-70" : ""
+        }>
+        <DataTable data={users} columns={columns} />
+        {pagination && (
+          <div className="mt-5">
+            <DataPagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              total={pagination.total}
+              handlePageChange={handlePageChange}
+              isPending={isFetching || isSearchPending}
+              label="usuário"
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };

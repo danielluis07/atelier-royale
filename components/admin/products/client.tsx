@@ -125,24 +125,29 @@ export const ProductsClient = ({
         </Button>
       </div>
       <ProductsToolbar categories={categories} />
-      <DataTable
-        data={products}
-        columns={columns}
-        getRowId={(row) => String(row.id)}
-        onDelete={onDelete}
-      />
-      {pagination && (
-        <div className="mt-5">
-          <DataPagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            total={pagination.total}
-            handlePageChange={handlePageChange}
-            isPending={isFetching || isSearchPending}
-            label="produto"
-          />
-        </div>
-      )}
+      <div
+        className={
+          isFetching || isSearchPending ? "pointer-events-none opacity-70" : ""
+        }>
+        <DataTable
+          data={products}
+          columns={columns}
+          getRowId={(row) => String(row.id)}
+          onDelete={onDelete}
+        />
+        {pagination && (
+          <div className="mt-5">
+            <DataPagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              total={pagination.total}
+              handlePageChange={handlePageChange}
+              isPending={isFetching || isSearchPending}
+              label="produto"
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };

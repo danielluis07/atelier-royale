@@ -49,19 +49,24 @@ export const OrdersClient = () => {
         searchPlaceholder="Procurar por cliente, email ou #pedido"
       />
       <OrdersToolbar />
-      <DataTable data={orders} columns={columns} />
-      {pagination && (
-        <div className="mt-5">
-          <DataPagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            total={pagination.total}
-            handlePageChange={handlePageChange}
-            isPending={isFetching || isSearchPending}
-            label="pedido"
-          />
-        </div>
-      )}
+      <div
+        className={
+          isFetching || isSearchPending ? "pointer-events-none opacity-70" : ""
+        }>
+        <DataTable data={orders} columns={columns} />
+        {pagination && (
+          <div className="mt-5">
+            <DataPagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              total={pagination.total}
+              handlePageChange={handlePageChange}
+              isPending={isFetching || isSearchPending}
+              label="pedido"
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };
