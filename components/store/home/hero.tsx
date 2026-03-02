@@ -42,20 +42,15 @@ export function Hero() {
           item, uma declaração de estilo atemporal.
         </p>
 
-        <div className="flex items-center gap-6 mt-10">
+        <div className="mt-10">
           <Link
-            href="#"
+            href="/products"
             className="group inline-flex items-center gap-3 bg-white text-foreground px-8 py-4 text-xs tracking-[0.2em] uppercase font-sans hover:bg-primary hover:text-primary-foreground transition-all duration-500">
             Explorar coleção
             <ArrowRight
               className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1"
               strokeWidth={1.5}
             />
-          </Link>
-          <Link
-            href="#"
-            className="text-white/60 text-xs tracking-[0.2em] uppercase font-sans hover:text-white transition-colors duration-300 border-b border-white/20 pb-1 hover:border-white/60">
-            Lookbook
           </Link>
         </div>
 
