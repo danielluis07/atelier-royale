@@ -13,15 +13,15 @@ const revenueOrderStatuses = [
 const DAY_RANGE = 30;
 
 export const statsRouter = createTRPCRouter({
-  getProfitByPeriod: adminProcedure.query(async () => {
+  getRevenueByPeriod: adminProcedure.query(async () => {
     const startDate = new Date();
     startDate.setUTCHours(0, 0, 0, 0);
     startDate.setUTCDate(startDate.getUTCDate() - (DAY_RANGE - 1));
 
-    const profitRows = await db
+    const revenueRows = await db
       .select({
         date: sql<string>`DATE(${order.createdAt})`,
-        profit: sql<number>`COALESCE(SUM(${order.totalAmount}), 0)`.mapWith(
+        revenue: sql<number>`COALESCE(SUM(${order.totalAmount}), 0)`.mapWith(
           Number,
         ),
       })
@@ -34,8 +34,8 @@ export const statsRouter = createTRPCRouter({
       )
       .groupBy(sql`DATE(${order.createdAt})`);
 
-    const profitsByDate = new Map(
-      profitRows.map((row) => [row.date, row.profit]),
+    const revenuesByDate = new Map(
+      revenueRows.map((row) => [row.date, row.revenue]),
     );
 
     return Array.from({ length: DAY_RANGE }, (_, index) => {
@@ -46,7 +46,7 @@ export const statsRouter = createTRPCRouter({
 
       return {
         date: dateKey,
-        profit: profitsByDate.get(dateKey) ?? 0,
+        revenue: revenuesByDate.get(dateKey) ?? 0,
       };
     });
   }),

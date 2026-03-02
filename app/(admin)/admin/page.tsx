@@ -1,5 +1,5 @@
 import { StatsCard } from "@/components/admin/stats/stats-card";
-import { ProfitByPeriod } from "@/components/admin/stats/charts/profit-by-period";
+import { RevenueByPeriod } from "@/components/admin/stats/charts/revenue-by-period";
 import { ProductsByStatus } from "@/components/admin/stats/charts/products-by-status";
 import { requireAdmin } from "@/lib/auth-utils";
 import { centsToReais } from "@/lib/utils";
@@ -46,7 +46,7 @@ const AdminPage = async () => {
 
       <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <ProfitByPeriod />
+          <RevenueByPeriod />
         </div>
         <ProductsByStatus />
       </div>

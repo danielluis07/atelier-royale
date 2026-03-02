@@ -2,12 +2,12 @@ import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 
 /**
- * Hook to fetch profit by period statistics.
+ * Hook to fetch revenue by period statistics.
  */
-export const useGetProfitByPeriod = () => {
+export const useGetRevenueByPeriod = () => {
   const trpc = useTRPC();
 
-  return useQuery(trpc.stats.getProfitByPeriod.queryOptions());
+  return useQuery(trpc.stats.getRevenueByPeriod.queryOptions());
 };
 
 /**

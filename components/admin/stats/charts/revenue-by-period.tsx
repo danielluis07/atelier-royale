@@ -17,28 +17,26 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { centsToReais } from "@/lib/utils";
-import { useGetProfitByPeriod } from "@/trpc/routers/stats/hooks";
-
-export const description = "Profit by period chart";
+import { useGetRevenueByPeriod } from "@/modules/stats/hooks";
 
 const chartConfig = {
-  profit: {
-    label: "Lucro",
+  revenue: {
+    label: "Receita",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
-export function ProfitByPeriod() {
-  const { data, isPending, isError } = useGetProfitByPeriod();
+export function RevenueByPeriod() {
+  const { data, isPending, isError } = useGetRevenueByPeriod();
 
   const chartData = React.useMemo(() => data ?? [], [data]);
 
-  const totalProfit = React.useMemo(
-    () => chartData.reduce((acc, curr) => acc + curr.profit, 0),
+  const totalRevenue = React.useMemo(
+    () => chartData.reduce((acc, curr) => acc + curr.revenue, 0),
     [chartData],
   );
 
-  const cardTitle = "Lucro por Período";
+  const cardTitle = "Receita por Período";
   const cardDescription = "Últimos 30 dias";
 
   return (
@@ -51,7 +49,7 @@ export function ProfitByPeriod() {
           </div>
           {!isPending && !isError && (
             <span className="text-sm font-semibold">
-              {centsToReais(totalProfit)}
+              {centsToReais(totalRevenue)}
             </span>
           )}
         </div>
@@ -88,7 +86,8 @@ export function ProfitByPeriod() {
                 tickMargin={8}
                 minTickGap={32}
                 tickFormatter={(value) => {
-                  const date = new Date(value);
+                  const [year, month, day] = value.split("-").map(Number);
+                  const date = new Date(year, month - 1, day);
                   return date.toLocaleDateString("pt-BR", {
                     month: "short",
                     day: "numeric",
@@ -101,16 +100,20 @@ export function ProfitByPeriod() {
                     className="w-37.5"
                     formatter={(value) => centsToReais(Number(value))}
                     labelFormatter={(value) => {
-                      return new Date(value).toLocaleDateString("pt-BR", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      });
+                      const [year, month, day] = value.split("-").map(Number);
+                      return new Date(year, month - 1, day).toLocaleDateString(
+                        "pt-BR",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        },
+                      );
                     }}
                   />
                 }
               />
-              <Bar dataKey="profit" fill="var(--color-profit)" />
+              <Bar dataKey="revenue" fill="var(--color-revenue)" />
             </BarChart>
           </ChartContainer>
         ) : null}

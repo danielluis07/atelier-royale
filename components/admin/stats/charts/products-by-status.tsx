@@ -16,9 +16,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { useGetProductsByStatus } from "@/trpc/routers/stats/hooks";
-
-export const description = "Products by status chart";
+import { useGetProductsByStatus } from "@/modules/stats/hooks";
 
 const chartConfig = {
   total: {
