@@ -49,9 +49,11 @@ export function ProfitByPeriod() {
             <CardTitle>{cardTitle}</CardTitle>
             <CardDescription>{cardDescription}</CardDescription>
           </div>
-          <span className="text-sm font-semibold">
-            {centsToReais(totalProfit)}
-          </span>
+          {!isPending && !isError && (
+            <span className="text-sm font-semibold">
+              {centsToReais(totalProfit)}
+            </span>
+          )}
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
@@ -87,7 +89,7 @@ export function ProfitByPeriod() {
                 minTickGap={32}
                 tickFormatter={(value) => {
                   const date = new Date(value);
-                  return date.toLocaleDateString("en-US", {
+                  return date.toLocaleDateString("pt-BR", {
                     month: "short",
                     day: "numeric",
                   });
@@ -99,7 +101,7 @@ export function ProfitByPeriod() {
                     className="w-37.5"
                     formatter={(value) => centsToReais(Number(value))}
                     labelFormatter={(value) => {
-                      return new Date(value).toLocaleDateString("en-US", {
+                      return new Date(value).toLocaleDateString("pt-BR", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
