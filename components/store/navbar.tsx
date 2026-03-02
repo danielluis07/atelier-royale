@@ -8,13 +8,15 @@ import { CartSheet } from "@/components/store/cart/cart-sheet";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import { authClient } from "@/lib/auth-client";
 import { SearchDialog } from "@/components/store/search-dialog";
-
-const NAV_ITEMS = ["Camisas", "Ternos", "Camisas", "Relógios", "Sapatos"];
+import { NavItems } from "@/components/store/nav-items";
+import { MobileMenu } from "@/components/store/mobile-menu";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const session = authClient.useSession();
+
+  const hasSession = !!session;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -48,17 +50,7 @@ export function Navbar() {
               </span>
             </Link>
             {/* Left Nav */}
-            <nav className="hidden lg:flex items-center gap-10">
-              {NAV_ITEMS.map((item, i) => (
-                <Link
-                  key={i}
-                  href="#"
-                  className="text-xs tracking-[0.2em] uppercase font-sans text-muted-foreground hover:text-foreground transition-colors duration-300 relative group">
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-500 group-hover:w-full" />
-                </Link>
-              ))}
-            </nav>
+            <NavItems />
 
             {/* Right Nav */}
             <div className="hidden lg:flex items-center gap-8">
@@ -66,7 +58,7 @@ export function Navbar() {
               <SearchDialog />
               {/* Login */}
               <Link
-                href={session ? "/account" : "/login"}
+                href={hasSession ? "/account" : "/login"}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-300">
                 <User className="w-4.5 h-4.5" strokeWidth={1.5} />
               </Link>
@@ -91,31 +83,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div
-          className={cn(
-            "lg:hidden overflow-hidden transition-all duration-500 bg-background border-t border-border",
-            mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
-          )}>
-          <div className="px-6 py-8 space-y-6">
-            {NAV_ITEMS.map((item, i) => (
-              <Link
-                key={i}
-                href="#"
-                className="block text-sm tracking-[0.2em] uppercase font-sans text-muted-foreground hover:text-foreground transition-colors">
-                {item}
-              </Link>
-            ))}
-            <div className="flex items-center gap-6 pt-4 border-t border-border">
-              <SearchDialog />
-              <Link
-                href={session ? "/account" : "/login"}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-300">
-                <User className="w-4.5 h-4.5" strokeWidth={1.5} />
-              </Link>
-              <CartSheet />
-            </div>
-          </div>
-        </div>
+        <MobileMenu mobileMenuOpen={mobileMenuOpen} hasSession={hasSession} />
       </header>
     </>
   );

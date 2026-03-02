@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "@/db";
-import { createTRPCRouter, adminProcedure } from "@/trpc/init";
+import { createTRPCRouter, adminProcedure, baseProcedure } from "@/trpc/init";
 import { category } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray, desc } from "drizzle-orm";
@@ -25,6 +25,22 @@ export const categoriesRouter = createTRPCRouter({
       })
       .from(category)
       .orderBy(desc(category.createdAt));
+
+    return data;
+  }),
+
+  listPublic: baseProcedure.query(async () => {
+    const data = await db
+      .select({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        imageUrl: category.imageUrl,
+        description: category.description,
+      })
+      .from(category)
+      .orderBy(desc(category.createdAt))
+      .limit(5);
 
     return data;
   }),

@@ -1,17 +1,27 @@
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 
 /**
- * Hook to fetch categories.
+ * Hook to fetch categories with suspense.
  */
 export const useCategoriesSuspense = () => {
   const trpc = useTRPC();
 
   return useSuspenseQuery(trpc.categories.list.queryOptions());
+};
+
+/**
+ * Hook to fetch categories.
+ */
+export const useGetCategories = () => {
+  const trpc = useTRPC();
+
+  return useQuery(trpc.categories.listPublic.queryOptions());
 };
 
 // ============================================================================
