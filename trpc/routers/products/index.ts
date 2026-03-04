@@ -288,6 +288,7 @@ export const productsRouter = createTRPCRouter({
               imageUrl: input.imageUrl,
               basePrice: input.basePrice,
               isAvailable: input.isAvailable ?? true,
+              isFeatured: input.isFeatured ?? false,
               categoryId: input.categoryId,
             })
             .where(eq(product.id, input.id))

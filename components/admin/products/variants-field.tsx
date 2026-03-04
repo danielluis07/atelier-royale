@@ -256,6 +256,7 @@ export const VariantsField = ({
                               id={`variants.${index}.weightGrams`}
                               {...field}
                               type="number"
+                              min={0}
                               placeholder="Gramas"
                               disabled={isLoading}
                               value={field.value ?? ""}
@@ -285,6 +286,7 @@ export const VariantsField = ({
                               id={`variants.${index}.heightCm`}
                               {...field}
                               type="number"
+                              min={0}
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
@@ -314,6 +316,7 @@ export const VariantsField = ({
                               id={`variants.${index}.widthCm`}
                               {...field}
                               type="number"
+                              min={0}
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
@@ -343,6 +346,7 @@ export const VariantsField = ({
                               id={`variants.${index}.lengthCm`}
                               {...field}
                               type="number"
+                              min={0}
                               placeholder="cm"
                               disabled={isLoading}
                               value={field.value ?? ""}
