@@ -26,6 +26,7 @@ import {
   relatedProductsInput,
   updateProductInput,
 } from "@/modules/products/validations";
+import { revalidatePath } from "next/cache";
 
 export const productsRouter = createTRPCRouter({
   list: adminProcedure.input(listProductsInput).query(async ({ input }) => {
@@ -390,6 +391,8 @@ export const productsRouter = createTRPCRouter({
 
           return productUpdated;
         });
+
+        revalidatePath("/");
 
         return updatedProduct;
       } catch (error) {

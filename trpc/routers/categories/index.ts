@@ -13,6 +13,7 @@ import {
   createCategoryInput,
   updateCategoryInput,
 } from "@/modules/categories/validations";
+import { revalidatePath } from "next/cache";
 
 export const categoriesRouter = createTRPCRouter({
   list: adminProcedure.query(async () => {
@@ -96,6 +97,8 @@ export const categoriesRouter = createTRPCRouter({
             message: "Categoria não encontrada",
           });
         }
+
+        revalidatePath("/");
 
         return updatedCategory;
       } catch (error) {
