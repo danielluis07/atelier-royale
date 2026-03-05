@@ -77,10 +77,10 @@ export const columns: ColumnDef<ProductOutput>[] = [
           />
           {name.length > 30 ? (
             <Tooltip>
-              <TooltipTrigger className="cursor-pointer" asChild>
-                <span className="w-34 truncate cursor-default font-semibold">
-                  {name}
-                </span>
+              <TooltipTrigger asChild>
+                <Link href={`/admin/products/${row.original.id}`}>
+                  <span className="w-34 truncate font-semibold">{name}</span>
+                </Link>
               </TooltipTrigger>
               <TooltipContent>
                 <span>{name}</span>
