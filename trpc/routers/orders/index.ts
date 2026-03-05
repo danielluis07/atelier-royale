@@ -297,6 +297,22 @@ export const ordersRouter = createTRPCRouter({
         });
 
         if (!mpResponse.init_point) {
+          await db.transaction(async (tx) => {
+            await tx
+              .update(order)
+              .set({ status: "cancelled" })
+              .where(eq(order.id, newOrder.id));
+
+            for (const item of itemsToInsert) {
+              await tx
+                .update(productVariant)
+                .set({
+                  stockQuantity: sql`${productVariant.stockQuantity} + ${item.quantity}`,
+                })
+                .where(eq(productVariant.id, item.productVariantId));
+            }
+          });
+
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Falha ao iniciar checkout no provedor de pagamento.",
