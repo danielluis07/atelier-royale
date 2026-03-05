@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCep } from "@/lib/utils";
 
-const OrderDeliverySection = ({
+export const OrderDeliverySection = ({
   delivery,
 }: {
   delivery: {
@@ -130,5 +130,3 @@ const OrderDeliverySection = ({
     </div>
   );
 };
-
-export default OrderDeliverySection;

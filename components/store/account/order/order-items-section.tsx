@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 import { centsToReais } from "@/lib/utils";
 
-const OrderItemsSection = ({
+export const OrderItemsSection = ({
   items,
   subtotalAmount,
   shippingAmount,
@@ -81,5 +81,3 @@ const OrderItemsSection = ({
     </div>
   );
 };
-
-export default OrderItemsSection;

@@ -10,7 +10,7 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   boleto: "Boleto",
 };
 
-const OrderPaymentSection = ({
+export const OrderPaymentSection = ({
   payment,
 }: {
   payment: {
@@ -69,5 +69,3 @@ const OrderPaymentSection = ({
     </div>
   );
 };
-
-export default OrderPaymentSection;

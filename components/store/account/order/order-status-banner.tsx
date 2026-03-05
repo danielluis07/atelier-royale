@@ -41,7 +41,7 @@ const ORDER_STATUS_BG: Record<string, string> = {
   refunded: "bg-muted/50",
 };
 
-const OrderStatusBanner = ({
+export const OrderStatusBanner = ({
   status,
   deliveryStatus,
   trackingCode,
@@ -83,5 +83,3 @@ const OrderStatusBanner = ({
     </div>
   );
 };
-
-export default OrderStatusBanner;

@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { centsToReais } from "@/lib/utils";
 
-const OrderSummaryCard = ({
+export const OrderSummaryCard = ({
   orderNumber,
   createdAt,
   updatedAt,
@@ -68,5 +68,3 @@ const OrderSummaryCard = ({
     </div>
   );
 };
-
-export default OrderSummaryCard;

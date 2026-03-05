@@ -8,7 +8,10 @@ const CheckoutFailurePage = () => {
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="max-w-2xl w-full mt-5">
         {/* Error Icon */}
-        <div className="flex justify-center mb-12">
+        <div
+          className="flex justify-center mb-12"
+          role="img"
+          aria-label="Erro no pagamento">
           <div className="relative w-24 h-24">
             {/* Animated glow background */}
             <div className="absolute inset-0 bg-destructive/10 rounded-full animate-pulse blur-xl" />
@@ -22,7 +25,6 @@ const CheckoutFailurePage = () => {
             </div>
           </div>
         </div>
-
         {/* Content */}
         <div className="text-center mb-12">
           <span className="text-xs tracking-[0.4em] uppercase font-sans text-destructive mb-4 block">

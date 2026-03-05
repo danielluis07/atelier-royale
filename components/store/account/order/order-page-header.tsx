@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const OrderPageHeader = ({
+export const OrderPageHeader = ({
   orderNumber,
   createdAt,
 }: {
@@ -36,5 +36,3 @@ const OrderPageHeader = ({
     </div>
   );
 };
-
-export default OrderPageHeader;

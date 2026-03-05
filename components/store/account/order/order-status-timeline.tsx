@@ -14,7 +14,7 @@ const STATUS_STEP_LABELS: Record<string, string> = {
   delivered: "Entregue",
 };
 
-const OrderStatusTimeline = ({ status }: { status: string }) => {
+export const OrderStatusTimeline = ({ status }: { status: string }) => {
   const isCancelledOrRefunded = status === "cancelled" || status === "refunded";
 
   if (isCancelledOrRefunded) {
@@ -67,20 +67,20 @@ const OrderStatusTimeline = ({ status }: { status: string }) => {
           );
         })}
       </div>
-
       <div className="sm:hidden flex flex-col gap-0">
         {STATUS_STEPS.map((step, i) => {
           const isActive = i <= currentStepIndex;
           const isLast = i === STATUS_STEPS.length - 1;
+          const isCurrent = i === currentStepIndex;
           return (
             <div key={step} className="flex items-start gap-3">
               <div className="flex flex-col items-center">
                 <div
-                  className={`w-6 h-6 flex items-center justify-center border ${
+                  className={`w-6 h-6 flex items-center justify-center border transition-colors ${
                     isActive
                       ? "bg-primary border-primary text-primary-foreground"
                       : "bg-background border-border text-muted-foreground"
-                  }`}>
+                  } ${isCurrent ? "ring-2 ring-primary/20" : ""}`}>
                   <span className="text-[9px] font-sans font-medium">
                     {i + 1}
                   </span>
@@ -104,5 +104,3 @@ const OrderStatusTimeline = ({ status }: { status: string }) => {
     </div>
   );
 };
-
-export default OrderStatusTimeline;

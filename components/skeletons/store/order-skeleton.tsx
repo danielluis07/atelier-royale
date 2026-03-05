@@ -27,7 +27,7 @@ function ItemRowSkeleton() {
   );
 }
 
-export default function OrderDetailLoading() {
+export function OrderDetailLoading() {
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
       {/* Header */}
