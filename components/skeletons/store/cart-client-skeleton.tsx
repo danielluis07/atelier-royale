@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const CartClientSkeleton = () => {
   return (
-    <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
+    <>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
         <div>
@@ -88,6 +88,6 @@ export const CartClientSkeleton = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

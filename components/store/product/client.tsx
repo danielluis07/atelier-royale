@@ -192,11 +192,10 @@ export const ProductClient = ({ slug }: { slug: string }) => {
                 <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
               </button>
             </div>
-            {hasVariants && !selectedVariant && (
-              <p className="text-[11px] mt-2 font-sans tracking-wide text-muted-foreground">
-                Selecione uma variação para ajustar a quantidade.
-              </p>
-            )}
+            <p
+              className={`text-[11px] mt-2 font-sans tracking-wide text-muted-foreground ${hasVariants && !selectedVariant ? "visible" : "invisible"}`}>
+              Selecione uma variação para ajustar a quantidade.
+            </p>
           </div>
 
           {/* Add to Cart Button */}
