@@ -29,6 +29,13 @@
       "when": 1772188149997,
       "tag": "0003_curvy_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772655992910,
+      "tag": "0004_third_monster_badoon",
+      "breakpoints": true
     }
   ]
 }

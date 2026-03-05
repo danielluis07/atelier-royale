@@ -15,6 +15,11 @@ export const useCart = create<CartState>()(
         );
 
         if (existing) {
+          // Variants should be unique in the cart.
+          if (item.variantId) {
+            return;
+          }
+
           const newQty = existing.quantity + (item.quantity ?? 1);
           const maxQty = existing.maxStock ?? 99;
           set({

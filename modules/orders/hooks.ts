@@ -1,5 +1,5 @@
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { normalizeOrdersParams } from "@/modules/orders/utils";
 import type { OrdersInput } from "@/modules/orders/types";
 
@@ -11,4 +11,13 @@ export const useOrdersSuspense = (params: Partial<OrdersInput>) => {
   const normalized = normalizeOrdersParams(params);
 
   return useSuspenseQuery(trpc.orders.list.queryOptions(normalized));
+};
+
+/**
+ * Hook to execute checkout.
+ */
+export const useCheckout = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.orders.checkout.mutationOptions());
 };

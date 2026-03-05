@@ -1,19 +1,86 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Truck, ShieldCheck, RotateCcw, Lock } from "lucide-react";
 import { centsToReais } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD } from "@/constants";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import { useCart } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
+import { useCheckout } from "@/modules/orders/hooks";
 
 export function OrderSummary({
   total,
   itemCount,
+  addressId,
 }: {
   total: number;
   itemCount: number;
+  addressId?: string;
 }) {
+  const { data } = authClient.useSession();
+  const { items } = useCart();
+  const { mutateAsync } = useCheckout();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - total;
+
+  const handleSubmit = async () => {
+    if (!data?.session) {
+      toast("Você precisa estar logado para finalizar a compra");
+      router.push("/login");
+      return;
+    }
+
+    if (items.length === 0) {
+      toast("Sua sacola está vazia");
+      return;
+    }
+
+    const invalidItem = items.find((item) => !item.variantId);
+    if (invalidItem) {
+      toast.error(
+        `Selecione uma variação válida para ${invalidItem.productName} antes de finalizar.`,
+      );
+      return;
+    }
+
+    if (!addressId) {
+      toast("Cadastre um endereço principal antes de finalizar a compra");
+      router.push("/account/profile");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await mutateAsync({
+        items: items.map((item) => ({
+          variantId: item.variantId as string,
+          quantity: item.quantity,
+        })),
+        shipping: {
+          carrier: "A calcular",
+          amount: 100,
+        },
+        addressId,
+      });
+
+      window.location.href = result.checkoutUrl;
+    } catch (error) {
+      console.error("Erro no checkout:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Ocorreu um erro ao finalizar a compra. Tente novamente.";
+
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="border border-border p-6 sm:p-8">
@@ -83,10 +150,11 @@ export function OrderSummary({
       {/* Checkout */}
       <button
         type="button"
-        onClick={() => toast("Essa é apenas uma demonstração")}
+        onClick={handleSubmit}
+        disabled={isLoading}
         className="w-full flex items-center justify-center gap-3 py-4 text-xs tracking-[0.25em] uppercase font-sans bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-all duration-500 mb-3">
         <Lock className="w-3.5 h-3.5" strokeWidth={1.5} />
-        Finalizar compra
+        {isLoading ? "Processando..." : "Finalizar compra"}
       </button>
 
       {/* Continue shopping */}

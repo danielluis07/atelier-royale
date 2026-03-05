@@ -36,6 +36,18 @@ export const deliveryStatusEnum = pgEnum("delivery_status", [
   "failed",
 ]);
 
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "pending",
+  "approved",
+  "authorized",
+  "in_process",
+  "in_mediation",
+  "rejected",
+  "cancelled",
+  "refunded",
+  "charged_back",
+]);
+
 // ============================================================================
 // AUTH TABLES AND USER
 // ============================================================================
@@ -368,6 +380,30 @@ export const orderDelivery = pgTable("order_delivery", {
 });
 
 // ============================================================================
+// PAYMENT
+// ============================================================================
+export const payment = pgTable("payment", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => Bun.randomUUIDv7()),
+  orderId: text("order_id")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
+  externalPaymentId: text("external_payment_id"), // ID da transação no Mercado Pago
+  paymentMethod: text("payment_method"), // Ex: 'pix', 'credit_card'
+  paymentUrl: text("payment_url"), // Link do boleto ou código "Copia e Cola" do Pix
+  status: paymentStatusEnum("status").notNull().default("pending"),
+  amount: integer("amount").notNull(), // Em centavos
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+// ============================================================================
 // RELATIONS
 // ============================================================================
 
@@ -425,6 +461,14 @@ export const orderRelations = relations(order, ({ one, many }) => ({
   delivery: one(orderDelivery, {
     fields: [order.id],
     references: [orderDelivery.orderId],
+  }),
+  payments: many(payment),
+}));
+
+export const paymentRelations = relations(payment, ({ one }) => ({
+  order: one(order, {
+    fields: [payment.orderId],
+    references: [order.id],
   }),
 }));
 
