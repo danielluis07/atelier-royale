@@ -52,11 +52,28 @@ export const ProductClient = ({ slug }: { slug: string }) => {
       ? selectedVariant.stockQuantity === 0
       : false;
 
-  const canAddToCart = hasVariants ? !!selectedVariant && !isOutOfStock : true;
+  const { addItem, items } = useCart();
 
-  const { addItem } = useCart();
+  const isSelectedVariantInCart =
+    hasVariants && !!selectedVariant
+      ? items.some(
+          (item) =>
+            item.productId === data.id && item.variantId === selectedVariant.id,
+        )
+      : false;
+
+  const canAdjustQuantity = hasVariants ? !!selectedVariant : true;
+
+  const canAddToCart = hasVariants
+    ? !!selectedVariant && !isOutOfStock && !isSelectedVariantInCart
+    : true;
 
   const handleAddToCart = () => {
+    if (isSelectedVariantInCart) {
+      toast.error("Esta variacao ja esta na sacola.");
+      return;
+    }
+
     if (!canAddToCart) return;
 
     addItem({
@@ -147,8 +164,11 @@ export const ProductClient = ({ slug }: { slug: string }) => {
             <div className="inline-flex items-center border border-border">
               <button
                 type="button"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
+                onClick={() => {
+                  if (!canAdjustQuantity) return;
+                  setQuantity(Math.max(1, quantity - 1));
+                }}
+                disabled={!canAdjustQuantity || quantity <= 1}
                 className="w-11 h-11 flex items-center justify-center text-foreground hover:bg-muted transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
                 aria-label="Diminuir quantidade">
                 <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
@@ -159,17 +179,24 @@ export const ProductClient = ({ slug }: { slug: string }) => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!canAdjustQuantity) return;
                   const max = activeStock !== null ? activeStock : 99;
                   setQuantity(Math.min(max, quantity + 1));
                 }}
                 disabled={
-                  activeStock !== null ? quantity >= activeStock : false
+                  !canAdjustQuantity ||
+                  (activeStock !== null ? quantity >= activeStock : false)
                 }
                 className="w-11 h-11 flex items-center justify-center text-foreground hover:bg-muted transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
                 aria-label="Aumentar quantidade">
                 <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
               </button>
             </div>
+            {hasVariants && !selectedVariant && (
+              <p className="text-[11px] mt-2 font-sans tracking-wide text-muted-foreground">
+                Selecione uma variação para ajustar a quantidade.
+              </p>
+            )}
           </div>
 
           {/* Add to Cart Button */}
@@ -190,7 +217,9 @@ export const ProductClient = ({ slug }: { slug: string }) => {
               ? "Selecione uma variação"
               : isOutOfStock
                 ? "Produto esgotado"
-                : "Adicionar à sacola"}
+                : isSelectedVariantInCart
+                  ? "Variação já na sacola"
+                  : "Adicionar à sacola"}
           </button>
 
           {/* Secondary Action */}

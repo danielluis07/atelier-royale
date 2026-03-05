@@ -32,3 +32,19 @@ export const ordersSearchParamsSchema = z.object({
   sortBy: orderSortBySchema.optional(),
   sortOrder: orderSortOrderSchema.optional(),
 });
+
+export const checkoutInput = z.object({
+  items: z
+    .array(
+      z.object({
+        variantId: z.string().min(1),
+        quantity: z.number().int().min(1),
+      }),
+    )
+    .min(1),
+  shipping: z.object({
+    carrier: z.string().min(1),
+    amount: z.number().min(0),
+  }),
+  addressId: z.string().min(1),
+});
