@@ -287,12 +287,12 @@ export const ordersRouter = createTRPCRouter({
             },
             external_reference: newOrder.id,
             back_urls: {
-              success: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/success`,
-              failure: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/failure`,
-              pending: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/pending`,
+              success: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+              failure: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/failure`,
+              pending: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/pending`,
             },
             auto_return: "approved",
-            notification_url: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/api/webhooks/mercadopago`,
+            notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`,
           },
         });
 
