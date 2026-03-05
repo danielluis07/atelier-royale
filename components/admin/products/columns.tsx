@@ -87,7 +87,7 @@ export const columns: ColumnDef<ProductOutput>[] = [
               </TooltipContent>
             </Tooltip>
           ) : (
-            <Link href={`/admin/users/${row.original.id}`}>
+            <Link href={`/admin/products/${row.original.id}`}>
               <span className="font-semibold">{name}</span>
             </Link>
           )}

@@ -194,7 +194,7 @@ export const ProductClient = ({ slug }: { slug: string }) => {
             </div>
             {hasVariants && !selectedVariant && (
               <p className="text-[11px] mt-2 font-sans tracking-wide text-muted-foreground">
-                Selecione uma variacao para ajustar a quantidade.
+                Selecione uma variação para ajustar a quantidade.
               </p>
             )}
           </div>

@@ -31,12 +31,6 @@ import { TRPCError } from "@trpc/server";
 import { Preference } from "mercadopago";
 import { mpClient } from "@/lib/mercadopago";
 
-const isDev = process.env.NODE_ENV === "development";
-
-const REDIRECT_URL = isDev
-  ? "https://aba7-2804-e24-fd60-7500-9014-f03f-c225-588f.ngrok-free.app"
-  : process.env.NEXT_PUBLIC_APP_URL;
-
 export const ordersRouter = createTRPCRouter({
   list: adminProcedure.input(listOrdersInput).query(async ({ input }) => {
     const { page, perPage, search, status, deliveryStatus, sortBy, sortOrder } =
@@ -293,12 +287,12 @@ export const ordersRouter = createTRPCRouter({
             },
             external_reference: newOrder.id,
             back_urls: {
-              success: `${REDIRECT_URL}/checkout/success`,
-              failure: `${REDIRECT_URL}/checkout/failure`,
-              pending: `${REDIRECT_URL}/checkout/pending`,
+              success: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/success`,
+              failure: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/failure`,
+              pending: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/checkout/pending`,
             },
             auto_return: "approved",
-            notification_url: `${REDIRECT_URL}/api/webhooks/mercadopago`,
+            notification_url: `https://8d60-2804-e24-fd60-7500-64d5-a9bf-c0d4-f80b.ngrok-free.app/api/webhooks/mercadopago`,
           },
         });
 

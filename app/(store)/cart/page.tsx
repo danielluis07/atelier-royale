@@ -20,14 +20,17 @@ const CartPage = async () => {
     headers: await headers(),
   });
 
-  const userId = session?.user?.id || "";
+  const userId = session?.user?.id;
 
-  const [address] = await db
-    .select({
-      id: userAddress.id,
-    })
-    .from(userAddress)
-    .where(eq(userAddress.userId, userId));
+  const address = userId
+    ? (
+        await db
+          .select({ id: userAddress.id })
+          .from(userAddress)
+          .where(eq(userAddress.userId, userId))
+          .limit(1)
+      )[0]
+    : undefined;
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-20">

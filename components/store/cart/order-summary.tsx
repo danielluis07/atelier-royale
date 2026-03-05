@@ -61,6 +61,7 @@ export function OrderSummary({
           variantId: item.variantId as string,
           quantity: item.quantity,
         })),
+        // TODO: Calculate real shipping cost based on address and items
         shipping: {
           carrier: "A calcular",
           amount: 100,
@@ -70,7 +71,7 @@ export function OrderSummary({
 
       window.location.href = result.checkoutUrl;
     } catch (error) {
-      console.error("Erro no checkout:", error);
+      console.error("Error in checkout:", error);
       const message =
         error instanceof Error
           ? error.message
