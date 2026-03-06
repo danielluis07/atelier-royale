@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { order, orderDelivery, orderItem, payment } from "@/db/schema";
-import { and, asc, eq, desc, sql } from "drizzle-orm";
+import { and, asc, eq, desc, count, min } from "drizzle-orm";
 
 export const getOrder = async (orderId: string, userId: string) => {
   const [orderData] = await db
@@ -42,22 +42,12 @@ export const getOrderPayments = async (orderId: string) => {
 
 export const getOrders = async (userId: string) => {
   const latestDelivery = db
-    .select({
+    .selectDistinctOn([orderDelivery.orderId], {
       orderId: orderDelivery.orderId,
       status: orderDelivery.status,
     })
     .from(orderDelivery)
-    .where(
-      eq(
-        orderDelivery.id,
-        db
-          .select({ id: orderDelivery.id })
-          .from(orderDelivery)
-          .where(eq(orderDelivery.orderId, orderDelivery.orderId))
-          .orderBy(desc(orderDelivery.createdAt))
-          .limit(1),
-      ),
-    )
+    .orderBy(orderDelivery.orderId, desc(orderDelivery.createdAt))
     .as("latestDelivery");
 
   const orders = await db
@@ -67,8 +57,8 @@ export const getOrders = async (userId: string) => {
       createdAt: order.createdAt,
       totalAmount: order.totalAmount,
       status: order.status,
-      itemCount: sql<number>`count(${orderItem.id})::int`,
-      firstItemName: sql<string>`min(${orderItem.productNameSnapshot})`,
+      itemCount: count(orderItem.id),
+      firstItemName: min(orderItem.productNameSnapshot),
       deliveryStatus: latestDelivery.status,
     })
     .from(order)

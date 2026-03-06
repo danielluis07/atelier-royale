@@ -14,9 +14,6 @@ import { ORDER_STATUS_LABELS, DELIVERY_STATUS_LABELS } from "@/constants";
 import { format } from "date-fns";
 import { centsToReais } from "@/lib/utils";
 import { ptBR } from "date-fns/locale";
-import { db } from "@/db";
-import { order, orderItem, orderDelivery } from "@/db/schema";
-import { eq, desc, sql } from "drizzle-orm";
 import { getOrders } from "@/modules/account/actions";
 
 const ORDER_STATUS_ICON: Record<string, React.ElementType> = {
