@@ -36,6 +36,13 @@
       "when": 1772655992910,
       "tag": "0004_third_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772803342199,
+      "tag": "0005_fearless_juggernaut",
+      "breakpoints": true
     }
   ]
 }

@@ -48,6 +48,13 @@ export const paymentStatusEnum = pgEnum("payment_status", [
   "charged_back",
 ]);
 
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "new_order",
+  "new_user",
+  "payment_update",
+  "system_alert",
+]);
+
 // ============================================================================
 // AUTH TABLES AND USER
 // ============================================================================
@@ -404,6 +411,39 @@ export const payment = pgTable("payment", {
 });
 
 // ============================================================================
+// NOTIFICATION
+// ============================================================================
+
+export const notification = pgTable(
+  "notification",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => Bun.randomUUIDv7()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }), // The user (admin) receiving the notification
+    type: notificationTypeEnum("type").notNull().default("system_alert"),
+    title: text("title").notNull(), // Ex: "Novo Pedido Recebido"
+    message: text("message").notNull(), // Ex: "Pedido #1024 no valor de R$ 500,00."
+    isRead: boolean("is_read").notNull().default(false),
+    actionUrl: text("action_url"), // Ex: "/admin/orders/1024" (Quick link for the admin panel)
+    resourceId: text("resource_id"), // The raw ID of the related entity, if you need to fetch it via API
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("notification_user_id_idx").on(table.userId),
+    index("notification_is_read_idx").on(table.isRead),
+  ],
+);
+
+// ============================================================================
 // RELATIONS
 // ============================================================================
 
@@ -415,6 +455,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   }),
   addresses: many(userAddress),
   orders: many(order),
+  notifications: many(notification),
 }));
 
 export const userProfileRelations = relations(userProfile, ({ one }) => ({
@@ -487,5 +528,12 @@ export const orderDeliveryRelations = relations(orderDelivery, ({ one }) => ({
   order: one(order, {
     fields: [orderDelivery.orderId],
     references: [order.id],
+  }),
+}));
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+  user: one(user, {
+    fields: [notification.userId],
+    references: [user.id],
   }),
 }));

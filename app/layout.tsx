@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { inter } from "@/fonts";
 import { TRPCReactProvider } from "@/trpc/client";
+import { NotificationProvider } from "@/providers/notifications-provider";
 
 export const metadata: Metadata = {
   title: "Atelier Royale | Luxo & Elegância",
@@ -20,8 +21,10 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.variable} font-inter antialiased`}>
         <TRPCReactProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-          <Toaster />
+          <NotificationProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+            <Toaster />
+          </NotificationProvider>
         </TRPCReactProvider>
       </body>
     </html>

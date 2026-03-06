@@ -291,6 +291,9 @@ export const ordersRouter = createTRPCRouter({
               failure: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/failure`,
               pending: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/pending`,
             },
+            metadata: {
+              orderNumber: newOrder.orderNumber,
+            },
             auto_return: "approved",
             notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`,
           },
