@@ -4,7 +4,7 @@ import { notificationTypeEnum } from "@/db/schema";
 export const notificationTypeSchema = z.enum(notificationTypeEnum.enumValues);
 
 export const baseNotificationsInput = z.object({
-  userId: z.string().min(1, "User ID is required"),
+  userId: z.string().min(1, "ID do usuário é necessário"),
 });
 
 export const markAsReadNotificationInput = z.object({

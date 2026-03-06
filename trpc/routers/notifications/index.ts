@@ -113,6 +113,9 @@ export const notificationsRouter = createTRPCRouter({
 
         return deletedRows;
       } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         console.error("Erro ao deletar notificações:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
