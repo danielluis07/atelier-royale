@@ -7,7 +7,7 @@ import { OrderDeliverySection } from "@/components/store/account/order/order-del
 import { OrderSummaryCard } from "@/components/store/account/order/order-summary-card";
 import { db } from "@/db";
 import { order, orderDelivery, orderItem, payment } from "@/db/schema";
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 export const OrderMain = async ({
@@ -30,7 +30,11 @@ export const OrderMain = async ({
 
   // Fetch items, delivery, and payment in parallel
   const [items, delivery, payments] = await Promise.all([
-    db.select().from(orderItem).where(eq(orderItem.orderId, orderData.id)),
+    db
+      .select()
+      .from(orderItem)
+      .where(eq(orderItem.orderId, orderData.id))
+      .orderBy(asc(orderItem.createdAt), asc(orderItem.id)),
     db
       .select()
       .from(orderDelivery)

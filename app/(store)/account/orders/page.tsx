@@ -1,7 +1,4 @@
-import { db } from "@/db";
-import { order, orderItem, orderDelivery } from "@/db/schema";
 import { requireUser } from "@/lib/auth-utils";
-import { eq, desc, sql } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

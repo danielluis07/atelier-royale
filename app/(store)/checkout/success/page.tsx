@@ -83,7 +83,7 @@ const CheckoutSuccessPage = () => {
           <Link
             href="/account/orders"
             className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground text-sm tracking-[0.2em] uppercase font-sans transition-all duration-300 hover:bg-primary/90">
-            Ver Meu Pedido
+            Ver Meus Pedidos
             <ArrowRight
               className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1"
               strokeWidth={1.5}
