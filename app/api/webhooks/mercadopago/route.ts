@@ -5,6 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { Payment } from "mercadopago";
 import { mpClient } from "@/lib/mercadopago";
 import type { MpWebhookBody } from "@/types/mercadopago";
+import { realtime } from "@/lib/realtime";
 // import { validateWebhookSignature } from "@/lib/webhook-utils";
 
 export async function POST(request: NextRequest) {
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
       const paymentInfo = await paymentClient.get({ id: paymentId });
 
       const orderId = paymentInfo.external_reference;
+      const orderNumber = paymentInfo.metadata?.orderNumber;
       const mpStatus = paymentInfo.status;
 
       if (!orderId) {
@@ -53,31 +55,38 @@ export async function POST(request: NextRequest) {
       let mappedPaymentStatus: typeof payment.$inferInsert.status = "pending";
       let mappedOrderStatus: typeof order.$inferInsert.status =
         "pending_payment";
+      let orderLabelStatus: string;
 
       switch (mpStatus) {
         case "approved":
           mappedPaymentStatus = "approved";
           mappedOrderStatus = "paid";
+          orderLabelStatus = "aprovado";
           break;
         case "rejected":
           mappedPaymentStatus = "rejected";
           mappedOrderStatus = "cancelled";
+          orderLabelStatus = "rejeitado";
           break;
         case "cancelled":
           mappedPaymentStatus = "cancelled";
           mappedOrderStatus = "cancelled";
+          orderLabelStatus = "cancelado";
           break;
         case "refunded":
           mappedPaymentStatus = "refunded";
           mappedOrderStatus = "refunded";
+          orderLabelStatus = "reembolsado";
           break;
         case "in_mediation":
           mappedPaymentStatus = "in_mediation";
           mappedOrderStatus = "pending_payment";
+          orderLabelStatus = "em mediação";
           break;
         default:
           mappedPaymentStatus = "pending";
           mappedOrderStatus = "pending_payment";
+          orderLabelStatus = "pendente";
       }
 
       await db.transaction(async (tx) => {
@@ -129,6 +138,12 @@ export async function POST(request: NextRequest) {
             }
           }
         }
+      });
+
+      await realtime.emit("notification.created", {
+        orderId: orderId,
+        message: `Pagamento ${orderLabelStatus} para pedido ${orderNumber || orderId}`,
+        date: new Date().toISOString(),
       });
     }
     return NextResponse.json({ success: true }, { status: 200 });

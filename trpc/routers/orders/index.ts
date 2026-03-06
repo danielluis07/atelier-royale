@@ -287,12 +287,15 @@ export const ordersRouter = createTRPCRouter({
             },
             external_reference: newOrder.id,
             back_urls: {
-              success: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
-              failure: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/failure`,
-              pending: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/pending`,
+              success: `https://f150-2804-e24-fd60-7500-906-2516-cfca-cb74.ngrok-free.app/checkout/success`,
+              failure: `https://f150-2804-e24-fd60-7500-906-2516-cfca-cb74.ngrok-free.app/checkout/failure`,
+              pending: `https://f150-2804-e24-fd60-7500-906-2516-cfca-cb74.ngrok-free.app/checkout/pending`,
+            },
+            metadata: {
+              orderNumber: newOrder.orderNumber,
             },
             auto_return: "approved",
-            notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`,
+            notification_url: `https://f150-2804-e24-fd60-7500-906-2516-cfca-cb74.ngrok-free.app/api/webhooks/mercadopago`,
           },
         });
 
