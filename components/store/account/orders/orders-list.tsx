@@ -54,7 +54,7 @@ export const OrdersList = async ({ userId }: { userId: string }) => {
     .innerJoin(orderItem, eq(order.id, orderItem.orderId))
     .leftJoin(orderDelivery, eq(order.id, orderDelivery.orderId))
     .where(eq(order.userId, userId))
-    .groupBy(order.id, orderDelivery.status)
+    .groupBy(order.id)
     .orderBy(desc(order.createdAt));
   return (
     <>
@@ -89,8 +89,7 @@ export const OrdersList = async ({ userId }: { userId: string }) => {
             const itemLabel =
               o.itemCount === 1
                 ? o.firstItemName
-                : `${o.firstItemName} e mais ${o.itemCount - 1}`;
-
+                : `${o.firstItemName} e mais ${o.itemCount - 1} ${o.itemCount - 1 === 1 ? "item" : "itens"}`;
             return (
               <Link
                 key={o.id}
