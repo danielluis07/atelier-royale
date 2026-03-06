@@ -22,29 +22,6 @@ export default function Home() {
       <Hero />
       <BrandMarquee />
 
-      {/* Featured Categories */}
-      <section className="py-24 lg:py-32 max-w-360 mx-auto px-6 lg:px-12">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
-          <div>
-            <span className="text-xs tracking-[0.4em] uppercase font-sans text-primary mb-4 block">
-              Curadoria
-            </span>
-            <h2 className="font-serif text-4xl lg:text-6xl tracking-tight text-foreground">
-              Explore por
-              <br />
-              <span className="italic text-muted-foreground">categoria</span>
-            </h2>
-          </div>
-          <p className="font-sans text-muted-foreground max-w-sm leading-relaxed lg:text-right text-pretty">
-            Cada categoria é uma porta de entrada para um universo de peças
-            selecionadas com o rigor que você merece.
-          </p>
-        </div>
-        <Suspense fallback={<FeaturedCategoriesSkeleton count={5} />}>
-          <FeaturedCategories />
-        </Suspense>
-      </section>
-
       {/* Featured Products */}
       <section className="py-24 lg:py-32 bg-muted/50 border-y border-border/50">
         <div className="max-w-360 mx-auto px-6 lg:px-12">
@@ -76,6 +53,29 @@ export default function Home() {
             <FeaturedProducts />
           </Suspense>
         </div>
+      </section>
+
+      {/* Featured Categories */}
+      <section className="py-24 lg:py-32 max-w-360 mx-auto px-6 lg:px-12">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+          <div>
+            <span className="text-xs tracking-[0.4em] uppercase font-sans text-primary mb-4 block">
+              Curadoria
+            </span>
+            <h2 className="font-serif text-4xl lg:text-6xl tracking-tight text-foreground">
+              Explore por
+              <br />
+              <span className="italic text-muted-foreground">categoria</span>
+            </h2>
+          </div>
+          <p className="font-sans text-muted-foreground max-w-sm leading-relaxed lg:text-right text-pretty">
+            Cada categoria é uma porta de entrada para um universo de peças
+            selecionadas com o rigor que você merece.
+          </p>
+        </div>
+        <Suspense fallback={<FeaturedCategoriesSkeleton count={5} />}>
+          <FeaturedCategories />
+        </Suspense>
       </section>
 
       {/* New Products */}
