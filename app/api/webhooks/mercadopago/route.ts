@@ -5,7 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { Payment } from "mercadopago";
 import { mpClient } from "@/lib/mercadopago";
 import type { MpWebhookBody } from "@/types/mercadopago";
-import { realtime } from "@/lib/realtime";
+import { createNotification } from "@/actions/create-notification";
 // import { validateWebhookSignature } from "@/lib/webhook-utils";
 
 export async function POST(request: NextRequest) {
@@ -140,11 +140,18 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      await realtime.emit("notification.created", {
-        orderId: orderId,
-        message: `Pagamento ${orderLabelStatus} para pedido ${orderNumber || orderId}`,
-        date: new Date().toISOString(),
-      });
+      const title = "Atualização de Pagamento";
+      const message = `Pagamento ${orderLabelStatus} para o pedido #${orderNumber || orderId}`;
+      const actionUrl = `/admin/orders/${orderId}`;
+
+      const payload = {
+        title,
+        message,
+        actionUrl,
+        orderId,
+      };
+
+      await createNotification({ payload });
     }
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

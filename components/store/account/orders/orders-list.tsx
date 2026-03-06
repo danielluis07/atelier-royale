@@ -54,7 +54,7 @@ export const OrdersList = async ({ userId }: { userId: string }) => {
     .innerJoin(orderItem, eq(order.id, orderItem.orderId))
     .leftJoin(orderDelivery, eq(order.id, orderDelivery.orderId))
     .where(eq(order.userId, userId))
-    .groupBy(order.id)
+    .groupBy(order.id, orderDelivery.status)
     .orderBy(desc(order.createdAt));
   return (
     <>
