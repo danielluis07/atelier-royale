@@ -22,12 +22,12 @@ import { useTRPC } from "@/trpc/client";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export const Notifications = ({ userId }: { userId: string }) => {
+export const Notifications = () => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const { data: notifications = [] } = useGetNotifications({ userId });
+  const { data: notifications = [] } = useGetNotifications();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -37,10 +37,8 @@ export const Notifications = ({ userId }: { userId: string }) => {
 
   useRealtime({
     events: ["notification.created"],
-    onData({ data }) {
-      if (data.userId === userId) {
-        queryClient.invalidateQueries(trpc.notifications.list.pathFilter());
-      }
+    onData() {
+      queryClient.invalidateQueries(trpc.notifications.list.pathFilter());
     },
   });
 
@@ -56,13 +54,14 @@ export const Notifications = ({ userId }: { userId: string }) => {
   };
 
   const handleMarkAllRead = () => {
-    markAllAsRead({ userId });
+    markAllAsRead();
   };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverAnchor asChild>
         <Button
+          aria-label="Abrir notificações"
           onClick={() => setOpen((prev) => !prev)}
           variant="ghost"
           size="icon"
@@ -155,9 +154,10 @@ export const Notifications = ({ userId }: { userId: string }) => {
                   </Link>
 
                   <Button
+                    aria-label={`Excluir notificação ${notification.title}`}
                     variant="ghost"
                     onClick={(e) => handleDelete(notification.id, e)}
-                    className="absolute top-3 right-3 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive">
+                    className="absolute top-3 right-3 h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 hover:bg-destructive/10 hover:text-destructive">
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </li>

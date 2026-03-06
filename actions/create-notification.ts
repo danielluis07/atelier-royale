@@ -14,20 +14,20 @@ export const createNotification = async ({
     orderId: string;
   };
 }) => {
+  const { title, message, actionUrl, orderId } = payload;
+
+  const [insertedNotification] = await db
+    .insert(notification)
+    .values({
+      userId: process.env.ADMIN_ID!,
+      title,
+      message,
+      actionUrl,
+      resourceId: orderId,
+    })
+    .returning();
+
   try {
-    const { title, message, actionUrl, orderId } = payload;
-
-    const [insertedNotification] = await db
-      .insert(notification)
-      .values({
-        userId: process.env.ADMIN_ID!,
-        title,
-        message,
-        actionUrl,
-        resourceId: orderId,
-      })
-      .returning();
-
     await realtime.emit("notification.created", {
       id: insertedNotification.id,
       userId: insertedNotification.userId,

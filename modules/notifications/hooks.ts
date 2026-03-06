@@ -6,10 +6,7 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import type { RouterOutput } from "@/trpc/routers/_app";
-import type {
-  NotificationsInput,
-  NotificationsOutput,
-} from "@/modules/notifications/types";
+import type { NotificationsOutput } from "@/modules/notifications/types";
 
 type UnreadCountOutput = RouterOutput["notifications"]["getUnreadCount"];
 
@@ -40,17 +37,17 @@ const restoreMutationContext = (
 /**
  * Hook to fetch all notifications for the current user.
  */
-export const useGetNotifications = (params: NotificationsInput) => {
+export const useGetNotifications = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.notifications.list.queryOptions(params));
+  return useQuery(trpc.notifications.list.queryOptions());
 };
 
 /**
  * Hook to fetch just the unread count (perfect for a bell icon badge).
  */
-export const useGetUnreadCount = (userId: string) => {
+export const useGetUnreadCount = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.notifications.getUnreadCount.queryOptions({ userId }));
+  return useQuery(trpc.notifications.getUnreadCount.queryOptions());
 };
 
 /**

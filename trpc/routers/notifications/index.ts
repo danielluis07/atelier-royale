@@ -4,50 +4,41 @@ import { createTRPCRouter, adminProcedure } from "@/trpc/init";
 import { notification } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray, desc, and, count } from "drizzle-orm";
-import {
-  baseNotificationsInput,
-  markAsReadNotificationInput,
-} from "@/modules/notifications/validations";
+import { markAsReadNotificationInput } from "@/modules/notifications/validations";
 
 export const notificationsRouter = createTRPCRouter({
-  list: adminProcedure
-    .input(baseNotificationsInput)
-    .query(async ({ input }) => {
-      const { userId } = input;
+  list: adminProcedure.query(async () => {
+    const data = await db
+      .select({
+        id: notification.id,
+        userId: notification.userId,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        isRead: notification.isRead,
+        actionUrl: notification.actionUrl,
+        createdAt: notification.createdAt,
+      })
+      .from(notification)
+      .where(eq(notification.userId, process.env.ADMIN_ID!))
+      .orderBy(desc(notification.createdAt));
 
-      const data = await db
-        .select({
-          id: notification.id,
-          userId: notification.userId,
-          type: notification.type,
-          title: notification.title,
-          message: notification.message,
-          isRead: notification.isRead,
-          actionUrl: notification.actionUrl,
-          createdAt: notification.createdAt,
-        })
-        .from(notification)
-        .where(eq(notification.userId, userId))
-        .orderBy(desc(notification.createdAt));
+    return data;
+  }),
 
-      return data;
-    }),
+  getUnreadCount: adminProcedure.query(async () => {
+    const [result] = await db
+      .select({ count: count() })
+      .from(notification)
+      .where(
+        and(
+          eq(notification.userId, process.env.ADMIN_ID!),
+          eq(notification.isRead, false),
+        ),
+      );
 
-  getUnreadCount: adminProcedure
-    .input(baseNotificationsInput)
-    .query(async ({ input }) => {
-      const [result] = await db
-        .select({ count: count() })
-        .from(notification)
-        .where(
-          and(
-            eq(notification.userId, input.userId),
-            eq(notification.isRead, false),
-          ),
-        );
-
-      return result?.count ?? 0;
-    }),
+    return result?.count ?? 0;
+  }),
 
   markAsRead: adminProcedure
     .input(markAsReadNotificationInput)
@@ -68,21 +59,19 @@ export const notificationsRouter = createTRPCRouter({
       return updatedRow[0];
     }),
 
-  markAllAsRead: adminProcedure
-    .input(baseNotificationsInput)
-    .mutation(async ({ input }) => {
-      await db
-        .update(notification)
-        .set({ isRead: true })
-        .where(
-          and(
-            eq(notification.userId, input.userId),
-            eq(notification.isRead, false),
-          ),
-        );
+  markAllAsRead: adminProcedure.mutation(async () => {
+    await db
+      .update(notification)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(notification.userId, process.env.ADMIN_ID!),
+          eq(notification.isRead, false),
+        ),
+      );
 
-      return { success: true };
-    }),
+    return { success: true };
+  }),
 
   deleteMany: adminProcedure
     .input(
