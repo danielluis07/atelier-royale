@@ -5,10 +5,13 @@ import { OrderItemsSection } from "@/components/store/account/order/order-items-
 import { OrderPaymentSection } from "@/components/store/account/order/order-payment-section";
 import { OrderDeliverySection } from "@/components/store/account/order/order-delivery-section";
 import { OrderSummaryCard } from "@/components/store/account/order/order-summary-card";
-import { db } from "@/db";
-import { order, orderDelivery, orderItem, payment } from "@/db/schema";
-import { and, eq, desc, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import {
+  getOrder,
+  getOrderDelivery,
+  getOrderItems,
+  getOrderPayments,
+} from "@/modules/account/actions";
 
 export const OrderMain = async ({
   orderId,
@@ -17,12 +20,7 @@ export const OrderMain = async ({
   orderId: string;
   userId: string;
 }) => {
-  // Fetch order ensuring it belongs to the user
-  const [orderData] = await db
-    .select()
-    .from(order)
-    .where(and(eq(order.id, orderId), eq(order.userId, userId)))
-    .limit(1);
+  const orderData = await getOrder(orderId, userId);
 
   if (!orderData) {
     notFound();
@@ -30,21 +28,9 @@ export const OrderMain = async ({
 
   // Fetch items, delivery, and payment in parallel
   const [items, delivery, payments] = await Promise.all([
-    db
-      .select()
-      .from(orderItem)
-      .where(eq(orderItem.orderId, orderData.id))
-      .orderBy(asc(orderItem.createdAt), asc(orderItem.id)),
-    db
-      .select()
-      .from(orderDelivery)
-      .where(eq(orderDelivery.orderId, orderData.id))
-      .then((res) => res[0] ?? null),
-    db
-      .select()
-      .from(payment)
-      .where(eq(payment.orderId, orderData.id))
-      .orderBy(desc(payment.createdAt)),
+    getOrderItems(orderData.id),
+    getOrderDelivery(orderData.id),
+    getOrderPayments(orderData.id),
   ]);
 
   const latestPayment = payments[0] ?? null;

@@ -17,6 +17,7 @@ import { ptBR } from "date-fns/locale";
 import { db } from "@/db";
 import { order, orderItem, orderDelivery } from "@/db/schema";
 import { eq, desc, sql } from "drizzle-orm";
+import { getOrders } from "@/modules/account/actions";
 
 const ORDER_STATUS_ICON: Record<string, React.ElementType> = {
   pending_payment: Clock,
@@ -39,42 +40,8 @@ const ORDER_STATUS_COLOR: Record<string, string> = {
 };
 
 export const OrdersList = async ({ userId }: { userId: string }) => {
-  const latestDelivery = db
-    .select({
-      orderId: orderDelivery.orderId,
-      status: orderDelivery.status,
-    })
-    .from(orderDelivery)
-    .where(
-      eq(
-        orderDelivery.id,
-        db
-          .select({ id: orderDelivery.id })
-          .from(orderDelivery)
-          .where(eq(orderDelivery.orderId, orderDelivery.orderId))
-          .orderBy(desc(orderDelivery.createdAt))
-          .limit(1),
-      ),
-    )
-    .as("latestDelivery");
+  const orders = await getOrders(userId);
 
-  const orders = await db
-    .select({
-      id: order.id,
-      orderNumber: order.orderNumber,
-      createdAt: order.createdAt,
-      totalAmount: order.totalAmount,
-      status: order.status,
-      itemCount: sql<number>`count(${orderItem.id})::int`,
-      firstItemName: sql<string>`min(${orderItem.productNameSnapshot})`,
-      deliveryStatus: latestDelivery.status,
-    })
-    .from(order)
-    .innerJoin(orderItem, eq(order.id, orderItem.orderId))
-    .leftJoin(latestDelivery, eq(order.id, latestDelivery.orderId))
-    .where(eq(order.userId, userId))
-    .groupBy(order.id, latestDelivery.status)
-    .orderBy(desc(order.createdAt));
   return (
     <>
       {orders.length === 0 ? (
