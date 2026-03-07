@@ -57,7 +57,7 @@ export const columns: ColumnDef<ReviewOutput>[] = [
 
       return (
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product.slug}`}
           className="font-medium hover:underline">
           {product.name}
         </Link>
