@@ -68,7 +68,7 @@ export const ReviewsClient = () => {
   ) => {
     const ids = row.map((r) => r.original.id);
 
-    toast.loading(`Deletando ${ids.length} produto(s)...`, {
+    toast.loading(`Deletando ${ids.length} reviews(s)...`, {
       id: "delete-reviews",
     });
     setPending(true);
@@ -90,7 +90,7 @@ export const ReviewsClient = () => {
     }
   };
 
-  const products = data.reviews;
+  const reviews = data.reviews;
   const pagination = data.pagination;
 
   return (
@@ -108,7 +108,7 @@ export const ReviewsClient = () => {
           isFetching || isSearchPending ? "pointer-events-none opacity-70" : ""
         }>
         <DataTable
-          data={products}
+          data={reviews}
           columns={columns}
           getRowId={(row) => String(row.id)}
           onDelete={onDelete}
@@ -121,7 +121,7 @@ export const ReviewsClient = () => {
               total={pagination.total}
               handlePageChange={handlePageChange}
               isPending={isFetching || isSearchPending}
-              label="produto"
+              label="review"
             />
           </div>
         )}

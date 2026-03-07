@@ -57,7 +57,7 @@ export const ReviewDetails = ({ id }: { id: string }) => {
   const handleApproval = async (isApproved: boolean) => {
     const confirmed = await confirm(
       `Tem certeza que deseja ${isApproved ? "aprovar" : "reprovar"} esta review?`,
-      "Esta ação não pode ser desfeita.",
+      "O status da review será alterado imediatamente.",
     );
 
     if (confirmed) {

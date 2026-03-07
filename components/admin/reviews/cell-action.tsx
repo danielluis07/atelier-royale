@@ -42,7 +42,7 @@ export const ReviewsCellAction = ({
   const handleApproval = async (isApproved: boolean) => {
     const confirmed = await confirm(
       `Tem certeza que deseja ${isApproved ? "aprovar" : "reprovar"} esta review?`,
-      "Esta ação não pode ser desfeita.",
+      "Deseja continuar?",
     );
 
     if (confirmed) {

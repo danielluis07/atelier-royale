@@ -51,7 +51,7 @@ export const reviewsSearchParamsSchema = z.object({
 });
 
 export const listProductReviewsInput = z.object({
-  productId: z.string().min(1, "Product ID is required"),
+  productId: z.string().min(1, "ID do produto é obrigatório"),
   page: z.number().min(1).default(1),
   perPage: z.number().min(1).max(50).default(10),
 });
