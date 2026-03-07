@@ -147,7 +147,7 @@ export const CreateProductForm = ({
             aria-label="Voltar"
             onClick={() => router.back()}>
             <ArrowLeft className="size-4" />
-          </Button>{" "}
+          </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Criar Produto</h1>
             <p className="text-sm text-muted-foreground">

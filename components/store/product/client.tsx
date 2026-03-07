@@ -15,6 +15,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { centsToReais } from "@/lib/utils";
 import { RelatedProducts } from "@/components/store/product/related-products";
+import { ReviewForm } from "@/components/store/product/review-form";
+import { ReviewsList } from "@/components/store/product/reviews-list";
 import { ProductVariants } from "./product-variants";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
@@ -331,6 +333,30 @@ export const ProductClient = ({ slug }: { slug: string }) => {
 
       <div className="mt-10">
         <RelatedProducts productId={data.id} categoryId={data.categoryId} />
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-16 lg:mt-20">
+        <div className="h-px w-full bg-border mb-10" />
+        <h2 className="font-serif text-2xl lg:text-3xl tracking-tight text-foreground mb-2">
+          Avaliações
+        </h2>
+        <p className="text-sm font-sans text-muted-foreground mb-8">
+          Veja o que nossos clientes dizem sobre este produto.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-10 lg:gap-16">
+          {/* Reviews List */}
+          <ReviewsList productId={data.id} />
+
+          {/* Review Form */}
+          <div>
+            <h3 className="text-xs tracking-[0.2em] uppercase font-sans text-foreground mb-4">
+              Deixe sua avaliação
+            </h3>
+            <ReviewForm productId={data.id} />
+          </div>
+        </div>
       </div>
     </>
   );

@@ -444,6 +444,43 @@ export const notification = pgTable(
 );
 
 // ============================================================================
+// PRODUCT REVIEW
+// ============================================================================
+
+export const review = pgTable(
+  "review",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => Bun.randomUUIDv7()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => product.id, { onDelete: "cascade" }),
+    rating: integer("rating").notNull(),
+    comment: text("comment"),
+    isApproved: boolean("is_approved").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("review_product_id_idx").on(table.productId),
+    // Ensures a user can only review a specific product once
+    uniqueIndex("review_user_product_unique_idx").on(
+      table.userId,
+      table.productId,
+    ),
+  ],
+);
+
+// ============================================================================
 // RELATIONS
 // ============================================================================
 
@@ -456,6 +493,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   addresses: many(userAddress),
   orders: many(order),
   notifications: many(notification),
+  reviews: many(review),
 }));
 
 export const userProfileRelations = relations(userProfile, ({ one }) => ({
@@ -477,12 +515,14 @@ export const categoryRelations = relations(category, ({ many }) => ({
   products: many(product),
 }));
 
+// --- Product Relations ---
 export const productRelations = relations(product, ({ one, many }) => ({
   category: one(category, {
     fields: [product.categoryId],
     references: [category.id],
   }),
   variants: many(productVariant),
+  reviews: many(review),
 }));
 
 export const productVariantRelations = relations(productVariant, ({ one }) => ({
@@ -506,13 +546,6 @@ export const orderRelations = relations(order, ({ one, many }) => ({
   payments: many(payment),
 }));
 
-export const paymentRelations = relations(payment, ({ one }) => ({
-  order: one(order, {
-    fields: [payment.orderId],
-    references: [order.id],
-  }),
-}));
-
 export const orderItemRelations = relations(orderItem, ({ one }) => ({
   order: one(order, {
     fields: [orderItem.orderId],
@@ -531,9 +564,30 @@ export const orderDeliveryRelations = relations(orderDelivery, ({ one }) => ({
   }),
 }));
 
+// --- Payment Relations ---
+export const paymentRelations = relations(payment, ({ one }) => ({
+  order: one(order, {
+    fields: [payment.orderId],
+    references: [order.id],
+  }),
+}));
+
+// --- Notification Relations ---
 export const notificationRelations = relations(notification, ({ one }) => ({
   user: one(user, {
     fields: [notification.userId],
     references: [user.id],
+  }),
+}));
+
+// --- Review Relations ---
+export const reviewRelations = relations(review, ({ one }) => ({
+  user: one(user, {
+    fields: [review.userId],
+    references: [user.id],
+  }),
+  product: one(product, {
+    fields: [review.productId],
+    references: [product.id],
   }),
 }));
