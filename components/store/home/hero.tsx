@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="relative h-svh min-h-220 overflow-hidden bg-foreground">
+    <section className="relative h-svh min-h-220 max-md:min-h-10 overflow-hidden bg-foreground">
       {/* Background Image with Parallax */}
       <div className="absolute inset-0 -top-20 -bottom-20">
         <Image
@@ -22,27 +22,27 @@ export function Hero() {
       <div className="absolute inset-0 bg-linear-to-r from-black/30 to-transparent" />
 
       {/* Content */}
-      <div className="relative h-full flex flex-col justify-end pb-20 lg:pb-34 max-w-360 mx-auto px-6 lg:px-12">
+      <div className="relative h-full flex flex-col justify-center pb-20 lg:pb-34 max-w-360 mx-auto px-6 lg:px-12">
         {/* Decorative Line */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-8 max-md:hidden">
           <div className="w-16 h-px bg-white/40" />
           <span className="text-white/60 text-xs tracking-[0.4em] uppercase font-sans">
             Nova Coleção 2026
           </span>
         </div>
 
-        <h1 className="font-serif text-5xl sm:text-6xl lg:text-8xl xl:text-9xl text-white leading-[0.9] tracking-tight max-w-4xl">
+        <h1 className="font-serif text-5xl text-center md:text-start sm:text-6xl lg:text-8xl xl:text-9xl text-white leading-[0.9] tracking-tight max-w-4xl">
           A arte da
           <br />
           <span className="italic text-white/80">elegância</span>
         </h1>
 
-        <p className="font-sans text-sm lg:text-base text-white/50 max-w-md mt-8 leading-relaxed tracking-wide">
+        <p className="font-sans text-sm max-md:mx-auto max-md:text-center lg:text-base text-white/50 max-w-md mt-8 leading-relaxed tracking-wide">
           Peças cuidadosamente selecionadas que transcendem tendências. Cada
           item, uma declaração de estilo atemporal.
         </p>
 
-        <div className="mt-10">
+        <div className="mt-10 max-md:mx-auto">
           <Link
             href="/products"
             className="group inline-flex items-center gap-3 bg-white text-foreground px-8 py-4 text-xs tracking-[0.2em] uppercase font-sans hover:bg-primary hover:text-primary-foreground transition-all duration-500">
