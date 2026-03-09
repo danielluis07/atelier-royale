@@ -2,19 +2,10 @@ import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 
 /**
- * Hook to fetch revenue by period statistics.
+ * Custom hook to fetch sales evolution data for a specified range of days.
  */
-export const useGetRevenueByPeriod = () => {
+export const useGetSalesEvolution = (input: { rangeDays: 7 | 30 | 90 }) => {
   const trpc = useTRPC();
 
-  return useQuery(trpc.stats.getRevenueByPeriod.queryOptions());
-};
-
-/**
- * Hook to fetch products by status statistics.
- */
-export const useGetProductsByStatus = () => {
-  const trpc = useTRPC();
-
-  return useQuery(trpc.stats.getProductsByStatus.queryOptions());
+  return useQuery(trpc.stats.getSalesEvolution.queryOptions(input));
 };
