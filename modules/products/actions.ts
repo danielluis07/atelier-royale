@@ -5,7 +5,7 @@ import {
   NEW_PRODUCT_THRESHOLD_DAYS,
 } from "@/constants";
 import { db } from "@/db";
-import { product } from "@/db/schema";
+import { product, review } from "@/db/schema";
 import { subDays } from "date-fns";
 import { eq, gte, and, desc } from "drizzle-orm";
 
@@ -20,8 +20,10 @@ export const getFeaturedProducts = async () => {
         imageUrl: product.imageUrl,
         basePrice: product.basePrice,
         createdAt: product.createdAt,
+        rating: review.rating,
       })
       .from(product)
+      .leftJoin(review, eq(review.productId, product.id))
       .where(and(eq(product.isFeatured, true), eq(product.isAvailable, true)))
       .orderBy(desc(product.createdAt))
       .limit(MAX_FEATURED_PRODUCTS);
