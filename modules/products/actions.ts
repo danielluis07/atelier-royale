@@ -7,7 +7,7 @@ import {
 import { db } from "@/db";
 import { product, review } from "@/db/schema";
 import { subDays } from "date-fns";
-import { eq, gte, and, desc } from "drizzle-orm";
+import { eq, gte, and, desc, avg } from "drizzle-orm";
 
 export const getFeaturedProducts = async () => {
   try {
@@ -20,11 +20,12 @@ export const getFeaturedProducts = async () => {
         imageUrl: product.imageUrl,
         basePrice: product.basePrice,
         createdAt: product.createdAt,
-        rating: review.rating,
+        rating: avg(review.rating),
       })
       .from(product)
       .leftJoin(review, eq(review.productId, product.id))
       .where(and(eq(product.isFeatured, true), eq(product.isAvailable, true)))
+      .groupBy(product.id)
       .orderBy(desc(product.createdAt))
       .limit(MAX_FEATURED_PRODUCTS);
 

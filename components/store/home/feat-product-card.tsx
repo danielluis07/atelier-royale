@@ -67,14 +67,16 @@ export const FeaturedProductsCard = ({
           <p className="font-sans text-sm text-muted-foreground tracking-wide">
             {centsToReais(product.basePrice)}
           </p>
-          {product.rating !== null && (
+          {product.rating !== null && product.rating > 0 && (
             <div className="flex gap-0.5">
-              {[...Array(product.rating)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-3 h-3 fill-primary/60 text-primary/60"
-                />
-              ))}
+              {[...Array(Math.min(Math.floor(product.rating), 5))].map(
+                (_, i) => (
+                  <Star
+                    key={i}
+                    className="w-3 h-3 fill-primary/60 text-primary/60"
+                  />
+                ),
+              )}
             </div>
           )}
         </div>
