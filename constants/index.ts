@@ -1,3 +1,5 @@
+export const TIME_ZONE = "America/Sao_Paulo";
+
 // General
 export const PAGINATION = {
   DEFAULT_PAGE: 1,

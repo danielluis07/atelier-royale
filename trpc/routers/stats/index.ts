@@ -1,7 +1,15 @@
+import { z } from "zod";
+import { and, inArray, sql } from "drizzle-orm";
+
 import { db } from "@/db";
+import { order } from "@/db/schema";
 import { createTRPCRouter, adminProcedure } from "@/trpc/init";
-import { order, product, productVariant } from "@/db/schema";
-import { and, eq, gte, inArray, sql } from "drizzle-orm";
+import { TIME_ZONE } from "@/constants";
+import {
+  addDays,
+  calculateDeltaPercent,
+  getLocalDateString,
+} from "@/lib/chart-utils";
 
 const revenueOrderStatuses = [
   "paid",
@@ -10,90 +18,148 @@ const revenueOrderStatuses = [
   "delivered",
 ] as const;
 
-const DAY_RANGE = 30;
-
 export const statsRouter = createTRPCRouter({
-  getRevenueByPeriod: adminProcedure.query(async () => {
-    const startDate = new Date();
-    startDate.setUTCHours(0, 0, 0, 0);
-    startDate.setUTCDate(startDate.getUTCDate() - (DAY_RANGE - 1));
+  getSalesEvolution: adminProcedure
+    .input(
+      z.object({
+        rangeDays: z.union([z.literal(7), z.literal(30), z.literal(90)]),
+      }),
+    )
+    .query(async ({ input }) => {
+      const rangeDays = input.rangeDays;
 
-    const revenueRows = await db
-      .select({
-        date: sql<string>`DATE(${order.createdAt})`,
-        revenue: sql<number>`COALESCE(SUM(${order.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
-      })
-      .from(order)
-      .where(
-        and(
-          inArray(order.status, revenueOrderStatuses),
-          gte(order.createdAt, startDate),
-        ),
-      )
-      .groupBy(sql`DATE(${order.createdAt})`);
+      const today = getLocalDateString(new Date(), TIME_ZONE);
+      const currentStartDate = addDays(today, -(rangeDays - 1));
+      const previousStartDate = addDays(currentStartDate, -rangeDays);
+      const previousEndDate = addDays(currentStartDate, -1);
 
-    const revenuesByDate = new Map(
-      revenueRows.map((row) => [row.date, row.revenue]),
-    );
+      const ordersWithLocalDate = db
+        .select({
+          localDate: sql<string>`
+            timezone(${TIME_ZONE}, ${order.createdAt})::date::text
+          `.as("local_date"),
+          status: order.status,
+          totalAmount: order.totalAmount,
+        })
+        .from(order)
+        .as("orders_with_local_date");
 
-    return Array.from({ length: DAY_RANGE }, (_, index) => {
-      const date = new Date(startDate);
-      date.setUTCDate(startDate.getUTCDate() + index);
+      const rows = await db
+        .select({
+          date: ordersWithLocalDate.localDate,
+          revenue: sql<number>`
+            COALESCE(SUM(${ordersWithLocalDate.totalAmount}), 0)
+          `.mapWith(Number),
+          orders: sql<number>`COUNT(*)`.mapWith(Number),
+        })
+        .from(ordersWithLocalDate)
+        .where(
+          and(
+            inArray(ordersWithLocalDate.status, revenueOrderStatuses),
+            sql`${ordersWithLocalDate.localDate}::date >= ${previousStartDate}::date`,
+            sql`${ordersWithLocalDate.localDate}::date <= ${today}::date`,
+          ),
+        )
+        .groupBy(ordersWithLocalDate.localDate)
+        .orderBy(ordersWithLocalDate.localDate);
 
-      const dateKey = date.toISOString().slice(0, 10);
+      const metricsByDate = new Map(
+        rows.map((row) => [
+          row.date,
+          {
+            revenue: row.revenue,
+            orders: row.orders,
+          },
+        ]),
+      );
+
+      const series = Array.from({ length: rangeDays }, (_, index) => {
+        const date = addDays(currentStartDate, index);
+        const previousDate = addDays(date, -rangeDays);
+
+        const current = metricsByDate.get(date) ?? {
+          revenue: 0,
+          orders: 0,
+        };
+
+        const previous = metricsByDate.get(previousDate) ?? {
+          revenue: 0,
+          orders: 0,
+        };
+
+        const averageTicket =
+          current.orders > 0 ? Math.round(current.revenue / current.orders) : 0;
+
+        const previousAverageTicket =
+          previous.orders > 0
+            ? Math.round(previous.revenue / previous.orders)
+            : 0;
+
+        return {
+          date,
+          previousDate,
+          revenue: current.revenue,
+          previousRevenue: previous.revenue,
+          orders: current.orders,
+          previousOrders: previous.orders,
+          averageTicket,
+          previousAverageTicket,
+        };
+      });
+
+      const currentRevenue = series.reduce(
+        (acc, item) => acc + item.revenue,
+        0,
+      );
+      const previousRevenue = series.reduce(
+        (acc, item) => acc + item.previousRevenue,
+        0,
+      );
+
+      const currentOrders = series.reduce((acc, item) => acc + item.orders, 0);
+      const previousOrders = series.reduce(
+        (acc, item) => acc + item.previousOrders,
+        0,
+      );
+
+      const currentAverageTicket =
+        currentOrders > 0 ? Math.round(currentRevenue / currentOrders) : 0;
+
+      const previousAverageTicket =
+        previousOrders > 0 ? Math.round(previousRevenue / previousOrders) : 0;
 
       return {
-        date: dateKey,
-        revenue: revenuesByDate.get(dateKey) ?? 0,
+        period: {
+          rangeDays,
+          currentStartDate,
+          currentEndDate: today,
+          previousStartDate,
+          previousEndDate,
+        },
+        summary: {
+          revenue: {
+            current: currentRevenue,
+            previous: previousRevenue,
+            deltaPercent: calculateDeltaPercent(
+              currentRevenue,
+              previousRevenue,
+            ),
+          },
+          orders: {
+            current: currentOrders,
+            previous: previousOrders,
+            deltaPercent: calculateDeltaPercent(currentOrders, previousOrders),
+          },
+          averageTicket: {
+            current: currentAverageTicket,
+            previous: previousAverageTicket,
+            deltaPercent: calculateDeltaPercent(
+              currentAverageTicket,
+              previousAverageTicket,
+            ),
+          },
+        },
+        series,
       };
-    });
-  }),
-
-  getProductsByStatus: adminProcedure.query(async () => {
-    const products = await db
-      .select({
-        isAvailable: product.isAvailable,
-        totalStock:
-          sql<number>`COALESCE(SUM(${productVariant.stockQuantity}), 0)`.mapWith(
-            Number,
-          ),
-      })
-      .from(product)
-      .leftJoin(productVariant, eq(product.id, productVariant.productId))
-      .groupBy(product.id, product.isAvailable);
-
-    const byStatus = products.reduce(
-      (acc, item) => {
-        if (!item.isAvailable) {
-          acc.unavailable += 1;
-          return acc;
-        }
-
-        if (item.totalStock > 0) {
-          acc.available += 1;
-          return acc;
-        }
-
-        acc.outOfStock += 1;
-        return acc;
-      },
-      {
-        available: 0,
-        outOfStock: 0,
-        unavailable: 0,
-      },
-    );
-
-    return [
-      { key: "available", status: "Disponível", total: byStatus.available },
-      { key: "outOfStock", status: "Sem estoque", total: byStatus.outOfStock },
-      {
-        key: "unavailable",
-        status: "Indisponível",
-        total: byStatus.unavailable,
-      },
-    ];
-  }),
+    }),
 });
