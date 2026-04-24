@@ -102,13 +102,13 @@ export const ProductClient = ({ slug }: { slug: string }) => {
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Left: Product Image */}
-        <div className="relative aspect-square lg:aspect-3/4 overflow-hidden bg-muted">
+        <div className="relative aspect-3/4 lg:aspect-2/3 overflow-hidden bg-muted">
           {isLoading && <Skeleton className="absolute inset-0" />}
           <Image
             src={data.imageUrl}
             alt={data.name}
             fill
-            className="object-cover"
+            className="object-cover object-top"
             sizes="(max-width: 1024px) 100vw, 50vw"
             onLoad={() => setIsLoading(false)}
             onError={() => setIsLoading(false)}
