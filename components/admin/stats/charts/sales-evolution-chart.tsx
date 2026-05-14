@@ -195,6 +195,8 @@ export function SalesEvolutionChart() {
   }, [data, metric]);
 
   const metricSummary = data?.summary[metric];
+  const initialTooltipIndex =
+    chartData.length > 0 ? chartData.length - 1 : undefined;
 
   return (
     <Card className="pt-0">
@@ -378,6 +380,7 @@ export function SalesEvolutionChart() {
               />
 
               <ChartTooltip
+                defaultIndex={initialTooltipIndex}
                 cursor={false}
                 content={
                   <EvolutionTooltip
